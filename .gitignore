@@ -1,0 +1,10 @@
+# Ignore JetBrains IDE files
+.idea/
+
+# Ignore localstack data directory
+localstack-data/
+/terraform/.terraform
+
+# Ignore other common files
+node_modules/
+*.env
