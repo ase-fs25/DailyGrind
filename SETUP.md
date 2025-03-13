@@ -108,45 +108,8 @@ This configuration allows you to interact with LocalStack, which mimics AWS loca
 
 ## 5. Set Up LocalStack with Docker Compose
 
-### Set the Authentication Token
-
-You must set the LocalStack Pro authentication token in your environment. The token is provided when you subscribe to
-LocalStack Pro.
-
-Set the LOCALSTACK_AUTH_TOKEN environment variable with your Pro license token (you can copy the token from the
-LocalStack dashboard):
-
-- macOS/Linux
-
-```bash
-    export LOCALSTACK_AUTH_TOKEN="your_auth_token"
-```
-
-- Windows (Command Prompt)
-
-```bash
-    set LOCALSTACK_AUTH_TOKEN=your_auth_token
-```
-
-- Windows (PowerShell)
-
-```bash
-    $env:LOCALSTACK_AUTH_TOKEN="your_auth_token"
-```
-
-### Run Docker Compose
-
-With the docker-compose.yml and your authentication token set, you can start LocalStack Pro by running:
-
-```bash
-    docker-compose up -d
-```
-
-```bash
-    docker-compose up -d
-```
-
-This will download and start LocalStack Pro, including all services specified in your docker-compose.yml.
+- Easiest Way: Make a custom run config in InteliJ where you set the environment variable `LOCALSTACK_AUTH_TOKEN` to
+  your LocalStack Pro license key.
 
 ## 6. Verify LocalStack Pro
 
@@ -162,8 +125,7 @@ This should show the localstack container running.
 
 ### Access the LocalStack Web UI:
 
-open your browser and navigate to http://localhost:8080. This is the LocalStack Web Application that provides an
-interface to monitor and manage emulated AWS services.
+Go to the LocalStack at [Web UI](https://app.localstack.cloud/dashboard) and log in
 
 ## 7. Troubleshooting
 
@@ -185,6 +147,12 @@ interface to monitor and manage emulated AWS services.
 - Create a test user inside the User Pool.
 
 ### Via the AWSLocal CLI
+
+Connect to you localstack container:
+
+```bash
+  docker exec -it your_container_id sh
+```
 
 #### Get user pool id
 
