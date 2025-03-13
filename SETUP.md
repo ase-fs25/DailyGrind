@@ -17,8 +17,7 @@ Ensure that the following are installed on your machine:
 To access advanced features like service persistence and the HTTPS Gateway, subscribe to a LocalStack Pro plan and
 retrieve your API key:
 
-- Visit the [LocalStack Pricing](https://localstack.cloud/pricing/) page and select a plan.
-- After subscribing, you will receive an API key that is needed to enable Pro features.
+- Hobby License should be sufficient
 
 ## 2. Install Prerequisites
 
@@ -31,7 +30,7 @@ retrieve your API key:
       brew install --cask docker
       brew install docker-compose
 ```
-    - Start Docker Desktop from your Applications folder.
+- Start Docker Desktop from your Applications folder.
 
 - **Windows**:
     - Download and install [Docker Desktop](https://www.docker.com/products/docker-desktop).
@@ -48,11 +47,39 @@ retrieve your API key:
 ### AWS CLI
 
 - **macOS/Linux**:
-  ```bash
+```bash
   brew install awscli
-  ```
+```
 - **Windows**:
     - Download and install the [AWS CLI](https://aws.amazon.com/cli/).
+
+### Terraform
+
+- **macOS**:
+```bash
+  brew install terraform
+```
+
+- **Windows**:
+    - Download the [Terraform binary](https://www.terraform.io/downloads.html) and add it to your PATH.
+
+- **Linux**:
+```bash
+  sudo apt-get update
+  sudo apt-get install terraform
+```
+
+- After installing Terraform, verify the installation by running:
+```bash
+  terraform --version
+```
+
+### Terraform Local
+
+- Download Terraform Local via pip:
+```bash
+  pip install terraform-local
+```
 
 ## 3. Clone the Repository
 
@@ -150,3 +177,54 @@ interface to monitor and manage emulated AWS services.
       brew install awscli
   ```
   
+## Create a test user
+
+### Via the LocalStack Web UI
+
+- Navigate to the Cognito service in the LocalStack Web UI.
+- Create a test user inside the User Pool.
+
+### Via the AWSLocal CLI
+
+#### Get user pool id
+
+```bash
+  awslocal cognito-idp list-user-pools --max-results 10 --region us-east-1
+```
+
+#### Get user pool client id
+
+```bash
+  awslocal cognito-idp list-user-pool-clients --user-pool-id your_user_pool_id --region us-east-1
+```
+
+#### Create a user
+
+```bash
+  awslocal cognito-idp sign-up --client-id your_client_id --username testuser --password Testuser@123 --region us-east-1
+```
+
+#### Confirm the user
+
+```bash
+  awslocal cognito-idp admin-confirm-sign-up --user-pool-id your_user_pool_id --username testuser --region us-east-1
+```
+
+#### Check all users in the user pool
+
+```bash
+  awslocal cognito-idp list-users --user-pool-id your_user_pool_id --region us-east-1
+```
+
+#### Get the user's access token
+
+- via cli
+```bash
+  awslocal cognito-idp initiate-auth --auth-flow USER_PASSWORD_AUTH --auth-parameters USERNAME=testuser,PASSWORD=Testuser@123 --client-id your_client_id --region us-east-1
+```
+
+- via curl
+```bash
+  curl 'http://localhost:4566/<pool_id>/.well-known/jwks.json'
+  {"keys": [{"kty": "RSA", "alg": "RS256", "use": "sig", "kid": "test-key", "n": "k6lrbEH..."]}
+```

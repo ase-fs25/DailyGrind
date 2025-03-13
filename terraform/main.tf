@@ -1,6 +1,13 @@
 resource "aws_cognito_user_pool" "daily_grind_user_pool" {
   name = "daily-grind-user-pool"
 
+  schema {
+    attribute_data_type = "String"
+    name               = "email"
+    required           = true
+    mutable            = false
+  }
+
   auto_verified_attributes = ["email"]
 
   password_policy {

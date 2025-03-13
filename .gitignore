@@ -4,6 +4,9 @@
 # Ignore localstack data directory
 localstack-data/
 /terraform/.terraform
+/terraform/.terraform.lock.hcl
+/terraform/terraform.tfstate
+/terraform/terraform.tfstate.backup
 
 # Ignore other common files
 node_modules/
