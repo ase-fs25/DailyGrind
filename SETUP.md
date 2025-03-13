@@ -223,8 +223,8 @@ interface to monitor and manage emulated AWS services.
   awslocal cognito-idp initiate-auth --auth-flow USER_PASSWORD_AUTH --auth-parameters USERNAME=testuser,PASSWORD=Testuser@123 --client-id your_client_id --region us-east-1
 ```
 
-- via curl
+or
+
 ```bash
-  curl 'http://localhost:4566/<pool_id>/.well-known/jwks.json'
-  {"keys": [{"kty": "RSA", "alg": "RS256", "use": "sig", "kid": "test-key", "n": "k6lrbEH..."]}
+awslocal cognito-idp admin-initiate-auth --user-pool-id your-user-pool-id --client-i your-client-id --auth-flow ADMIN_NO_SRP_AUTH --auth-parameters USERNAME=testuser,PASSWORD=Testuser@123
 ```

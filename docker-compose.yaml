@@ -14,13 +14,13 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "./localstack-data:/var/lib/localstack"
 
-  terraform:
-    image: hashicorp/terraform
-    working_dir: /terraform
-    volumes:
-      - ./terraform:/terraform
-    environment:
-      - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
-    entrypoint: [ "/bin/sh", "/terraform/init-terraform.sh" ]
-    depends_on:
-      - localstack
+#  terraform:
+#    image: hashicorp/terraform
+#    working_dir: /terraform
+#    volumes:
+#      - ./terraform:/terraform
+#    environment:
+#      - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
+#    entrypoint: [ "/bin/sh", "/terraform/init-terraform.sh" ]
+#    depends_on:
+#      - localstack
