@@ -163,32 +163,32 @@ Connect to you localstack container:
 #### Get user pool client id
 
 ```bash
-  awslocal cognito-idp list-user-pool-clients --user-pool-id your_user_pool_id --region us-east-1
+  awslocal cognito-idp list-user-pool-clients --region us-east-1 --user-pool-id your_user_pool_id
 ```
 
 #### Create a user
 
 ```bash
-  awslocal cognito-idp sign-up --client-id your_client_id --username testuser --password Testuser@123 --region us-east-1
+  awslocal cognito-idp sign-up --username testuser@gmail.com --password Testuser@123 --region us-east-1 --client-id your_client_id
 ```
 
 #### Confirm the user
 
 ```bash
-  awslocal cognito-idp admin-confirm-sign-up --user-pool-id your_user_pool_id --username testuser --region us-east-1
+  awslocal cognito-idp admin-confirm-sign-up --username testuser@gmail.com --region us-east-1 --user-pool-id your_user_pool_id
 ```
 
 #### Check all users in the user pool
 
 ```bash
-  awslocal cognito-idp list-users --user-pool-id your_user_pool_id --region us-east-1
+  awslocal cognito-idp list-users --region us-east-1 --user-pool-id your_user_pool_id
 ```
 
 #### Get the user's access token
 
 - via cli
 ```bash
-  awslocal cognito-idp initiate-auth --auth-flow USER_PASSWORD_AUTH --auth-parameters USERNAME=testuser,PASSWORD=Testuser@123 --client-id your_client_id --region us-east-1
+  awslocal cognito-idp initiate-auth --auth-flow USER_PASSWORD_AUTH --auth-parameters USERNAME=testuser@gmail.com,PASSWORD=Testuser@123 --region us-east-1 --client-id your_client_id
 ```
 
 or
@@ -196,3 +196,8 @@ or
 ```bash
 awslocal cognito-idp admin-initiate-auth --user-pool-id your-user-pool-id --client-i your-client-id --auth-flow ADMIN_NO_SRP_AUTH --auth-parameters USERNAME=testuser,PASSWORD=Testuser@123
 ```
+
+
+### Log in / Sign up with cognito hosted UI
+
+http://localhost.localstack.cloud:4566/_aws/cognito-idp/login?response_type=code&client_id=<your_client_id>&redirect_uri=http://google.com
