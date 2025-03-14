@@ -1,24 +1,24 @@
 # DynamoDB Table for Users
-resource "aws_dynamodb_table" "Users" {
-  name           = "Users"  # Pascal case
-  hash_key       = "userId"
+resource "aws_dynamodb_table" "users" {
+  name           = "users"
+  hash_key       = "user_id"
   billing_mode   = "PROVISIONED"
   read_capacity  = 5
   write_capacity = 5
 
   attribute {
-    name = "userId"
-    type = "S"  # String type for userId
+    name = "user_id"
+    type = "S"
   }
 
   attribute {
     name = "name"
-    type = "S"  # String type for name
+    type = "S"
   }
 
-  # Global Secondary Index for name (optional if you plan to query by name)
+  # Global Secondary Index for name
   global_secondary_index {
-    name               = "NameIndex"
+    name               = "name-index"
     hash_key           = "name"
     projection_type    = "ALL"
     read_capacity      = 5
@@ -26,97 +26,97 @@ resource "aws_dynamodb_table" "Users" {
   }
 
   tags = {
-    Name = "Users Table"
+    Name = "users-table"
   }
 }
 
 # DynamoDB Table for Friend Requests
-resource "aws_dynamodb_table" "FriendRequests" {
-  name           = "FriendRequests"  # Pascal case
-  hash_key       = "senderId"
-  range_key      = "receiverId"
+resource "aws_dynamodb_table" "friend_requests" {
+  name           = "friend-requests"  # Lowercase with hyphens
+  hash_key       = "sender_id"
+  range_key      = "receiver_id"
   billing_mode   = "PROVISIONED"
   read_capacity  = 5
   write_capacity = 5
 
   attribute {
-    name = "senderId"
-    type = "S"  # String type for senderId
+    name = "sender_id"
+    type = "S"
   }
 
   attribute {
-    name = "receiverId"
-    type = "S"  # String type for receiverId
+    name = "receiver_id"
+    type = "S"
   }
 
   attribute {
-    name = "requestStatus"
-    type = "S"  # String type for requestStatus
+    name = "request_status"
+    type = "S"
   }
 
-  # Global Secondary Index for requestStatus (optional if you plan to query by requestStatus)
+  # Global Secondary Index for request_status
   global_secondary_index {
-    name               = "RequestStatusIndex"
-    hash_key           = "requestStatus"
+    name               = "request-status-index"
+    hash_key           = "request_status"
     projection_type    = "ALL"
     read_capacity      = 5
     write_capacity     = 5
   }
 
   tags = {
-    Name = "FriendRequests Table"
+    Name = "friend-requests-table"
   }
 }
 
 # DynamoDB Table for Posts
-resource "aws_dynamodb_table" "Posts" {
-  name           = "Posts"  # Pascal case
-  hash_key       = "postId"
+resource "aws_dynamodb_table" "posts" {
+  name           = "posts"
+  hash_key       = "post_id"
   billing_mode   = "PROVISIONED"
   read_capacity  = 5
   write_capacity = 5
 
   attribute {
-    name = "postId"
-    type = "S"  # String type for postId
+    name = "post_id"
+    type = "S"
   }
 
   attribute {
-    name = "userId"
-    type = "S"  # String type for userId
+    name = "user_id"
+    type = "S"
   }
 
   attribute {
     name = "content"
-    type = "S"  # String type for content of the post
+    type = "S"
   }
 
   attribute {
     name = "timestamp"
-    type = "S"  # String type for timestamp
+    type = "S"
   }
 
-  # Global Secondary Index for userId (optional if you plan to query by userId)
+  # Global Secondary Index for user_id
   global_secondary_index {
-    name               = "UserIdIndex"
-    hash_key           = "userId"
+    name               = "user-id-index"
+    hash_key           = "user_id"
     projection_type    = "ALL"
     read_capacity      = 5
     write_capacity     = 5
   }
 
-  # Global Secondary Index for timestamp (optional if you plan to query posts by timestamp)
+  # Global Secondary Index for timestamp
   global_secondary_index {
-    name               = "TimestampIndex"
+    name               = "timestamp-index"
     hash_key           = "timestamp"
     projection_type    = "ALL"
     read_capacity      = 5
     write_capacity     = 5
   }
 
-  # Global Secondary Index for content (optional if you plan to query posts by content)
+  # Global Secondary Index for content
   global_secondary_index {
-    name               = "ContentIndex"
+    name               = "content-index"
     hash_key           = "content"
     projection_type    = "ALL"
     read_capacity      = 5
@@ -124,19 +124,19 @@ resource "aws_dynamodb_table" "Posts" {
   }
 
   tags = {
-    Name = "Posts Table"
+    Name = "posts-table"
   }
 }
 
 # Outputs for reference
-output "Users_table_name" {
-  value = aws_dynamodb_table.Users.name
+output "users_table_name" {
+  value = aws_dynamodb_table.users.name
 }
 
-output "FriendRequests_table_name" {
-  value = aws_dynamodb_table.FriendRequests.name
+output "friend_requests_table_name" {
+  value = aws_dynamodb_table.friend_requests.name
 }
 
-output "Posts_table_name" {
-  value = aws_dynamodb_table.Posts.name
+output "posts_table_name" {
+  value = aws_dynamodb_table.posts.name
 }

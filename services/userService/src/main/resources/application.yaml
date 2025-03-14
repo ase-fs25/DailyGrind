@@ -1,7 +1,7 @@
 dg:
   us:
     cors:
-      allowed-origins: http://localhost:3000
+      allowed-origins: http://localhost:3000, https://oauth.pstmn.io/v1/callback
       allowed-methods: GET, POST, PUT, DELETE
     aws:
       region: ${AWS_REGION:us-east-1}
@@ -21,10 +21,11 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-#          issuer-uri: ${dg.us.aws.cognito.issuer-uri}
-#          jwk-set-uri: ${dg.us.aws.cognito.jwk-set-uri}
-          issurer-uri: http://localhost.localstack.cloud:4566/us-east-1_573e2e5b87e8442696d15c7fe168b791
-          jwk-set-uri: http://localhost:4566/us-east-1_573e2e5b87e8442696d15c7fe168b791/.well-known/jwks.json
+#          issuer-uri: http://localhost.localstack.cloud:4566/us-east-1_573e2e5b87e8442696d15c7fe168b791
+#          jwk-set-uri: http://localhost:4566/us-east-1_573e2e5b87e8442696d15c7fe168b791/.well-known/jwks.json
+          issuer-uri: ${dg.us.aws.cognito.issuer-uri}
+          jwk-set-uri: ${dg.us.aws.cognito.jwk-set-uri}
+
 logging:
   level:
     org.springframework.security: TRACE

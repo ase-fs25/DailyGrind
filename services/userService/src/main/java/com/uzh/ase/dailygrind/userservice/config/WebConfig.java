@@ -13,22 +13,22 @@ import java.util.List;
 public class WebConfig implements WebMvcConfigurer {
 
     @Value("${dg.us.cors.allowed-origins}")
-    private List<String> allowedOrigins;
+    private String[] allowedOrigins;
 
     @Value("${dg.us.cors.allowed-methods}")
     private String[] allowedMethods;
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        if (allowedOrigins == null || allowedOrigins.isEmpty()) {
+        if (allowedOrigins == null || allowedOrigins.length == 0) {
             log.error("List allowed CORS origins is not configured!");
             return;
         }
 
         log.info("Allowed CORS origins: {}", String.join(", ", allowedOrigins));
+        log.info("Allowed CORS methods: {}", String.join(", ", allowedMethods));
 
-        registry.addMapping("/**")
-                .allowedOrigins(allowedOrigins.toArray(new String[0]))
-                .allowedMethods(allowedMethods);
+        registry.addMapping("/**").allowedOrigins(allowedOrigins);
+        registry.addMapping("/**").allowedMethods(allowedMethods);
     }
 }
