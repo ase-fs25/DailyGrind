@@ -12,8 +12,11 @@ import java.util.List;
 @Slf4j
 public class WebConfig implements WebMvcConfigurer {
 
-    @Value("${uzh.ase.dg.allowed-origins}")
+    @Value("${dg.us.cors.allowed-origins}")
     private List<String> allowedOrigins;
+
+    @Value("${dg.us.cors.allowed-methods}")
+    private String[] allowedMethods;
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -26,6 +29,6 @@ public class WebConfig implements WebMvcConfigurer {
 
         registry.addMapping("/**")
                 .allowedOrigins(allowedOrigins.toArray(new String[0]))
-                .allowedMethods("HEAD", "OPTIONS", "GET");
+                .allowedMethods(allowedMethods);
     }
 }
