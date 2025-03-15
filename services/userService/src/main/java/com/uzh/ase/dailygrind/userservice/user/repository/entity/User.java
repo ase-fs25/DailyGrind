@@ -15,9 +15,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class User {
 
-    @DynamoDBHashKey(attributeName = "user_id") // Hash key for the table
-    private String userId; // The user's unique ID
+    @DynamoDBHashKey(attributeName = "user_id")
+    private String userId;
 
-    @DynamoDBAttribute(attributeName = "name") // Attribute for user's name
-    private String name; // The user's name (this will be indexed in the global secondary index)
+    @DynamoDBAttribute(attributeName = "name")
+    private String name;
 }

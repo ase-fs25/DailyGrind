@@ -12,19 +12,17 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users") // Base path for all methods in this controller
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
-    // Fetch all users
     @GetMapping
     public List<User> getUsers() {
         return userService.getAllUser();
     }
 
-    // Create a new user
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
         User createdUser = userService.createUser(user);
@@ -33,16 +31,16 @@ public class UserController {
 
     @GetMapping("/page")
     public Page<User> getUsersPage(Pageable pageable) {
-        return userService.getUsersPage(pageable); // Ensure userService handles pagination
+        return userService.getUsersPage(pageable);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable("id") String id) {
         User user = userService.getUserById(id);
         if (user != null) {
-            return ResponseEntity.ok(user); // Return OK status if user found
+            return ResponseEntity.ok(user);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Return 404 if user not found
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 }
