@@ -1,4 +1,4 @@
-package com.uzh.ase.dailygrind.userservice.config;
+package com.uzh.ase.dailygrind.postservice.config;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;

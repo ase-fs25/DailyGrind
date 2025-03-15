@@ -87,6 +87,11 @@ resource "aws_dynamodb_table" "posts" {
   }
 
   attribute {
+    name = "title"
+    type = "S"
+  }
+
+  attribute {
     name = "content"
     type = "S"
   }
@@ -109,6 +114,14 @@ resource "aws_dynamodb_table" "posts" {
   global_secondary_index {
     name               = "timestamp-index"
     hash_key           = "timestamp"
+    projection_type    = "ALL"
+    read_capacity      = 5
+    write_capacity     = 5
+  }
+
+  global_secondary_index {
+    name               = "title-index"
+    hash_key           = "title"
     projection_type    = "ALL"
     read_capacity      = 5
     write_capacity     = 5

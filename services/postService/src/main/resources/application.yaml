@@ -16,7 +16,7 @@ dg:
 
 spring:
   application:
-    name: userService
+    name: postService
   security:
     oauth2:
       resourceserver:
