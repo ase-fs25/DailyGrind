@@ -61,9 +61,9 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: "java-kotlin"
-          build-mode: "autobuild"
+          build-mode: "manual"
 
-      - name: Install dependencies and run tests
+      - name: Build & Run Tests
         working-directory: ${{ matrix.service }}
         run: mvn clean verify -Pintegration-tests
 
