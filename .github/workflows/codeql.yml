@@ -61,7 +61,7 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: "java-kotlin"
-          build-mode: "auto"
+          build-mode: "autobuild"
 
       - name: Install dependencies and run tests
         working-directory: ${{ matrix.service }}
