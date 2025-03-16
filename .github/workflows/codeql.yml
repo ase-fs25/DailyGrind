@@ -4,14 +4,15 @@ on:
   push:
     branches:
       - develop
-      - "feature/*"
       - "release/*"
       - "hotfix/*"
+      - main
   pull_request:
     branches:
       - develop
       - "release/*"
       - "hotfix/*"
+      - main
   schedule:
     - cron: '0 22 * * 0'  # Every Sunday at 10:00 PM UTC
 
@@ -104,7 +105,7 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: "javascript-typescript"
-          build-mode: "manual"
+          build-mode: "none"
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
