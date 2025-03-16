@@ -1,0 +1,16 @@
+.screen-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f3e5f5;
+  color: #9c27b0;
+}
+
+.screen-content {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}

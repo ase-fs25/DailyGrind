@@ -1,0 +1,85 @@
+.settings-popup .MuiDialog-paper {
+  width: 50%;
+  max-width: 600px;
+  padding: 20px;
+  background-color: #f3e5f5;
+}
+
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #9c27b0;
+  font-weight: bold;
+  margin-bottom: 0px;
+}
+
+.close-button {
+  color: #9c27b0 !important;
+}
+
+.settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.profile-section {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  margin-top: 16px;
+}
+
+.blurred-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+}
+
+.profile-upload-button {
+  border: none;
+  padding: 0;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile-avatar {
+  width: 100px !important;
+  height: 100px !important;
+  border: 2px solid #9c27b0;
+  transition: transform 0.2s ease-in-out;
+}
+
+.profile-avatar:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
+.input-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.full-input {
+  flex-grow: 1;
+}
+
+.narrow-input {
+  flex-grow: 0.8;
+}
+
+.edit-buttons {
+  display: flex;
+  gap: 4px;
+}
