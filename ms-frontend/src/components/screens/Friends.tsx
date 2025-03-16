@@ -16,19 +16,16 @@ const Friends = () => {
           <Card
             key={friend.userId}
             sx={{
-              display: "flex",
-              alignItems: "center",
-              width: "100%",
+              display: 'flex',
+              alignItems: 'center',
+              width: '100%',
               maxWidth: 600,
               mb: 2,
               p: 1,
               boxShadow: 3,
             }}
           >
-            <Avatar
-              src={friend.profilePicture}
-              sx={{ width: 64, height: 64, ml: 2, mr: 2 }}
-            />
+            <Avatar src={friend.profilePicture} sx={{ width: 64, height: 64, ml: 2, mr: 2 }} />
             <CardContent>
               <Typography variant="h6">{friend.username}</Typography>
             </CardContent>
