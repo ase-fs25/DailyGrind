@@ -1,0 +1,87 @@
+name: "CodeQL Security Scan"
+
+on:
+  push:
+    branches:
+      - develop
+      - "feature/*"
+      - "release/*"
+      - "hotfix/*"
+  pull_request:
+    branches:
+      - develop
+      - "release/*"
+      - "hotfix/*"
+  schedule:
+    - cron: '0 22 * * 0'  # Every Sunday at 10:00 PM UTC
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      packages: read
+      actions: read
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: "java-kotlin"
+            build-mode: "auto"
+          - language: "javascript-typescript"
+            build-mode: "manual"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 🔹 Set up Java for Maven builds
+      - name: Set up Java
+        if: matrix.language == 'java-kotlin'
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+
+      # 🔹 Set up Node.js for TypeScript analysis
+      - name: Set up Node.js (latest)
+        if: matrix.language == 'javascript-typescript'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'latest'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      # 🔹 Install dependencies for backend (Java/Maven)
+      - name: Install backend dependencies
+        if: matrix.language == 'java-kotlin'
+        run: mvn clean verify -Pintegration-tests
+
+      # 🔹 Install dependencies for frontend (TypeScript/React)
+      - name: Install frontend dependencies
+        if: matrix.language == 'javascript-typescript'
+        working-directory: frontend
+        run: npm ci
+
+      # 🔹 Build the frontend
+      - name: Build frontend
+        if: matrix.language == 'javascript-typescript'
+        working-directory: frontend
+        run: npm run build
+
+      # 🔹 Initialize CodeQL
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+
+      # 🔹 Run CodeQL Analysis
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{matrix.language}}"

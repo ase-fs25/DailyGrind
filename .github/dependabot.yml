@@ -1,0 +1,60 @@
+version: 2
+updates:
+  # 🔹 Java/Maven Dependencies (Automatically covers multiple services)
+  - package-ecosystem: "maven"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      time: "22:00"
+    open-pull-requests-limit: 10
+    assignees:
+      - "leo-wag"
+    reviewers:
+      - "polatmete"
+    allow:
+      - dependency-type: "all"  # Ensure all updates are considered
+
+  # 🔹 Automatically apply the same config for all `ms-*` backend services
+  - package-ecosystem: "maven"
+    directory: "/ms-user"
+    schedule:
+      interval: "weekly"
+      time: "22:00"
+    assignees:
+      - "leo-wag"
+    reviewers:
+      - "polatmete"
+
+  - package-ecosystem: "maven"
+    directory: "/ms-post"
+    schedule:
+      interval: "weekly"
+      time: "22:00"
+    assignees:
+      - "leo-wag"
+    reviewers:
+      - "polatmete"
+
+  # 🔹 Frontend Dependencies
+  - package-ecosystem: "npm"
+    directory: "/ms-frontend"
+    schedule:
+      interval: "weekly"
+      time: "22:00"
+    open-pull-requests-limit: 10
+    assignees:
+      - "jnsgbl"
+    reviewers:
+      - "polatmete"
+
+  # 🔹 GitHub Actions Dependencies
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      time: "22:00"
+    open-pull-requests-limit: 10
+    assignees:
+      - "polatmete"
+    reviewers:
+      - "polatmete"
