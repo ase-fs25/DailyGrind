@@ -4,12 +4,16 @@ on:
   push:
     branches:
       - develop
-      - "feature/*"
       - "release/*"
+      - "hotfix/*"
+      - main
   pull_request:
     branches:
       - develop
       - "release/*"
+      - "hotfix/*"
+      - main
+
 
 jobs:
   test-frontend:

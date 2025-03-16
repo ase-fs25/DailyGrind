@@ -4,14 +4,15 @@ on:
   push:
     branches:
       - develop
-      - "feature/*"
       - "release/*"
       - "hotfix/*"
+      - main
   pull_request:
     branches:
       - develop
       - "release/*"
       - "hotfix/*"
+      - main
   schedule:
     - cron: '0 22 * * 0'  # Every Sunday at 10:00 PM UTC
 
