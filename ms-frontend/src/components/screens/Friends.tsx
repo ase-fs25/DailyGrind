@@ -1,7 +1,7 @@
-import { Box, Typography } from "@mui/material";
-import Header from "../common/Header";
+import { Box, Typography } from '@mui/material';
+import Header from '../common/Header';
 
-import "../../styles/components/screens/screen.css";
+import '../../styles/components/screens/screen.css';
 
 const Friends = () => {
   return (

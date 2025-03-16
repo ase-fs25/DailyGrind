@@ -1,12 +1,12 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route } from 'react-router-dom';
 
-import "./styles/app.css";
+import './styles/app.css';
 
-import Login from "./components/login/Login";
-import Registration from "./components/login/Registration";
-import Feed from "./components/screens/Feed";
-import Posts from "./components/screens/Posts";
-import Friends from "./components/screens/Friends";
+import Login from './components/login/Login';
+import Registration from './components/login/Registration';
+import Feed from './components/screens/Feed';
+import Posts from './components/screens/Posts';
+import Friends from './components/screens/Friends';
 
 function App() {
   return (
