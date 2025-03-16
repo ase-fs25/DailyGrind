@@ -3,7 +3,7 @@ import Header from "../common/Header";
 
 import { mockPosts } from "../../mockData/mockPosts";
 import "../../styles/components/screens/screen.css";
-import "../../styles/components/screens/feed.css"; // Importing the new styles
+import "../../styles/components/screens/feed.css";
 
 const formatDate = (timestamp: string) => {
   const date = new Date(timestamp);
