@@ -15,32 +15,22 @@ import ClearIcon from "@mui/icons-material/Clear";
 import { useNavigate } from "react-router-dom";
 
 import "../../styles/components/common/settingsPopup.css";
+import profileStore from "../../stores/profileStore";
+import { Profile, ProfileInfo } from "../../types/profile";
 
 interface SettingsPopupProps {
   open: boolean;
   onClose: () => void;
 }
 
-interface Profile {
-  profilePicture: string;
-  username: string;
-  location: string;
-  education: string;
-  workExperience: string;
-}
-
 const SettingsPopup: React.FC<SettingsPopupProps> = ({ open, onClose }) => {
   const navigate = useNavigate();
 
-  const [profile, setProfile] = useState<Profile>({
-    profilePicture: "https://via.placeholder.com/100",
-    username: "JohnDoe",
-    location: "New York, USA",
-    education: "Bachelor's in Computer Science",
-    workExperience: "Software Developer at TechCorp",
-  });
+  const [profile, setProfile] = useState<Profile>(profileStore.getProfile());
 
-  const [editingField, setEditingField] = useState<keyof Profile | null>(null);
+  const [editingField, setEditingField] = useState<
+    keyof Profile | keyof ProfileInfo | null
+  >(null);
   const [tempValue, setTempValue] = useState<string>("");
 
   const handleProfilePictureChange = (
@@ -61,9 +51,13 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ open, onClose }) => {
     }
   };
 
-  const startEditing = (field: keyof Profile) => {
+  const startEditing = (field: keyof Profile | keyof ProfileInfo) => {
     setEditingField(field);
-    setTempValue(profile[field]);
+    if (field === "username") {
+      setTempValue(profile[field]);
+    } else {
+      setTempValue(profile.profileInfo[field as keyof ProfileInfo]);
+    }
   };
 
   const handleCancel = () => {
@@ -72,16 +66,42 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ open, onClose }) => {
   };
 
   const handleConfirm = () => {
-    if (editingField) {
-      setProfile((prev) => ({ ...prev, [editingField]: tempValue }));
-      console.log("Changed", editingField, tempValue);
+    // TODO In this function we would also need to call the API to update the user's profile
+    if (!editingField) return;
+
+    setProfile((prev) => {
+      if (!prev) return prev;
+
+      return editingField === "username"
+        ? { ...prev, username: tempValue }
+        : {
+            ...prev,
+            profileInfo: {
+              ...prev.profileInfo,
+              [editingField]: tempValue,
+            },
+          };
+    });
+
+    // TODO Find a better solution for this. Might even change when the API is implemented
+    if (editingField === "username") {
+      profileStore.setUsername(tempValue);
+    } else if (
+      editingField === "profilePicture" ||
+      editingField === "location" ||
+      editingField === "education" ||
+      editingField === "workExperience"
+    ) {
+      profileStore.updateProfileInfoField(editingField, tempValue);
     }
+
     setEditingField(null);
     setTempValue("");
   };
 
   const handleLogout = () => {
-    navigate("/login");
+    profileStore.deleteProfile();
+    navigate("/");
   };
 
   return (
@@ -115,7 +135,7 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ open, onClose }) => {
             className="profile-upload-button"
           >
             <Avatar
-              src={profile.profilePicture}
+              src={profile.profileInfo.profilePicture}
               className="profile-avatar"
               style={{ cursor: "pointer" }}
             />
@@ -127,7 +147,32 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ open, onClose }) => {
             />
           </Button>
         </Box>
-        {Object.entries(profile).map(
+        <Box className="settings-field">
+          <Box className="input-container">
+            <TextField
+              label={"Username"}
+              variant="outlined"
+              fullWidth
+              className={
+                editingField === "username" ? "narrow-input" : "full-input"
+              }
+              value={editingField === "username" ? tempValue : profile.username}
+              onChange={(e) => setTempValue(e.target.value)}
+              onFocus={() => startEditing("username")}
+            />
+            {editingField === "username" && tempValue !== "username" && (
+              <Box className="edit-buttons">
+                <IconButton onClick={handleCancel} className="cancel-button">
+                  <ClearIcon />
+                </IconButton>
+                <IconButton onClick={handleConfirm} className="confirm-button">
+                  <CheckIcon />
+                </IconButton>
+              </Box>
+            )}
+          </Box>
+        </Box>
+        {Object.entries(profile.profileInfo).map(
           ([key, value]) =>
             key !== "profilePicture" && (
               <Box key={key} className="settings-field">
@@ -143,22 +188,25 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ open, onClose }) => {
                     onChange={(e) => setTempValue(e.target.value)}
                     onFocus={() => startEditing(key as keyof Profile)}
                   />
-                  {editingField === key && tempValue !== profile[key] && (
-                    <Box className="edit-buttons">
-                      <IconButton
-                        onClick={handleCancel}
-                        className="cancel-button"
-                      >
-                        <ClearIcon />
-                      </IconButton>
-                      <IconButton
-                        onClick={handleConfirm}
-                        className="confirm-button"
-                      >
-                        <CheckIcon />
-                      </IconButton>
-                    </Box>
-                  )}
+                  {editingField === key &&
+                    key in profile.profileInfo &&
+                    tempValue !==
+                      profile.profileInfo[key as keyof ProfileInfo] && (
+                      <Box className="edit-buttons">
+                        <IconButton
+                          onClick={handleCancel}
+                          className="cancel-button"
+                        >
+                          <ClearIcon />
+                        </IconButton>
+                        <IconButton
+                          onClick={handleConfirm}
+                          className="confirm-button"
+                        >
+                          <CheckIcon />
+                        </IconButton>
+                      </Box>
+                    )}
                 </Box>
               </Box>
             )

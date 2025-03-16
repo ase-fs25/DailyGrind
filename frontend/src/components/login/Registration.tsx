@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { TextField, Button, Paper, Typography, Box } from "@mui/material";
 
 import "../../styles/components/login/registration.css";
+import { registerUser } from "../../helpers/loginHelpers";
 
 const Registration = () => {
   const navigate = useNavigate();
@@ -16,10 +17,15 @@ const Registration = () => {
       setError("Passwords do not match");
       return;
     }
-    setError("");
-    // Handle registration logic here
-    console.log("Registering with:", username, password);
 
+    const registrationSuccess = registerUser(username, password);
+
+    if (!registrationSuccess) {
+      setError("Username already exists. Please choose another one.");
+      return;
+    }
+
+    setError("");
     navigate("/feed");
   };
 
