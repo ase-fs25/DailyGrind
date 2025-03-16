@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.uzh.ase.dailygrind</groupId>
-    <artifactId>userService</artifactId>
+    <artifactId>ms-user</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>userService</name>
     <description>userService</description>
