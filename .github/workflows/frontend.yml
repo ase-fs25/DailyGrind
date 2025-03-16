@@ -1,0 +1,55 @@
+name: Frontend CI
+
+on:
+  push:
+    branches:
+      - develop
+      - "feature/*"
+      - "release/*"
+  pull_request:
+    branches:
+      - develop
+      - "release/*"
+
+jobs:
+  test-frontend:
+    name: Build, Test & Lint Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js (latest)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'latest'
+          cache: 'npm'
+          cache-dependency-path: ms-frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ms-frontend
+        run: npm ci
+
+      - name: Run ESLint (Linting)
+        working-directory: ms-frontend
+        run: npm run lint
+
+      - name: Run Prettier (Code Formatting Check)
+        working-directory: ms-frontend
+        run: npm run prettier:check
+
+      - name: TypeScript Type Checking
+        working-directory: ms-frontend
+        run: npm run type-check
+
+      - name: Run tests
+        working-directory: ms-frontend
+        run: npm test
+
+      - name: Run security audit on dependencies
+        working-directory: ms-frontend
+        run: npm audit --audit-level=high || echo "Security vulnerabilities detected. Review required."
+
+      - name: Build frontend
+        working-directory: ms-frontend
+        run: npm run build
