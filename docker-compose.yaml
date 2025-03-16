@@ -1,0 +1,26 @@
+services:
+  localstack:
+    image: localstack/localstack-pro
+    container_name: localstack
+    environment:
+      - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
+      - AWS_DEFAULT_REGION=us-east-1
+      - SERVICES=iam, sts, cognito-idp, dynamodb, s3
+    ports:
+      - "4566:4566"            # LocalStack Gateway
+      - "4510-4559:4510-4559"  # External services port range
+      - "8443:443"              # HTTPS Gateway
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./localstack-data:/var/lib/localstack"
+
+#  terraform:
+#    image: hashicorp/terraform
+#    working_dir: /terraform
+#    volumes:
+#      - ./terraform:/terraform
+#    environment:
+#      - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
+#    entrypoint: [ "/bin/sh", "/terraform/init-terraform.sh" ]
+#    depends_on:
+#      - localstack
