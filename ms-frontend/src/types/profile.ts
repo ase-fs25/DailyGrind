@@ -7,7 +7,7 @@ export interface Profile {
     location: string;
     education: string;
     workExperience: string;
-  }; 
+  };
 }
 
 export interface ProfileInfo {

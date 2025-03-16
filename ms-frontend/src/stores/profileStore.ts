@@ -1,16 +1,16 @@
-import { Profile, ProfileInfo } from "../types/profile";
+import { Profile, ProfileInfo } from '../types/profile';
 
 class ProfileStore {
   private profile: Profile = {
-      userId: 0,
-      username: "",
-      password: "",
-      profileInfo: {
-          profilePicture: "",
-          location: "",
-          education: "",
-          workExperience: ""
-      }
+    userId: 0,
+    username: '',
+    password: '',
+    profileInfo: {
+      profilePicture: '',
+      location: '',
+      education: '',
+      workExperience: '',
+    },
   };
 
   // Setter / Getter for the entire profile
@@ -28,7 +28,7 @@ class ProfileStore {
         },
       };
     }
-  };
+  }
 
   getProfile(): Profile {
     return this.profile;
@@ -37,14 +37,14 @@ class ProfileStore {
   deleteProfile(): void {
     this.profile = {
       userId: 0,
-      username: "",
-      password: "",
+      username: '',
+      password: '',
       profileInfo: {
-        profilePicture: "",
-        location: "",
-        education: "",
-        workExperience: ""
-      }
+        profilePicture: '',
+        location: '',
+        education: '',
+        workExperience: '',
+      },
     };
   }
 

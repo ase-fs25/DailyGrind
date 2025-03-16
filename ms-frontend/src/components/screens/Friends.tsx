@@ -1,8 +1,8 @@
-import { Box, Typography, Card, CardContent, Avatar } from "@mui/material";
-import Header from "../common/Header";
-import { mockFriends } from "../../mockData/mockFriends";
+import { Box, Typography, Card, CardContent, Avatar } from '@mui/material';
+import Header from '../common/Header';
+import { mockFriends } from '../../mockData/mockFriends';
 
-import "../../styles/components/screens/screen.css";
+import '../../styles/components/screens/screen.css';
 
 const Friends = () => {
   return (

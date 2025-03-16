@@ -1,32 +1,32 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { TextField, Button, Paper, Typography, Box } from "@mui/material";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { TextField, Button, Paper, Typography, Box } from '@mui/material';
 
-import "../../styles/components/login/registration.css";
-import { registerUser } from "../../helpers/loginHelpers";
+import '../../styles/components/login/registration.css';
+import { registerUser } from '../../helpers/loginHelpers';
 
 const Registration = () => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
 
   const handleRegister = () => {
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      setError('Passwords do not match');
       return;
     }
 
     const registrationSuccess = registerUser(username, password);
 
     if (!registrationSuccess) {
-      setError("Username already exists. Please choose another one.");
+      setError('Username already exists. Please choose another one.');
       return;
     }
 
-    setError("");
-    navigate("/feed");
+    setError('');
+    navigate('/feed');
   };
 
   return (
@@ -75,12 +75,7 @@ const Registration = () => {
         >
           Register
         </Button>
-        <Button
-          variant="text"
-          color="inherit"
-          fullWidth
-          onClick={() => navigate("/")}
-        >
+        <Button variant="text" color="inherit" fullWidth onClick={() => navigate('/')}>
           Already have an account? Login here
         </Button>
       </Paper>
