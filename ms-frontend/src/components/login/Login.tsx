@@ -3,15 +3,23 @@ import { useNavigate } from "react-router-dom";
 import { TextField, Button, Paper, Typography, Box } from "@mui/material";
 
 import "../../styles/components/login/login.css";
+import { checkLogin } from "../../helpers/loginHelpers";
 
 const Login = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleLogin = () => {
-    // Handle login logic here
-    console.log("Logging in with:", username, password);
+    const validLogin = checkLogin(username, password);
+
+    if (!validLogin) {
+      setError("Wrong username or password");
+      return;
+    }
+
+    setError("");
     navigate("/feed");
   };
 
@@ -38,6 +46,11 @@ const Login = () => {
           onChange={(e) => setPassword(e.target.value)}
           className="login-input"
         />
+        {error && (
+          <Typography className="error-text" color="error" textAlign="center">
+            {error}
+          </Typography>
+        )}
         <Button
           variant="contained"
           color="secondary"
