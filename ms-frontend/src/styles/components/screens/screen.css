@@ -5,6 +5,7 @@
   align-items: center;
   background-color: #f3e5f5;
   color: #9c27b0;
+  overflow: hidden;
 }
 
 .screen-content {
