@@ -1,4 +1,4 @@
-import { Box, Typography, Card, CardContent } from "@mui/material";
+import { Box, Typography, Card } from "@mui/material";
 import Header from "../common/Header";
 
 import { mockPosts } from "../../mockData/mockPosts";
