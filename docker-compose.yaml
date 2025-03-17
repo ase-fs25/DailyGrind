@@ -1,11 +1,14 @@
 services:
   localstack:
     image: localstack/localstack-pro
+    profiles: [dev, fe-dev, prod]
     container_name: localstack
     environment:
       - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
       - AWS_DEFAULT_REGION=us-east-1
       - SERVICES=iam, sts, cognito-idp, dynamodb, s3
+      - SMTP_HOST=1025
+      - SMTP_EMAIL=sender@example.com
     ports:
       - "4566:4566"            # LocalStack Gateway
       - "4510-4559:4510-4559"  # External services port range
@@ -14,8 +17,16 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "./localstack-data:/var/lib/localstack"
 
+  mailhog:
+    image: mailhog/mailhog
+    profiles: [dev, fe-dev, prod]
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+
   ms-user:
     build: ./ms-user
+    profiles: [fe-dev, prod]
 #    ports:
 #      - "8080:8080"
     depends_on:
@@ -30,6 +41,7 @@ services:
 
   ms-post:
     build: ./ms-post
+    profiles: [fe-dev, prod]
 #    ports:
 #      - "8081:8080"
     depends_on:
@@ -44,6 +56,7 @@ services:
 
   frontend:
     build: ./ms-frontend
+    profiles: [prod]
     ports:
       - "3000:80"
 
