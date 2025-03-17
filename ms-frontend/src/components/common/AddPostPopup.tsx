@@ -1,15 +1,8 @@
-import React, { useState } from "react";
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  Button,
-  DialogActions,
-  TextField,
-} from "@mui/material";
+import React, { useState } from 'react';
+import { Dialog, DialogTitle, DialogContent, Button, DialogActions, TextField } from '@mui/material';
 
-import "../../styles/components/common/addPostPopup.css";
-import { mockPersonalPosts } from "../../mockData/mockPersonalPosts";
+import '../../styles/components/common/addPostPopup.css';
+import { mockPersonalPosts } from '../../mockData/mockPersonalPosts';
 
 interface AddPostPopupProps {
   open: boolean;
@@ -17,11 +10,10 @@ interface AddPostPopupProps {
 }
 
 const AddPostPopup: React.FC<AddPostPopupProps> = ({ open, onClose }) => {
-  const [postTitle, setPostTitle] = useState("");
-  const [postContent, setPostContent] = useState("");
+  const [postTitle, setPostTitle] = useState('');
+  const [postContent, setPostContent] = useState('');
 
-  const isFormValid =
-    postTitle.trim().length > 0 && postContent.trim().length > 0;
+  const isFormValid = postTitle.trim().length > 0 && postContent.trim().length > 0;
 
   const addPost = () => {
     // TODO Here we should add the post to the backend
@@ -29,14 +21,14 @@ const AddPostPopup: React.FC<AddPostPopupProps> = ({ open, onClose }) => {
 
     mockPersonalPosts.push({
       post_id: Math.random().toString(36).substr(2, 9),
-      user_id: "1",
+      user_id: '1',
       title: postTitle,
       content: postContent,
       timestamp: new Date().toISOString(),
     });
 
-    setPostTitle("");
-    setPostContent("");
+    setPostTitle('');
+    setPostContent('');
     onClose();
   };
   return (
@@ -50,8 +42,8 @@ const AddPostPopup: React.FC<AddPostPopupProps> = ({ open, onClose }) => {
         backdrop: {
           timeout: 600,
           style: {
-            backgroundColor: "rgba(255, 255, 255, 0.5)",
-            backdropFilter: "blur(4px)",
+            backgroundColor: 'rgba(255, 255, 255, 0.5)',
+            backdropFilter: 'blur(4px)',
           },
         },
       }}
@@ -87,8 +79,8 @@ const AddPostPopup: React.FC<AddPostPopupProps> = ({ open, onClose }) => {
           variant="contained"
           disabled={!isFormValid}
           sx={{
-            backgroundColor: "#7b1fa2",
-            "&:hover": { backgroundColor: "#9c27b0" },
+            backgroundColor: '#7b1fa2',
+            '&:hover': { backgroundColor: '#9c27b0' },
           }}
         >
           Add Post
