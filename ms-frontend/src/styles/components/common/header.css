@@ -21,7 +21,6 @@
 }
 
 .header-tabs {
-  flex-grow: 1;
   display: flex;
   justify-content: center;
 }
@@ -32,6 +31,11 @@
 
 .header-tabs .MuiTabs-indicator {
   background-color: #f3e5f5 !important;
+}
+
+.button-row {
+  display: flex;
+  gap: 8px;
 }
 
 .settings-button {
