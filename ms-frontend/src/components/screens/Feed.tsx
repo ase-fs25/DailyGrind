@@ -1,18 +1,18 @@
 import { Box, Typography, Card } from '@mui/material';
-import Header from '../common/Header';
 
+import Header from '../common/Header';
 import { mockPosts } from '../../mockData/mockPosts';
 import '../../styles/components/screens/screen.css';
 import '../../styles/components/screens/feed.css';
 
-const formatDate = (timestamp: string) => {
-  const date = new Date(timestamp);
-  return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1)
-    .toString()
-    .padStart(2, '0')}-${date.getFullYear()}`;
-};
-
 const Feed = () => {
+  const formatDate = (timestamp: string) => {
+    const date = new Date(timestamp);
+    return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1)
+      .toString()
+      .padStart(2, '0')}-${date.getFullYear()}`;
+  };
+
   return (
     <Box className="screen-container">
       <Header />

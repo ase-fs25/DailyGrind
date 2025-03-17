@@ -1,4 +1,4 @@
-.feed-content {
+.post-content {
   display: flex;
   flex-direction: column;
   width: 80%;
@@ -6,31 +6,27 @@
   overflow-y: auto;
 }
 
-.feed-content::-webkit-scrollbar {
+.post-content::-webkit-scrollbar {
   background-color: transparent;
 }
 
-.feed-content::-webkit-scrollbar-thumb {
+.post-content::-webkit-scrollbar-thumb {
   background-color: rgb(156, 39, 176, 0.5);
   border: 4px solid transparent;
   border-radius: 9px;
   background-clip: content-box;
 }
 
-.feed-title {
-  margin-bottom: 16px;
-}
-
-.feed-grid {
+.post-grid {
   display: grid;
   gap: 16px;
 }
 
-.feed-item {
+.post-item {
   width: 100%;
 }
 
-.post-card {
+.personal-post-card {
   display: flex;
   flex-direction: column;
   padding: 16px;
@@ -39,33 +35,30 @@
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.post-card-header {
+.personal-post-header {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
 }
 
-.post-title {
+.personal-post-title {
   font-weight: bold;
+  margin-bottom: 16px;
 }
 
-.post-timestamp {
-  font-size: 0.85rem;
-}
-
-.post-content {
+.personal-post-content {
   text-align: left;
   margin-top: 4px;
 }
 
 /* Responsive Design */
 @media (max-width: 600px) {
-  .feed-content {
+  .post-content {
     padding: 10px;
   }
 
-  .post-card {
+  .personal-post-card {
     padding: 12px;
   }
 }
