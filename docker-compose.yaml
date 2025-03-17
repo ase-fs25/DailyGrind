@@ -14,6 +14,40 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "./localstack-data:/var/lib/localstack"
 
+  ms-user:
+    build: ./ms-user
+#    ports:
+#      - "8080:8080"
+    depends_on:
+      - localstack
+    environment:
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_S3_ENDPOINT=http://localstack:4566
+      - AWS_SQS_ENDPOINT=http://localstack:4566
+      - SERVER_PORT=8080
+
+  ms-post:
+    build: ./ms-post
+#    ports:
+#      - "8081:8080"
+    depends_on:
+      - localstack
+    environment:
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_S3_ENDPOINT=http://localstack:4566
+      - AWS_SQS_ENDPOINT=http://localstack:4566
+      - SERVER_PORT=8080
+
+  frontend:
+    build: ./ms-frontend
+    ports:
+      - "3000:80"
+
+
 #  terraform:
 #    image: hashicorp/terraform
 #    working_dir: /terraform
