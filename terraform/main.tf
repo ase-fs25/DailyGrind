@@ -36,7 +36,7 @@ resource "aws_cognito_user_pool_client" "daily_grind_app_client" {
   allowed_oauth_scopes = ["email", "openid", "profile"]
   allowed_oauth_flows_user_pool_client = true
   generate_secret = true
-  allowed_oauth_flows = ["code", "implicit", "client_credentials"]
+  allowed_oauth_flows = ["code", "implicit"]
   callback_urls = ["http://localhost:3000", "https://oauth.pstmn.io/v1/callback"]
   explicit_auth_flows = [
     "ALLOW_USER_PASSWORD_AUTH",
