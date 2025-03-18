@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 
 import Header from '../common/Header';
 import { mockPosts } from '../../mockData/mockPosts';
+import {mockVapidKeys} from "../../mockData/mockVapidKeys";
 import '../../styles/components/screens/screen.css';
 import '../../styles/components/screens/feed.css';
 
@@ -10,13 +11,14 @@ const Feed = () => {
 
     useEffect(() => {
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/serviceWorker.ts')
+            navigator.serviceWorker.register('/service-worker.js')
                 .then(() => {
                     if (Notification.permission !== 'denied') {
                         return requestNotificationPermission();
                     }
+                    return undefined; // Permission was denied
                 })
-                .then(permission => {
+                .then((permission) => {
                     if (permission === 'granted') {
                         return subscribeUserToPush();
                     }
@@ -25,24 +27,7 @@ const Feed = () => {
         }
     }, []);
 
-  const formatDate = (timestamp: string) => {
-    const date = new Date(timestamp);
-    return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1)
-      .toString()
-      .padStart(2, '0')}-${date.getFullYear()}`;
-  };
-
-  const registerServiceWorker = async () => {
-      if('serviceWorker' in navigator) {
-          try {
-              await navigator.serviceWorker.register('/serviceWorker.ts');
-          } catch (error) {
-              console.error('Failed to register service worker', error);
-          }
-      }
-  }
-
-  const requestNotificationPermission = async (): Promise<string> => {
+    const requestNotificationPermission = async (): Promise<string> => {
       return new Promise(function (resolve, reject) {
           const permissionResult = Notification.requestPermission(function (result) {
               return resolve(result);
@@ -57,26 +42,36 @@ const Feed = () => {
           }
           return permissionResult;
       });
-  }
+    };
 
-    const subscribeUserToPush = () => {
-        return navigator.serviceWorker.ready
-            .then(function (registration) {
+    const subscribeUserToPush = async () => {
+        try {
+            const registration = await navigator.serviceWorker.ready;
+
+            let subscription: PushSubscription | null = await registration.pushManager.getSubscription();
+
+            if (subscription) {
+                console.log('Received existing PushSubscription: ', JSON.stringify(subscription));
+            } else {
                 const subscribeOptions = {
                     userVisibleOnly: true,
-                    applicationServerKey: 'Public VAPID key',
+                    applicationServerKey: mockVapidKeys.publicKey,
                 };
+                subscription = await registration.pushManager.subscribe(subscribeOptions);
+                console.log('Created new PushSubscription: ', JSON.stringify(subscription));
+            }
+            return subscription;
+        } catch (error) {
+            console.error('Error subscribing to push:', error);
+        }
+    };
 
-                return registration.pushManager.subscribe(subscribeOptions);
-            })
-            .then(function (pushSubscription) {
-                console.log(
-                    'Received PushSubscription: ',
-                    JSON.stringify(pushSubscription),
-                );
-                return pushSubscription;
-            });
-    }
+    const formatDate = (timestamp: string) => {
+        const date = new Date(timestamp);
+        return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1)
+            .toString()
+            .padStart(2, '0')}-${date.getFullYear()}`;
+    };
 
   return (
     <Box className="screen-container">
