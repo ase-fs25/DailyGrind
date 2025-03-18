@@ -1,4 +1,5 @@
 import { Box, Typography, Card } from '@mui/material';
+import { useEffect } from 'react';
 
 import Header from '../common/Header';
 import { mockPosts } from '../../mockData/mockPosts';
@@ -6,12 +7,76 @@ import '../../styles/components/screens/screen.css';
 import '../../styles/components/screens/feed.css';
 
 const Feed = () => {
+
+    useEffect(() => {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/serviceWorker.ts')
+                .then(() => {
+                    if (Notification.permission !== 'denied') {
+                        return requestNotificationPermission();
+                    }
+                })
+                .then(permission => {
+                    if (permission === 'granted') {
+                        return subscribeUserToPush();
+                    }
+                })
+                .catch(error => console.error('Service worker or notification error:', error));
+        }
+    }, []);
+
   const formatDate = (timestamp: string) => {
     const date = new Date(timestamp);
     return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1)
       .toString()
       .padStart(2, '0')}-${date.getFullYear()}`;
   };
+
+  const registerServiceWorker = async () => {
+      if('serviceWorker' in navigator) {
+          try {
+              await navigator.serviceWorker.register('/serviceWorker.ts');
+          } catch (error) {
+              console.error('Failed to register service worker', error);
+          }
+      }
+  }
+
+  const requestNotificationPermission = async (): Promise<string> => {
+      return new Promise(function (resolve, reject) {
+          const permissionResult = Notification.requestPermission(function (result) {
+              return resolve(result);
+          });
+
+          if (permissionResult) {
+              permissionResult.then(resolve, reject);
+          }
+      }).then(function (permissionResult) {
+          if (permissionResult !== 'granted') {
+              throw new Error("We weren't granted permission.");
+          }
+          return permissionResult;
+      });
+  }
+
+    const subscribeUserToPush = () => {
+        return navigator.serviceWorker.ready
+            .then(function (registration) {
+                const subscribeOptions = {
+                    userVisibleOnly: true,
+                    applicationServerKey: 'Public VAPID key',
+                };
+
+                return registration.pushManager.subscribe(subscribeOptions);
+            })
+            .then(function (pushSubscription) {
+                console.log(
+                    'Received PushSubscription: ',
+                    JSON.stringify(pushSubscription),
+                );
+                return pushSubscription;
+            });
+    }
 
   return (
     <Box className="screen-container">
