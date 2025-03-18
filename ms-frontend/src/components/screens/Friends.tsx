@@ -1,36 +1,32 @@
-import { Box, Typography, Card, CardContent, Avatar } from '@mui/material';
-import Header from '../common/Header';
-import { mockFriends } from '../../mockData/mockFriends';
+import React, { useState } from 'react';
+import { Box, Tabs, Tab } from '@mui/material';
+import Header from '../../components/common/Header';
+import FriendsList from './FriendsList';
+import FriendsSearch from './FriendsSearch';
+import FriendsRequests from './FriendsRequests';
 
-import '../../styles/components/screens/screen.css';
+import '../../styles/components/screens/friends.css';
 
 const Friends = () => {
+  const [activeTab, setActiveTab] = useState(0);
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setActiveTab(newValue);
+  };
+
   return (
-    <Box className="screen-container">
+    <Box id="x" className="screen-container">
       <Header />
-      <Box className="screen-content" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <Typography variant="h4" gutterBottom sx={{ mb: 4 }}>
-          Friends
-        </Typography>
-        {mockFriends.map((friend) => (
-          <Card
-            key={friend.userId}
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              width: '100%',
-              maxWidth: 600,
-              mb: 2,
-              p: 1,
-              boxShadow: 3,
-            }}
-          >
-            <Avatar src={friend.profilePicture} sx={{ width: 64, height: 64, ml: 2, mr: 2 }} />
-            <CardContent>
-              <Typography variant="h6">{friend.username}</Typography>
-            </CardContent>
-          </Card>
-        ))}
+      <Box className="screen-content">
+        <Tabs value={activeTab} onChange={handleTabChange}>
+          <Tab label="Friends" />
+          <Tab label="Search" />
+          <Tab label="Requests" />
+        </Tabs>
+
+        {activeTab === 0 && <FriendsList />}
+        {activeTab === 1 && <FriendsSearch />}
+        {activeTab === 2 && <FriendsRequests />}
       </Box>
     </Box>
   );
