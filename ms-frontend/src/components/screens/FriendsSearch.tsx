@@ -29,7 +29,13 @@ const FriendsSearch: React.FC = () => {
           {filteredProfiles.map((profile) => (
             <Box key={profile.userId} className="search-result-item">
               <Typography variant="subtitle1">{profile.username}</Typography>
-              <Button variant="contained" color="primary">
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  alert('Friend request sent!');
+                }}
+              >
                 Add Friend
               </Button>
             </Box>
