@@ -1,3 +1,37 @@
-#x {
-   color:aqua;
-}
+
+
+/* Outer container for the entire Friends page */
+.friends-container {
+    display: flex;
+    flex-direction: column;
+    /* If you want the background to be white instead of pink, you can set it here: */
+    background-color: #fdfdfd;
+    min-height: 100vh; /* So it spans the full viewport height */
+  }
+  
+  /* Main content area below the header */
+  .friends-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px; /* Space around the tabs and list */
+  }
+  
+  /* Optional styling for the Tabs themselves */
+  .friends-tabs {
+    margin-bottom: 20px;
+  }
+  
+  /* Example styling for each friend card in the list (if you want to override default MUI) */
+  .friend-card {
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Example for customizing the avatar or text if you want */
+  .friend-avatar {
+    margin-right: 16px;
+  }
+  

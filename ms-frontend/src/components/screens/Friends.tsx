@@ -15,15 +15,24 @@ const Friends = () => {
   };
 
   return (
-    <Box id="x" className="screen-container">
+    <Box className="friends-container">
       <Header />
-      <Box className="screen-content">
-        <Tabs value={activeTab} onChange={handleTabChange}>
+      <Box className="friends-content">
+        {/* Tabs at the top */}
+        <Tabs
+          value={activeTab}
+          onChange={handleTabChange}
+          textColor="primary"
+          indicatorColor="primary"
+          centered
+          className="friends-tabs"
+        >
           <Tab label="Friends" />
           <Tab label="Search" />
           <Tab label="Requests" />
         </Tabs>
 
+        {/* Conditional rendering based on the active tab */}
         {activeTab === 0 && <FriendsList />}
         {activeTab === 1 && <FriendsSearch />}
         {activeTab === 2 && <FriendsRequests />}
