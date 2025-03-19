@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, TextField, Button, Typography } from '@mui/material';
 import { mockProfiles } from '../../mockData/mockProfiles';
 
-import '../../styles/components/screens/friendsSearch.css';
+import '../../styles/components/friends/friendsSearch.css';
 
 const FriendsSearch: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -30,8 +30,9 @@ const FriendsSearch: React.FC = () => {
             <Box key={profile.userId} className="search-result-item">
               <Typography variant="subtitle1">{profile.username}</Typography>
               <Button
-                variant="contained"
-                color="primary"
+                variant="outlined"
+                color="secondary"
+                size="small"
                 onClick={() => {
                   alert('Friend request sent!');
                 }}

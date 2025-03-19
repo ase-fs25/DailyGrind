@@ -1,27 +1,27 @@
 import React, { useState } from 'react';
 import { Box, Tabs, Tab } from '@mui/material';
 import Header from '../../components/common/Header';
-import FriendsList from './FriendsList';
-import FriendsSearch from './FriendsSearch';
-import FriendsRequests from './FriendsRequests';
+import FriendsList from '../friends/FriendsList';
+import FriendsSearch from '../friends/FriendsSearch';
+import FriendsRequests from '../friends/FriendsRequests';
 
 import '../../styles/components/screens/friends.css';
+import '../../styles/components/screens/screen.css';
 
 const Friends = () => {
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeFriendsTab, setActiveFriendsTab] = useState(0);
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setActiveTab(newValue);
+  const handleFriendsTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setActiveFriendsTab(newValue);
   };
 
   return (
-    <Box className="friends-container">
+    <Box className="screen-container">
       <Header />
       <Box className="friends-content">
-        {/* Tabs at the top */}
         <Tabs
-          value={activeTab}
-          onChange={handleTabChange}
+          value={activeFriendsTab}
+          onChange={handleFriendsTabChange}
           textColor="primary"
           indicatorColor="primary"
           centered
@@ -32,10 +32,9 @@ const Friends = () => {
           <Tab label="Requests" />
         </Tabs>
 
-        {/* Conditional rendering based on the active tab */}
-        {activeTab === 0 && <FriendsList />}
-        {activeTab === 1 && <FriendsSearch />}
-        {activeTab === 2 && <FriendsRequests />}
+        {activeFriendsTab === 0 && <FriendsList />}
+        {activeFriendsTab === 1 && <FriendsSearch />}
+        {activeFriendsTab === 2 && <FriendsRequests />}
       </Box>
     </Box>
   );

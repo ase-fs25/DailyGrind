@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import { mockFriendRequests } from '../../mockData/mockFriendRequests';
-import '../../styles/components/screens/friendRequests.css';
+import '../../styles/components/friends/friendRequests.css';
 
 const FriendsRequests: React.FC = () => {
   // Store requests in local state so we can remove them on accept/decline

@@ -1,0 +1,48 @@
+
+.requests-container {
+  margin-top: 16px;
+  padding: 16px;
+}
+
+.requests-title {
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.requests-list {
+  transform: translateY(2vh);
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* Space between each request-item */
+}
+
+
+.request-item {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  padding: 8px;
+  border-radius: 6px;
+  background-color: gainsboro;
+}
+
+/* Username spacing */
+.request-username {
+  flex: 1; /* Take up remaining space */
+  margin-right: 26px;
+}
+
+/* Common button styles */
+.request-button {
+  transform: translateX(0.47vw);
+}
+
+/* Additional styling for accept button if needed */
+.accept {
+  /* e.g., background-color override, custom hover, etc. */
+}
+
+/* Additional styling for decline button if needed */
+.decline {
+  /* e.g., background-color override, custom hover, etc. */
+}
