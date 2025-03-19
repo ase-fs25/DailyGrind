@@ -1,36 +1,40 @@
-import { Box, Typography, Card, CardContent, Avatar } from '@mui/material';
-import Header from '../common/Header';
-import { mockFriends } from '../../mockData/mockFriends';
+import React, { useState } from 'react';
+import { Box, Tabs, Tab } from '@mui/material';
+import Header from '../../components/common/Header';
+import FriendsList from '../friends/FriendsList';
+import FriendsSearch from '../friends/FriendsSearch';
+import FriendsRequests from '../friends/FriendsRequests';
 
+import '../../styles/components/screens/friends.css';
 import '../../styles/components/screens/screen.css';
 
 const Friends = () => {
+  const [activeFriendsTab, setActiveFriendsTab] = useState(0);
+
+  const handleFriendsTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setActiveFriendsTab(newValue);
+  };
+
   return (
     <Box className="screen-container">
       <Header />
-      <Box className="screen-content" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <Typography variant="h4" gutterBottom sx={{ mb: 4 }}>
-          Friends
-        </Typography>
-        {mockFriends.map((friend) => (
-          <Card
-            key={friend.userId}
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              width: '100%',
-              maxWidth: 600,
-              mb: 2,
-              p: 1,
-              boxShadow: 3,
-            }}
-          >
-            <Avatar src={friend.profilePicture} sx={{ width: 64, height: 64, ml: 2, mr: 2 }} />
-            <CardContent>
-              <Typography variant="h6">{friend.username}</Typography>
-            </CardContent>
-          </Card>
-        ))}
+      <Box className="friends-content">
+        <Tabs
+          value={activeFriendsTab}
+          onChange={handleFriendsTabChange}
+          textColor="primary"
+          indicatorColor="primary"
+          centered
+          className="friends-tabs"
+        >
+          <Tab label="Friends" />
+          <Tab label="Search" />
+          <Tab label="Requests" />
+        </Tabs>
+
+        {activeFriendsTab === 0 && <FriendsList />}
+        {activeFriendsTab === 1 && <FriendsSearch />}
+        {activeFriendsTab === 2 && <FriendsRequests />}
       </Box>
     </Box>
   );
