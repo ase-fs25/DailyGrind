@@ -1,4 +1,3 @@
-
 .requests-container {
   margin-top: 16px;
   padding: 16px;
@@ -15,7 +14,6 @@
   flex-direction: column;
   gap: 12px; /* Space between each request-item */
 }
-
 
 .request-item {
   display: flex;
