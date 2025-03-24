@@ -9,13 +9,11 @@ const FriendsRequests: React.FC = () => {
 
   const handleAccept = (username: string) => {
     alert(`Accepted request from ${username}`);
-    // Remove this user from the list
     setRequests((prev) => prev.filter((req) => req.username !== username));
   };
 
   const handleDecline = (username: string) => {
     alert(`Declined request from ${username}`);
-    // Remove this user from the list
     setRequests((prev) => prev.filter((req) => req.username !== username));
   };
 
@@ -30,24 +28,16 @@ const FriendsRequests: React.FC = () => {
             <Typography variant="subtitle1" className="request-username">
               {request.username}
             </Typography>
-            <Button
-              variant="contained"
-              color="success"
-              size="small"
-              className="request-button accept"
-              onClick={() => handleAccept(request.username)}
-            >
-              Accept
-            </Button>
-            <Button
-              variant="contained"
-              color="error"
-              size="small"
-              className="request-button decline"
-              onClick={() => handleDecline(request.username)}
-            >
-              Decline
-            </Button>
+
+            {/* Button group with spacing */}
+            <Box className="request-buttons">
+              <Button variant="outlined" color="success" size="small" onClick={() => handleAccept(request.username)}>
+                Accept
+              </Button>
+              <Button variant="outlined" color="error" size="small" onClick={() => handleDecline(request.username)}>
+                Decline
+              </Button>
+            </Box>
           </Box>
         ))}
       </Box>
