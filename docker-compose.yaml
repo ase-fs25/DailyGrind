@@ -3,12 +3,14 @@ services:
     image: localstack/localstack-pro
     profiles: [dev, fe-dev, prod]
     container_name: localstack
+    hostname: localstack
     environment:
       - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
       - AWS_DEFAULT_REGION=us-east-1
       - SERVICES=iam, sts, cognito-idp, dynamodb, s3
       - SMTP_HOST=1025
       - SMTP_EMAIL=sender@example.com
+      - HOSTNAME_EXTERNAL=localstack
     ports:
       - "4566:4566"            # LocalStack Gateway
       - "4510-4559:4510-4559"  # External services port range
