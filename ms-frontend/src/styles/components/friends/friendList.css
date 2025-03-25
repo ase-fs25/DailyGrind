@@ -1,5 +1,5 @@
 .friends-list-container {
-  margin-top: 16px; /* equivalent to mt: 2 */
+  margin-top: 16px;
 }
 
 .friend-card {
@@ -7,8 +7,8 @@
   align-items: center;
   width: 100%;
   max-width: 600px;
-  margin-bottom: 16px; /* equivalent to mb: 2 */
-  padding: 8px; /* equivalent to p: 1 */
+  margin-bottom: 16px;
+  padding: 8px;
   box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2);
 }
 
@@ -17,14 +17,4 @@
   height: 64px;
   margin-left: 16px;
   margin-right: 16px;
-}
-
-/* CardContent can be customized further if needed */
-.friend-card-content {
-  /* Add any additional styling here */
-}
-
-/* Typography styling for the friend's username */
-.friend-username {
-  /* Add additional styling if needed */
 }

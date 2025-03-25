@@ -1,45 +1,37 @@
-/* friendRequests.css */
-
-/* Container for the entire requests screen */
 .requests-container {
   margin-top: 16px;
   padding: 16px;
   width: 90%;
-  max-width: 800px; /* Increased maximum width */
+  max-width: 800px;
   margin-left: auto;
   margin-right: auto;
 }
 
-/* Title styling */
 .requests-title {
   margin-bottom: 16px;
   text-align: center;
 }
 
-/* Wrapper for the list of requests */
 .requests-list {
   display: flex;
   flex-direction: column;
-  gap: 16px; /* Increased gap between items for more breathing room */
+  gap: 16px;
 }
 
-/* Each individual request row */
 .request-item {
   display: flex;
   align-items: center;
   border: 1px solid #ccc;
-  padding: 12px; /* Increased padding */
+  padding: 12px;
   border-radius: 6px;
   background-color: gainsboro;
 }
 
-/* Username spacing */
 .request-username {
-  flex: 1; /* Take up remaining space */
+  flex: 1;
   margin-right: 26px;
 }
 
-/* If you use a container for buttons, you can add spacing there as well */
 .request-buttons {
   display: flex;
   gap: 8px;

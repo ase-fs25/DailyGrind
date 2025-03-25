@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Box, TextField, Button, Typography } from '@mui/material';
 import { mockProfiles } from '../../mockData/mockProfiles';
-
 import '../../styles/components/friends/friendsSearch.css';
 
 const FriendsSearch: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Filter profiles that match the search term
+  // TODO: In the future, replace the local filter logic with an API call to search for users.
+  // Filter profiles that match the search term (using local mock data for now)
   const filteredProfiles = mockProfiles.filter((profile) =>
     profile.username.toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
@@ -34,6 +34,7 @@ const FriendsSearch: React.FC = () => {
                 color="secondary"
                 size="small"
                 onClick={() => {
+                  // TODO: Replace alert with an API call to send a friend request.
                   alert('Friend request sent!');
                 }}
               >

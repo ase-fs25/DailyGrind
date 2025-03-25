@@ -4,16 +4,20 @@ import { mockFriendRequests } from '../../mockData/mockFriendRequests';
 import '../../styles/components/friends/friendRequests.css';
 
 const FriendsRequests: React.FC = () => {
-  // Store requests in local state so we can remove them on accept/decline
+  // TODO: Replace 'mockFriendRequests' with an API call to fetch friend requests.
   const [requests, setRequests] = useState(mockFriendRequests);
 
   const handleAccept = (username: string) => {
     alert(`Accepted request from ${username}`);
+    // TODO: Call backend API to accept friend request for this username.
+    // After a successful API call, update the UI.
     setRequests((prev) => prev.filter((req) => req.username !== username));
   };
 
   const handleDecline = (username: string) => {
     alert(`Declined request from ${username}`);
+    // TODO: Call backend API to decline friend request for this username.
+    // After a successful API call, update the UI.
     setRequests((prev) => prev.filter((req) => req.username !== username));
   };
 

@@ -3,6 +3,7 @@ import { mockFriends } from '../../mockData/mockFriends';
 import '../../styles/components/friends/friendList.css';
 
 const FriendsList = () => {
+  // TODO: Replace 'mockFriends' with a backend API call to fetch the user's friends list.
   return (
     <Box className="friends-list-container">
       {mockFriends.map((friend) => (
