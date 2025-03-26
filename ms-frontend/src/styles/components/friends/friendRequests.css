@@ -1,0 +1,38 @@
+.requests-container {
+  margin-top: 16px;
+  padding: 16px;
+  width: 90%;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.requests-title {
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.requests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.request-item {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  padding: 12px;
+  border-radius: 6px;
+  background-color: gainsboro;
+}
+
+.request-username {
+  flex: 1;
+  margin-right: 26px;
+}
+
+.request-buttons {
+  display: flex;
+  gap: 8px;
+}
