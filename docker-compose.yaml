@@ -6,8 +6,8 @@ services:
     environment:
       - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
       - AWS_DEFAULT_REGION=us-east-1
-      - SERVICES=iam, sts, cognito-idp, dynamodb, s3
-      - SMTP_HOST=1025
+      - SERVICES=iam, sts, cognito-idp, dynamodb, s3 ses, lambda
+      - SMTP_HOST=mailhog:1025
       - SMTP_EMAIL=sender@example.com
     ports:
       - "4566:4566"            # LocalStack Gateway
