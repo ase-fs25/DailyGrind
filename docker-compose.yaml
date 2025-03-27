@@ -1,9 +1,14 @@
+networks:
+  localstack_network:
+
 services:
   localstack:
     image: localstack/localstack-pro
     profiles: [dev, fe-dev, prod]
     container_name: localstack
     hostname: localstack
+    networks:
+      - localstack_network
     environment:
       - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
       - AWS_DEFAULT_REGION=us-east-1
@@ -57,19 +62,28 @@ services:
       - SERVER_PORT=8080
 
   frontend:
-    build: ./ms-frontend
+    build: frontend
     profiles: [prod]
     ports:
       - "3000:80"
 
 
-#  terraform:
-#    image: hashicorp/terraform
-#    working_dir: /terraform
-#    volumes:
-#      - ./terraform:/terraform
-#    environment:
-#      - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
-#    entrypoint: [ "/bin/sh", "/terraform/init-terraform.sh" ]
-#    depends_on:
-#      - localstack
+  terraform:
+    image: hashicorp/terraform
+    profiles: [dev, fe-dev, prod]
+    working_dir: /terraform
+    networks:
+      - localstack_network
+    volumes:
+      - ./terraform:/terraform
+      - ./lambda-functions:/lambda-functions
+    environment:
+      - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - LOCALSTACK_HOSTNAME=localstack
+      - EDGE_PORT=4566
+    entrypoint: [ "/bin/sh", "/terraform/init-terraform.sh" ]
+    depends_on:
+      - localstack

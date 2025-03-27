@@ -28,22 +28,22 @@ jobs:
         with:
           node-version: 'latest'
           cache: 'npm'
-          cache-dependency-path: ms-frontend/package-lock.json
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
-        working-directory: ms-frontend
+        working-directory: frontend
         run: npm ci
 
       - name: Run ESLint (Linting)
-        working-directory: ms-frontend
+        working-directory: frontend
         run: npm run lint
 
       - name: Run Prettier (Code Formatting Check)
-        working-directory: ms-frontend
+        working-directory: frontend
         run: npm run prettier:check
 
       - name: TypeScript Type Checking
-        working-directory: ms-frontend
+        working-directory: frontend
         run: npm run type-check
 
 # TODO: Uncomment the following lines after writing tests
@@ -57,5 +57,5 @@ jobs:
 #        run: npm audit --audit-level=high || echo "Security vulnerabilities detected. Review required."
 
       - name: Build frontend
-        working-directory: ms-frontend
+        working-directory: frontend
         run: npm run build
