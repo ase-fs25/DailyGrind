@@ -1,3 +1,4 @@
+# Cognito User Pool
 resource "aws_cognito_user_pool" "daily_grind_user_pool" {
   name = "daily-grind-user-pool"
 
@@ -18,6 +19,7 @@ resource "aws_cognito_user_pool" "daily_grind_user_pool" {
 
 }
 
+# Cognito Client
 resource "aws_cognito_user_pool_client" "daily_grind_app_client" {
   name = "daily-grind-app-client"
   user_pool_id = aws_cognito_user_pool.daily_grind_user_pool.id
@@ -26,6 +28,8 @@ resource "aws_cognito_user_pool_client" "daily_grind_app_client" {
   generate_secret = true
   allowed_oauth_flows = ["code", "implicit"]
   callback_urls = ["http://localhost:3000", "https://oauth.pstmn.io/v1/callback"]
+  logout_urls = ["http://localhost:3000"]
+  supported_identity_providers = ["COGNITO"]
   explicit_auth_flows = [
     "ALLOW_USER_PASSWORD_AUTH",
     "ALLOW_USER_SRP_AUTH",

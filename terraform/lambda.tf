@@ -18,12 +18,12 @@ resource "aws_iam_role" "iam_for_lambda" {
 
 data "archive_file" "lambda" {
   type        = "zip"
-  source_dir  = "${path.module}/../userConfirmationLambda/src"
-  output_path = "${path.module}/lambda-functions/userConfirmationLambda.zip"
+  source_dir  = "./../lambda-functions/user-confirmation-lambda/src"
+  output_path = "./../lambda-functions/user-confirmation-lambda.zip"
 }
 
 resource "aws_lambda_function" "confirm_user_lambda" {
-  filename         = "${path.module}/lambda-functions/userConfirmationLambda.zip"
+  filename         = "./../lambda-functions/user-confirmation-lambda.zip"
   function_name    = "userConfirmationLambda"
   role          = aws_iam_role.iam_for_lambda.arn
   handler          = "handler.lambda_handler"

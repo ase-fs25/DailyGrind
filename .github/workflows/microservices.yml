@@ -1,4 +1,4 @@
-name: Backend CI
+name: Microservices CI
 
 on:
   push:
@@ -26,12 +26,12 @@ jobs:
       - name: Detect Backend Services
         id: set-matrix
         run: |
-          SERVICES=$(ls -d ms-* 2>/dev/null | grep -v 'ms-frontend' | jq -R -s -c 'split("\n")[:-1]')
+          SERVICES=$(ls -d microservices/*/ 2>/dev/null | jq -R -s -c 'split("\n")[:-1]')
           echo "Detected services: $SERVICES"
           echo "services=$SERVICES" >> "$GITHUB_OUTPUT"
 
-  test-backend:
-    name: Build & Test Backend Services
+  test-microservices:
+    name: Build & Test Microservices
     runs-on: ubuntu-latest
     needs: discover-services
     strategy:
