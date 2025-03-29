@@ -1,5 +1,3 @@
-# Description: Dockerfile for building a container image with Terraform and terraform-local installed
-
 FROM hashicorp/terraform:latest
 
 # Install Python, pip, and virtualenv
