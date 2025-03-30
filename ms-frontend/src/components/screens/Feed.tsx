@@ -9,20 +9,26 @@ import '../../styles/components/screens/screen.css';
 import '../../styles/components/screens/feed.css';
 
 const Feed = () => {
-
+    console.log('Feed component rendering');
+    alert("test");
     useEffect(() => {
+        console.log('Service Worker Registration');
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/service-worker.js')
                 .then(() => {
                     if (Notification.permission !== 'denied') {
                         return requestNotificationPermission();
                     }
-                    return undefined; // Permission was denied
+                    return null;
                 })
                 .then((permission) => {
+                    console.log('Permission result: ', permission);
                     if (permission === 'granted') {
                         return subscribeUserToPush();
                     }
+                    return null;
+                }).then(subscription => {
+                    console.log('Subscription Object: ', subscription);
                 })
                 .catch(error => console.error('Service worker or notification error:', error));
         }

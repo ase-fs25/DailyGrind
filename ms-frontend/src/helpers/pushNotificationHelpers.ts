@@ -20,6 +20,7 @@ export const requestNotificationPermission = async (): Promise<string> => {
 export const subscribeUserToPush = async () => {
     try {
         const registration = await navigator.serviceWorker.ready;
+        console.log('Service Worker is ready');
 
         let subscription: PushSubscription | null = await registration.pushManager.getSubscription();
 
@@ -38,7 +39,7 @@ export const subscribeUserToPush = async () => {
                 await sendSubscriptionToBackend(subscription);
             }
 
-             */
+            */
         }
         return subscription;
     } catch (error) {

@@ -1,4 +1,5 @@
-const webpush = require('web-push');
+//const webpush = require('web-push');
+import webpush from 'web-push';
 
 const mockVapidKeys = {
     publicKey:
