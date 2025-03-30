@@ -1,25 +1,23 @@
 import { Routes, Route } from 'react-router-dom';
+import { Authenticator } from '@aws-amplify/ui-react';
+import { Amplify } from 'aws-amplify';
 
 import './styles/app.css';
-
-import { Authenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 
 import Feed from './components/screens/Feed';
 import Posts from './components/screens/Posts';
 import Friends from './components/screens/Friends';
-import { Amplify } from 'aws-amplify';
 
-// TODO: Move this to a config file
 Amplify.configure({
   Auth: {
     Cognito: {
-      userPoolClientId: 'qxjav04eh3y6x1vwrjkpvdypmw',
-      userPoolId: 'us-east-1_3bb6832f013743d68e09a73fdf1cdf8a',
-      userPoolEndpoint: 'http://localhost.localstack.cloud:4566/_aws/cognito-idp',
+      userPoolClientId: import.meta.env.VITE_USER_POOL_CLIENT_ID ? import.meta.env.VITE_USER_POOL_CLIENT_ID : '',
+      userPoolId: import.meta.env.VITE_USER_POOL_ID ? import.meta.env.VITE_USER_POOL_ID : '',
+      userPoolEndpoint: import.meta.env.VITE_USER_POOL_ENDPOINT,
       loginWith: {
         oauth: {
-          domain: 'http://localhost.localstack.cloud:4566/_aws/cognito-idp/login',
+          domain: import.meta.env.VITE_DOMAIN ? import.meta.env.VITE_DOMAIN : '',
           redirectSignIn: ['http://localhost:3000/'],
           redirectSignOut: ['http://localhost:3000/'],
           responseType: 'code',
