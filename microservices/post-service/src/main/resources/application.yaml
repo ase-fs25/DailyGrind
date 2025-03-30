@@ -24,6 +24,9 @@ spring:
           issuer-uri: ${dg.us.aws.cognito.issuer-uri}
           jwk-set-uri: ${dg.us.aws.cognito.jwk-set-uri}
 
+server:
+  port: ${PORT:8081}
+
 logging:
   level:
     org.springframework.security: TRACE

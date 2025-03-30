@@ -1,14 +1,22 @@
+networks:
+  localstack_network:
+    driver: bridge
+
 services:
   localstack:
     image: localstack/localstack-pro
     profiles: [dev, fe-dev, prod]
     container_name: localstack
+    hostname: localstack
+    networks:
+      - localstack_network
     environment:
       - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
       - AWS_DEFAULT_REGION=us-east-1
-      - SERVICES=iam, sts, cognito-idp, dynamodb, s3
-      - SMTP_HOST=1025
+      - SERVICES=iam, sts, cognito-idp, dynamodb, s3 ses, lambda
+      - SMTP_HOST=mailhog:1025
       - SMTP_EMAIL=sender@example.com
+      - HOSTNAME_EXTERNAL=localstack
     ports:
       - "4566:4566"            # LocalStack Gateway
       - "4510-4559:4510-4559"  # External services port range
@@ -70,19 +78,31 @@ services:
       - SERVER_PORT=8080
 
   frontend:
-    build: ./ms-frontend
+    build: frontend
     profiles: [prod]
     ports:
       - "3000:80"
 
 
-#  terraform:
-#    image: hashicorp/terraform
-#    working_dir: /terraform
-#    volumes:
-#      - ./terraform:/terraform
-#    environment:
-#      - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
-#    entrypoint: [ "/bin/sh", "/terraform/init-terraform.sh" ]
-#    depends_on:
-#      - localstack
+  terraform:
+    build:
+      context: ./terraform
+      dockerfile: Dockerfile
+    image: hashicorp/terraform
+    profiles: [dev, fe-dev, prod]
+    working_dir: /terraform
+    networks:
+      - localstack_network
+    volumes:
+      - ./terraform:/terraform
+      - ./lambda-functions:/lambda-functions
+    environment:
+      - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - LOCALSTACK_HOSTNAME=localstack
+      - EDGE_PORT=4566
+    entrypoint: [ "/bin/sh", "/terraform/init-terraform.sh" ]
+    depends_on:
+      - localstack

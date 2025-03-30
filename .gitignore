@@ -1,5 +1,6 @@
 # Ignore JetBrains IDE files
 .idea/
+*.iml
 
 # Ignore localstack data directory
 localstack-data/
@@ -7,6 +8,9 @@ localstack-data/
 /terraform/.terraform.lock.hcl
 /terraform/terraform.tfstate
 /terraform/terraform.tfstate.backup
+
+# Ignore lambda zip files
+/lambda-functions/*.zip
 
 # Ignore other common files
 node_modules/

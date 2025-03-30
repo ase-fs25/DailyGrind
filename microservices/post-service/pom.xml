@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.uzh.ase.dailygrind</groupId>
-    <artifactId>postService</artifactId>
+    <artifactId>post-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>postService</name>
-    <description>postService</description>
+    <name>post-service</name>
+    <description>post-service</description>
     <url/>
     <licenses>
         <license/>
