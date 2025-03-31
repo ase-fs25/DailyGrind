@@ -9,7 +9,7 @@
     "@mui/material": "^6.4.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-router-dom": "^7.3.0"
+    "react-router-dom": "^7.4.1"
   },
   "devDependencies": {
     "@testing-library/dom": "^10.4.0",
