@@ -18,10 +18,10 @@ const Header = () => {
     setAddPostOpen(true);
   };
 
-  const tabIndex = ['/feed', '/posts', '/friends'].indexOf(location.pathname);
+  const tabIndex = ['/', '/posts', '/friends'].indexOf(location.pathname);
 
   const handleTabChange = (event: React.SyntheticEvent, newIndex: number) => {
-    const paths = ['/feed', '/posts', '/friends'];
+    const paths = ['/', '/posts', '/friends'];
     navigate(paths[newIndex]);
   };
 

@@ -6,11 +6,26 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 In the project directory, you can run:
 
-### `yarn install`
+### `npm install`
 
 Do this first to install all the necessary dependencies.
 
-### `yarn start`
+### Set ENV variables
+
+Copy the env.template in your root folder and name it .env
+Then insert the values for the following keys:
+
+VITE_USER_POOL_CLIENT_ID=
+VITE_USER_POOL_ID=
+VITE_USER_POOL_ENDPOINT=
+VITE_DOMAIN=
+
+Get the first two from your terraform container (should be printed to console after start).
+The third one is either http://localhost:4566/_aws/cognito-idp or http://localhost.localstack.cloud:4566/_aws/cognito-idp and the fourth one is either http://localhost:4566/_aws/cognito-idp/login or http://localhost.localstack.cloud:4566/_aws/cognito-idp/login.
+
+Try out the third and fourth one. We haven't figured out why it is different for some machines.
+
+### `npm start`
 
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
@@ -18,26 +33,7 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
 
-### `yarn test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `yarn build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-## WIP Documentation
-
-All the necessary commands are listed above.
-
-TODO:
+### TODO:
 
 - Connect to backend
 - Fully build the different pages
