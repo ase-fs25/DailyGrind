@@ -9,7 +9,7 @@ updates:
     assignees:
       - "leo-wag"
     reviewers:
-      - "polatmete"
+      - "leo-wag"
     target-branch: "develop"
     allow:
       - dependency-type: "all"  # Ensure all updates are considered
@@ -23,7 +23,7 @@ updates:
     assignees:
       - "leo-wag"
     reviewers:
-      - "polatmete"
+      - "leo-wag"
     target-branch: "develop"
 
   - package-ecosystem: "maven"
@@ -34,7 +34,7 @@ updates:
     assignees:
       - "leo-wag"
     reviewers:
-      - "polatmete"
+      - "leo-wag"
     target-branch: "develop"
 
   # 🔹 Frontend Dependencies
@@ -46,7 +46,7 @@ updates:
     assignees:
       - "jnsgbl"
     reviewers:
-      - "polatmete"
+      - "jnsgbl"
     target-branch: "develop"
 
   # 🔹 GitHub Actions Dependencies
