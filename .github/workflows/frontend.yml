@@ -48,13 +48,12 @@ jobs:
 
 # TODO: Uncomment the following lines after writing tests
 #      - name: Run tests
-#        working-directory: ms-frontend
+#        working-directory: frontend
 #        run: npm test
 
-# TODO: Uncomment the following lines after solving security vulnerabilities
-#      - name: Run security audit on dependencies
-#        working-directory: ms-frontend
-#        run: npm audit --audit-level=high || echo "Security vulnerabilities detected. Review required."
+      - name: Run security audit on dependencies
+        working-directory: frontend
+        run: npm audit --audit-level=high || echo "Security vulnerabilities detected. Review required."
 
       - name: Build frontend
         working-directory: frontend

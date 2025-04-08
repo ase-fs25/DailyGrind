@@ -13,10 +13,11 @@ services:
     environment:
       - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
       - AWS_DEFAULT_REGION=us-east-1
-      - SERVICES=iam, sts, cognito-idp, dynamodb, s3 ses, lambda
+      - SERVICES=iam, sts, cognito-idp, dynamodb, s3 ses, lambda, cloudcontrol
       - SMTP_HOST=mailhog:1025
       - SMTP_EMAIL=sender@example.com
       - HOSTNAME_EXTERNAL=localstack
+      - DISABLE_CORS_CHECKS=1
     ports:
       - "4566:4566"            # LocalStack Gateway
       - "4510-4559:4510-4559"  # External services port range
@@ -28,6 +29,8 @@ services:
   mailhog:
     image: mailhog/mailhog
     profiles: [dev, fe-dev, prod]
+    networks:
+      - localstack_network
     ports:
       - "8025:8025"
       - "1025:1025"

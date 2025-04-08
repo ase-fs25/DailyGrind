@@ -16,13 +16,17 @@
 }
 
 .logo {
+  display: flex;
   font-size: 20px;
   font-weight: bold;
+  width: 33%;
+  justify-content: flex-start;
 }
 
 .header-tabs {
   display: flex;
   justify-content: center;
+  width: 33%;
 }
 
 .header-tab {
@@ -35,7 +39,16 @@
 
 .button-row {
   display: flex;
-  gap: 8px;
+  gap: 35%;
+  width: 33%;
+  justify-content: flex-end;
+}
+
+.add-post-button .MuiButton-startIcon {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .settings-button {
