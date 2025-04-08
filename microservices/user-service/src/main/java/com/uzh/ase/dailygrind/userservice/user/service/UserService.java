@@ -1,5 +1,6 @@
 package com.uzh.ase.dailygrind.userservice.user.service;
 
+import com.uzh.ase.dailygrind.userservice.user.controller.dto.CreateUserDto;
 import com.uzh.ase.dailygrind.userservice.user.repository.UserCrudRepository;
 import com.uzh.ase.dailygrind.userservice.user.repository.UserPagingSortingRepository;
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.User;
@@ -22,7 +23,14 @@ public class UserService {
         return userCrudRepository.findAll();
     }
 
-    public User createUser(User user) {
+    public User createUser(CreateUserDto createUserDto, String userId) {
+        User user = User.builder()
+                .userId(userId)
+                .email(createUserDto.email())
+                .firstName(createUserDto.firstName())
+                .lastName(createUserDto.lastName())
+                .location(createUserDto.location())
+                .build();
         return userCrudRepository.save(user);
     }
 

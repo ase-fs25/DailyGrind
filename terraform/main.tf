@@ -12,9 +12,9 @@ resource "aws_cognito_user_pool" "daily_grind_user_pool" {
   }
 
   // Lambda function to automatically confirm users without needing to verify their email
-  # lambda_config {
-  #   pre_sign_up = aws_lambda_function.confirm_user_lambda.arn
-  # }
+  lambda_config {
+    pre_sign_up = aws_lambda_function.confirm_user_lambda.arn
+  }
 
   password_policy {
     minimum_length    = 8

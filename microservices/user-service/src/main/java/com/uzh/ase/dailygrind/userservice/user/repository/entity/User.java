@@ -18,6 +18,15 @@ public class User {
     @DynamoDBHashKey(attributeName = "user_id")
     private String userId;
 
-    @DynamoDBAttribute(attributeName = "name")
-    private String name;
+    @DynamoDBAttribute(attributeName = "email")
+    private String email;
+
+    @DynamoDBAttribute(attributeName = "firstName")
+    private String firstName;
+
+    @DynamoDBAttribute(attributeName = "lastName")
+    private String lastName;
+
+    @DynamoDBAttribute(attributeName = "location")
+    private String location;
 }

@@ -12,14 +12,52 @@ resource "aws_dynamodb_table" "users" {
   }
 
   attribute {
-    name = "name"
+    name = "email"
     type = "S"
   }
 
-  # Global Secondary Index for name
+  attribute {
+    name = "firstName"
+    type = "S"
+  }
+
+  attribute {
+    name = "lastName"
+    type = "S"
+  }
+
+  attribute {
+    name = "location"
+    type = "S"
+  }
+
   global_secondary_index {
-    name               = "name-index"
-    hash_key           = "name"
+    name               = "email-index"
+    hash_key           = "email"
+    projection_type    = "ALL"
+    read_capacity      = 5
+    write_capacity     = 5
+  }
+
+  global_secondary_index {
+    name               = "firstName-index"
+    hash_key           = "firstName"
+    projection_type    = "ALL"
+    read_capacity      = 5
+    write_capacity     = 5
+  }
+
+  global_secondary_index {
+    name               = "lastName-index"
+    hash_key           = "lastName"
+    projection_type    = "ALL"
+    read_capacity      = 5
+    write_capacity     = 5
+  }
+
+  global_secondary_index {
+    name               = "location-index"
+    hash_key           = "location"
     projection_type    = "ALL"
     read_capacity      = 5
     write_capacity     = 5
