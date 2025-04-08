@@ -8,7 +8,7 @@ COPY pom.xml ./
 RUN mvn dependency:go-offline
 
 # Copy the source code and build the application
-COPY src ./src
+COPY ../../ms-push-notification/src ./src
 RUN mvn package -DskipTests
 
 # Stage 2: Run the application
