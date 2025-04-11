@@ -1,7 +1,9 @@
-package com.uzh.ase.dailygrind.mspushnotifications.pushNotification.service;
+package com.uzh.ase.dailygrind.pushnotificationsservice.pushNotification.service;
 
-import com.uzh.ase.dailygrind.mspushnotifications.pushNotification.repository.PushSubscriptionRepository;
-import com.uzh.ase.dailygrind.mspushnotifications.pushNotification.repository.entity.PushSubscription;
+
+import com.uzh.ase.dailygrind.pushnotificationsservice.pushNotification.controller.dto.SubscriptionDto;
+import com.uzh.ase.dailygrind.pushnotificationsservice.pushNotification.repository.PushSubscriptionRepository;
+import com.uzh.ase.dailygrind.pushnotificationsservice.pushNotification.repository.entity.PushSubscription;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,7 +16,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.security.Security;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -38,36 +42,41 @@ public class PushNotificationService {
         return pushSubscriptionRepository.findAll();
     }
 
-    public PushSubscription saveSubscription(PushSubscription pushSubscription) {
-        return pushSubscriptionRepository.save(pushSubscription);
+    public PushSubscription saveSubscription(SubscriptionDto pushSubscription, String userId) {
+        PushSubscription subscription = PushSubscription.builder()
+                .pushSubscription(pushSubscription)
+                .userId(userId)
+                .build();
+
+        return pushSubscriptionRepository.save(subscription);
     }
-
-    public void sendNotification(String message) {
-        List<PushSubscription> subscriptions = pushSubscriptionRepository.findAll();
-
-        if(subscriptions.isEmpty()) {
-            return;
-        }
-
-        for(PushSubscription subscription : subscriptions) {
-            try {
-                // Parse the JSON string from your entity
-                JsonNode subscriptionJson = objectMapper.readTree(subscription.getPushSubscription());
-
-                // Create a web-push library Subscription object
-                Subscription pushSubscription = new Subscription(
-                        subscriptionJson.get("endpoint").asText(),
-                        new Subscription.Keys(
-                                subscriptionJson.get("keys").get("p256dh").asText(),
-                                subscriptionJson.get("keys").get("auth").asText()
-                        )
-                );
-
-                Notification notification = new Notification(pushSubscription, "this is the message body");
-                pushService.send(notification);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
+//
+//    public void sendNotification(String message) {
+//        List<PushSubscription> subscriptions = pushSubscriptionRepository.findAll();
+//
+//        if(subscriptions.isEmpty()) {
+//            return;
+//        }
+//
+//        for(PushSubscription subscription : subscriptions) {
+//            try {
+//                // Parse the JSON string from your entity
+//                JsonNode subscriptionJson = objectMapper.readTree(subscription.getPushSubscription());
+//
+//                // Create a web-push library Subscription object
+//                Subscription pushSubscription = new Subscription(
+//                        subscriptionJson.get("endpoint").asText(),
+//                        new Subscription.Keys(
+//                                subscriptionJson.get("keys").get("p256dh").asText(),
+//                                subscriptionJson.get("keys").get("auth").asText()
+//                        )
+//                );
+//
+//                Notification notification = new Notification(pushSubscription, "this is the message body");
+//                pushService.send(notification);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 }

@@ -1,6 +1,6 @@
-package com.uzh.ase.dailygrind.mspushnotifications.pushNotification.repository;
+package com.uzh.ase.dailygrind.pushnotificationsservice.pushNotification.repository;
 
-import com.uzh.ase.dailygrind.mspushnotifications.pushNotification.repository.entity.PushSubscription;
+import com.uzh.ase.dailygrind.pushnotificationsservice.pushNotification.repository.entity.PushSubscription;
 import lombok.NonNull;
 import org.socialsignin.spring.data.dynamodb.repository.DynamoDBCrudRepository;
 import org.socialsignin.spring.data.dynamodb.repository.EnableScan;

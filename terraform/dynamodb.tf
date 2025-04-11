@@ -159,6 +159,8 @@ resource "aws_dynamodb_table" "push_subscriptions" {
     type = "S"
   }
 
+
+
   # Global Secondary Index for user_id
   global_secondary_index {
     name               = "user-id-index"
