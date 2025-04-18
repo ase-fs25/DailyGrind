@@ -1,6 +1,7 @@
 package com.uzh.ase.dailygrind.userservice.user.controller;
 
 import com.uzh.ase.dailygrind.userservice.user.controller.dto.CreateUserDto;
+import com.uzh.ase.dailygrind.userservice.user.controller.dto.UserDetailsDto;
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.User;
 import com.uzh.ase.dailygrind.userservice.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -37,10 +38,10 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable("id") String id) {
-        User user = userService.getUserById(id);
-        if (user != null) {
-            return ResponseEntity.ok(user);
+    public ResponseEntity<UserDetailsDto> getUserDetailsById(@PathVariable("id") String id) {
+        UserDetailsDto userDetailsDto = userService.getUserById(id);
+        if (userDetailsDto != null) {
+            return ResponseEntity.ok(userDetailsDto);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }

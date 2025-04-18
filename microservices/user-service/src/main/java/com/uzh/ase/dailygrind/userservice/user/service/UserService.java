@@ -1,6 +1,8 @@
 package com.uzh.ase.dailygrind.userservice.user.service;
 
 import com.uzh.ase.dailygrind.userservice.user.controller.dto.CreateUserDto;
+import com.uzh.ase.dailygrind.userservice.user.controller.dto.UserDetailsDto;
+import com.uzh.ase.dailygrind.userservice.user.mapper.UserMapper;
 import com.uzh.ase.dailygrind.userservice.user.repository.UserCrudRepository;
 import com.uzh.ase.dailygrind.userservice.user.repository.UserPagingSortingRepository;
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.User;
@@ -19,27 +21,23 @@ public class UserService {
 
     private final UserPagingSortingRepository userPagingSortingRepository;
 
+    private final UserMapper userMapper;
+
     public List<User> getAllUser() {
         return userCrudRepository.findAll();
     }
 
     public User createUser(CreateUserDto createUserDto, String userId) {
-        User user = User.builder()
-                .userId(userId)
-                .email(createUserDto.email())
-                .firstName(createUserDto.firstName())
-                .lastName(createUserDto.lastName())
-                .location(createUserDto.location())
-                .build();
-        return userCrudRepository.save(user);
+        return userCrudRepository.save(userMapper.createUserDtoToUserEntity(createUserDto, userId));
     }
 
     public Page<User> getUsersPage(Pageable pageable) {
         return userPagingSortingRepository.findAll(pageable);
     }
 
-    public User getUserById(String id) {
-        return userPagingSortingRepository.findById(id);
+    public UserDetailsDto getUserById(String id) {
+        User user = userPagingSortingRepository.findById(id);
+        return userMapper.userEntityToUserDetailsDto(user);
     }
 
 }
