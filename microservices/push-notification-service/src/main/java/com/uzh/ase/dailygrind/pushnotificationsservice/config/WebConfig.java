@@ -1,4 +1,4 @@
-package com.uzh.ase.dailygrind.mspushnotifications.config;
+package com.uzh.ase.dailygrind.pushnotificationsservice.config;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;

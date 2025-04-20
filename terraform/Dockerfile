@@ -1,7 +1,7 @@
 FROM hashicorp/terraform:latest
 
 # Install Python, pip, and virtualenv
-RUN apk add --no-cache python3 py3-pip py3-virtualenv
+RUN apk add --no-cache python3 py3-pip py3-virtualenv nodejs npm
 
 # Create a virtual environment
 RUN python3 -m venv /venv

@@ -31,10 +31,10 @@ public class pushNotificationController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
      */
-//
-//    @PostMapping("/send")
-//    public ResponseEntity<Void> sendNotification(@RequestBody String message) {
-//        pushNotificationService.sendNotification(message);
-//        return ResponseEntity.status(HttpStatus.OK).build();
-//    }
+
+    @PostMapping("/send")
+    public ResponseEntity<Void> sendNotification(@RequestBody String message) {
+        pushNotificationService.sendNotification(message);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }

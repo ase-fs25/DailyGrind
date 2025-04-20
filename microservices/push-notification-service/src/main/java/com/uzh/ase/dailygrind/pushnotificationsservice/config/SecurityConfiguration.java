@@ -1,4 +1,4 @@
-package com.uzh.ase.dailygrind.mspushnotifications.config;
+package com.uzh.ase.dailygrind.pushnotificationsservice.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,8 +22,9 @@ public class SecurityConfiguration {
                     .csrf(AbstractHttpConfigurer::disable)
                     .exceptionHandling(c -> c.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.FORBIDDEN)))
                     .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                    .authorizeHttpRequests(r ->
-                            r.anyRequest().authenticated())
+                    .authorizeHttpRequests(r -> r
+                            .requestMatchers("/push-notifications/**").permitAll()
+                            .anyRequest().authenticated())
                     .oauth2ResourceServer(s -> s.jwt(Customizer.withDefaults()));
 
             return http.build();

@@ -1,4 +1,4 @@
-package com.uzh.ase.dailygrind.mspushnotifications.config;
+package com.uzh.ase.dailygrind.pushnotificationsservice.config;
 
 
 import com.amazonaws.auth.AWSCredentialsProvider;
@@ -9,7 +9,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
-import com.uzh.ase.dailygrind.mspushnotifications.pushNotification.repository.PushSubscriptionRepository;
+import com.uzh.ase.dailygrind.pushnotificationsservice.pushNotification.repository.PushSubscriptionRepository;
 import org.socialsignin.spring.data.dynamodb.repository.config.EnableDynamoDBRepositories;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

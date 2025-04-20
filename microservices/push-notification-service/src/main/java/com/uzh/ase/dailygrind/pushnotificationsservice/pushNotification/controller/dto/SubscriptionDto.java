@@ -4,7 +4,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
 
 import java.util.Map;
 
-@DynamoDBDocument
+//@DynamoDBDocument
 public record SubscriptionDto(
         String endpoint,
         Long expirationTime,

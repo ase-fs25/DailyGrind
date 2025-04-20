@@ -4,43 +4,42 @@ import { useEffect } from 'react';
 import Header from '../common/Header';
 import { mockPosts } from '../../mockData/mockPosts';
 //import {mockVapidKeys} from "../../mockData/mockVapidKeys";
-import { requestNotificationPermission, subscribeUserToPush} from "../../helpers/pushNotificationHelpers";
+import { requestNotificationPermission, subscribeUserToPush } from '../../helpers/pushNotificationHelpers';
 import '../../styles/components/screens/screen.css';
 import '../../styles/components/screens/feed.css';
 
 const Feed = () => {
-    console.log('Feed component rendering');
-    alert("test");
-    useEffect(() => {
-        console.log('Service Worker Registration');
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/service-worker.js')
-                .then(() => {
-                    if (Notification.permission !== 'denied') {
-                        return requestNotificationPermission();
-                    }
-                    return null;
-                })
-                .then((permission) => {
-                    console.log('Permission result: ', permission);
-                    if (permission === 'granted') {
-                        return subscribeUserToPush();
-                    }
-                    return null;
-                }).then(subscription => {
-                    console.log('Subscription Object: ', subscription);
-                })
-                .catch(error => console.error('Service worker or notification error:', error));
-        }
-    }, []);
+  useEffect(() => {
+    console.log('Service Worker Registration');
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .register('/service-worker.js')
+        .then(() => {
+          if (Notification.permission !== 'denied') {
+            return requestNotificationPermission();
+          }
+          return null;
+        })
+        .then((permission) => {
+          console.log('Permission result: ', permission);
+          if (permission === 'granted') {
+            return subscribeUserToPush();
+          }
+          return null;
+        })
+        .then((subscription) => {
+          console.log('Subscription Object: ', subscription);
+        })
+        .catch((error) => console.error('Service worker or notification error:', error));
+    }
+  }, []);
 
-
-    const formatDate = (timestamp: string) => {
-        const date = new Date(timestamp);
-        return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1)
-            .toString()
-            .padStart(2, '0')}-${date.getFullYear()}`;
-    };
+  const formatDate = (timestamp: string) => {
+    const date = new Date(timestamp);
+    return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1)
+      .toString()
+      .padStart(2, '0')}-${date.getFullYear()}`;
+  };
 
   return (
     <Box className="screen-container">

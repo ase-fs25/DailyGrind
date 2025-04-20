@@ -12,3 +12,4 @@ rm -f localstack_providers_override.tf
 # Initialize and apply Terraform with LocalStack
 tflocal init
 tflocal apply -auto-approve
+terraform output client_secret
