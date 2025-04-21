@@ -10,7 +10,7 @@ dg:
       secret-key: ${AWS_DYNAMODB_SECRET_ACCESS_KEY:test}
       base-url: http://localhost.localstack.cloud:${dg.us.aws.port}
       cognito:
-        user-pool-id: ${AWS_COGNITO_USER_POOL_ID:us-east-1_ec029cc3670d4ec0b97aa80ac3ddea9e}
+        user-pool-id: ${AWS_COGNITO_USER_POOL_ID:us-east-1_4b4264f9c02e43e5b2c204b8d7f55fb2}
         issuer-uri: http://localhost.localstack.cloud:${dg.us.aws.port}/${dg.us.aws.cognito.user-pool-id}
         jwk-set-uri: http://localhost:${dg.us.aws.port}/${dg.us.aws.cognito.user-pool-id}/.well-known/jwks.json
 

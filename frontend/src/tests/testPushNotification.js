@@ -8,6 +8,14 @@ const mockVapidKeys = {
 
 webpush.setVapidDetails('mailto:tim.vorburger@uzh.ch', mockVapidKeys.publicKey, mockVapidKeys.privateKey);
 
-const pushSubscription = {"endpoint":"https://fcm.googleapis.com/fcm/send/cujueS3bVpo:APA91bHCxJiZmLPD0GDMAKfbaM1QxcShFCzT7iw3xCuivzIGaH6MzVNixLRYai0u9YPrCgWw1b1cc_Xy6fi9FwVDAXtPOVwsBoDOkUFn1abfjAkpfUDkCxiaLbp5WusqBV7xcEWbalxk","expirationTime":null,"keys":{"p256dh":"BA17Oc-yKU53lTcznORcDeW3AXkEXABGqw-ZNavimyp0vJPR5SWWTAjXEhLNuR-cemfDG5rvbVGuDX9OCrLBApk","auth":"AO6Gk1fw-xcnniGbwofRUA"}};
+const pushSubscription = {
+  endpoint:
+    'https://fcm.googleapis.com/fcm/send/cujueS3bVpo:APA91bHCxJiZmLPD0GDMAKfbaM1QxcShFCzT7iw3xCuivzIGaH6MzVNixLRYai0u9YPrCgWw1b1cc_Xy6fi9FwVDAXtPOVwsBoDOkUFn1abfjAkpfUDkCxiaLbp5WusqBV7xcEWbalxk',
+  expirationTime: null,
+  keys: {
+    p256dh: 'BA17Oc-yKU53lTcznORcDeW3AXkEXABGqw-ZNavimyp0vJPR5SWWTAjXEhLNuR-cemfDG5rvbVGuDX9OCrLBApk',
+    auth: 'AO6Gk1fw-xcnniGbwofRUA',
+  },
+};
 
 webpush.sendNotification(pushSubscription, 'This is the message body from node!');

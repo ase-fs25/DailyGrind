@@ -10,7 +10,7 @@ resource "aws_lambda_function" "push_notification_lambda" {
   function_name    = "pushNotificationLambda"
   role           = aws_iam_role.iam_for_lambda.arn
   handler          = "index.handler"
-  runtime          = "nodejs16.x"
+  runtime          = "nodejs18.x"
   source_code_hash = data.archive_file.push_notification_lambda.output_base64sha256
 
   environment {
