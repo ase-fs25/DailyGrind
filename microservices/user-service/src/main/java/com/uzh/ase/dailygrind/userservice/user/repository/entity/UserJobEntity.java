@@ -17,10 +17,11 @@ public class UserJobEntity {
     private String sk; // JOB#<jobID>
 
     private String jobTitle;
-    private String employer;
-    private String startDate;
-    private String endDate;
-    private String description;
+    private String companyName;
+    private String jobLocation;
+    private String jobStartDate;
+    private String jobEndDate;
+    private String jobDescription;
 
     @DynamoDbPartitionKey
     @DynamoDbAttribute("PK")

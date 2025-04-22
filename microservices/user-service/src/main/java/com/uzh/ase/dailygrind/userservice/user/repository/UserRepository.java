@@ -8,11 +8,6 @@ import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserJobEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
-import software.amazon.awssdk.enhanced.dynamodb.Key;
-import software.amazon.awssdk.enhanced.dynamodb.model.Page;
-import software.amazon.awssdk.enhanced.dynamodb.model.PageIterable;
-import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
-import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +36,24 @@ public class UserRepository {
         return user;
     }
 
+    public UserDto findUserDetailsById(String userId) {
+
+        UserEntity user = table.scan().items().stream().filter(item -> item.getSk().equals("USER#" + userId)).findFirst().orElse(null);
+        if (user == null) return null;
+        List<UserJobEntity> userJobs = jobTable.scan().items().stream().filter(item -> item.getSk().startsWith("JOB#")).toList();
+        List<UserEducationEntity> userEducations = educationTable.scan().items().stream().filter(item -> item.getSk().startsWith("EDUCATION#")).toList();
+
+        List<UserJobEntity> jobs = userJobs.stream()
+                .filter(job -> job.getPk().equals(user.getPk()))
+                .toList();
+        List<UserEducationEntity> educations = userEducations.stream()
+                .filter(education -> education.getPk().equals(user.getPk()))
+                .toList();
+
+        return userMapper.toUserDto(user, jobs, educations);
+
+    }
+
     public List<UserDto> findAllUserDetails() {
 
        List<UserEntity> users = table.scan().items().stream().filter(item -> item.getSk().startsWith("USER#")).toList();
@@ -64,4 +77,25 @@ public class UserRepository {
 
     }
 
+    public void followUser(String toFollow, String follower) {
+        UserEntity toFollowEntity = UserEntity.builder()
+                .pk("USER#" + toFollow)
+                .sk("FOLLOWER#" + follower).build();
+        table.putItem(toFollowEntity);
+        UserEntity followerEntity = UserEntity.builder()
+                .pk("USER#" + follower)
+                .sk("FOLLOWING#" + toFollow).build();
+        table.putItem(followerEntity);
+    }
+
+    public void unfollowUser(String toUnfollow, String follower) {
+        UserEntity toUnfollowEntity = UserEntity.builder()
+                .pk("USER#" + toUnfollow)
+                .sk("FOLLOWER#" + follower).build();
+        table.deleteItem(toUnfollowEntity);
+        UserEntity followerEntity = UserEntity.builder()
+                .pk("USER#" + follower)
+                .sk("FOLLOWING#" + toUnfollow).build();
+        table.deleteItem(followerEntity);
+    }
 }

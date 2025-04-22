@@ -19,7 +19,11 @@ public class UserService {
 
     private final UserMapper userMapper;
 
-    public List<UserDto> getAllUser() {
+    public UserDto getUserDetailsById(String userId) {
+        return userRepository.findUserDetailsById(userId);
+    }
+
+    public List<UserDto> getAllUserDetails() {
         return userRepository.findAllUserDetails();
     }
 
@@ -33,13 +37,11 @@ public class UserService {
         return userMapper.toUserDto(userEntity, userJobEntities, userEducationEntities);
     }
 
-//    public Page<UserEntity> getUsersPage(Pageable pageable) {
-//        return userPagingSortingRepository.findAll(pageable);
-//    }
-//
-//    public UserDetailsDto getUserById(String id) {
-//        UserEntity user = userPagingSortingRepository.findById(id);
-//        return userMapper.userEntityToUserDetailsDto(user);
-//    }
+    public void followUser(String toFollow, String follower) {
+        userRepository.followUser(toFollow, follower);
+    }
 
+    public void unfollowUser(String toUnfollow, String follower) {
+        userRepository.unfollowUser(toUnfollow, follower);
+    }
 }

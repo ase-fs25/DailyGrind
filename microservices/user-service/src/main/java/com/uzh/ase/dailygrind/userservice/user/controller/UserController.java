@@ -1,7 +1,6 @@
 package com.uzh.ase.dailygrind.userservice.user.controller;
 
 import com.uzh.ase.dailygrind.userservice.user.controller.dto.UserDto;
-import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserEntity;
 import com.uzh.ase.dailygrind.userservice.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,9 +17,14 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping
-    public List<UserDto> getUsers() {
-        return userService.getAllUser();
+    @GetMapping("/{userId}")
+    public UserDto getUserDetailsById(@PathVariable String userId) {
+        return userService.getUserDetailsById(userId);
+    }
+
+    @GetMapping("/details")
+    public List<UserDto> getUsersDetails() {
+        return userService.getAllUserDetails();
     }
 
     @PostMapping
@@ -29,18 +33,25 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
-//    @GetMapping("/page")
-//    public List<UserEntity> getUsersPage(int page, int size) {
-//        return userService.getUsersPage(PageRequest.of(page, size)).getContent();
-//    }
+    @PostMapping("follow/{userId}")
+    public ResponseEntity<?> followUser(@PathVariable String userId, Principal principal) {
+        if (principal.getName().equals(userId)) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("You cannot follow yourself.");
+        }
+        userService.followUser(userId, principal.getName());
+        return ResponseEntity.ok().build();
+    }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<UserDetailsDto> getUserDetailsById(@PathVariable("id") String id) {
-//        UserDetailsDto userDetailsDto = userService.getUserById(id);
-//        if (userDetailsDto != null) {
-//            return ResponseEntity.ok(userDetailsDto);
-//        } else {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-//        }
-//    }
+    @DeleteMapping("unfollow/{userId}")
+    public ResponseEntity<?> unfollowUser(@PathVariable String userId, Principal principal) {
+        if (principal.getName().equals(userId)) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("You cannot unfollow yourself.");
+        }
+        userService.unfollowUser(userId, principal.getName());
+        return ResponseEntity.ok().build();
+    }
 }

@@ -23,12 +23,16 @@ public interface UserMapper {
 
     @Named("generateJobSk")
     public static String generateJobSk(String sk) {
-        return (sk == null || sk.isEmpty()) ? "JOB#" + UUID.randomUUID() : sk;
+        if (sk == null || sk.isEmpty()) return "JOB#" + UUID.randomUUID();
+        if (!sk.startsWith("JOB#")) return "JOB#" + sk;
+        return sk;
     }
 
     @Named("generateEducationSk")
     public static String generateEducationSk(String sk) {
-        return (sk == null || sk.isEmpty()) ? "EDUCATION#" + UUID.randomUUID() : sk;
+        if (sk == null || sk.isEmpty()) return "EDUCATION#" + UUID.randomUUID();
+        if (!sk.startsWith("EDUCATION#")) return "EDUCATION#" + sk;
+        return sk;
     }
 
     @Mapping(target = "pk", source = "userId", qualifiedByName = "generatePk")
@@ -37,6 +41,12 @@ public interface UserMapper {
 
     @Mapping(target = "pk", source = "userId", qualifiedByName = "generatePk")
     @Mapping(target = "sk", source = "job.jobId", qualifiedByName = "generateJobSk")
+    @Mapping(target = "jobStartDate", source = "job.startDate")
+    @Mapping(target = "jobEndDate", source = "job.endDate")
+    @Mapping(target = "jobTitle", source = "job.jobTitle")
+    @Mapping(target = "companyName", source = "job.companyName")
+    @Mapping(target = "jobLocation", source = "job.location")
+    @Mapping(target = "jobDescription", source = "job.description")
     UserJobEntity toJobEntity(String userId, UserJobDTO job);
 
     @Mapping(target = "pk", source = "userId", qualifiedByName = "generatePk")
@@ -68,6 +78,12 @@ public interface UserMapper {
     UserDto toUserDto(UserEntity userEntity, List<UserJobEntity> userJobEntities, List<UserEducationEntity> userEducationEntities);
 
     @Mapping(target = "jobId", expression = "java(userJobEntity.getSk().replace(\"JOB#\", \"\"))")
+    @Mapping(target = "startDate", source = "userJobEntity.jobStartDate")
+    @Mapping(target = "endDate", source = "userJobEntity.jobEndDate")
+    @Mapping(target = "jobTitle", source = "userJobEntity.jobTitle")
+    @Mapping(target = "companyName", source = "userJobEntity.companyName")
+    @Mapping(target = "location", source = "userJobEntity.jobLocation")
+    @Mapping(target = "description", source = "userJobEntity.jobDescription")
     UserJobDTO toUserJobDTO(UserJobEntity userJobEntity);
 
     @Mapping(target = "educationId", expression = "java(userEducationEntity.getSk().replace(\"EDUCATION#\", \"\"))")
