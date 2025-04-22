@@ -44,10 +44,10 @@ public class UserRepository {
         List<UserEducationEntity> userEducations = educationTable.scan().items().stream().filter(item -> item.getSk().startsWith("EDUCATION#")).toList();
 
         List<UserJobEntity> jobs = userJobs.stream()
-                .filter(job -> job.getPk().equals(user.getPk()))
+                .filter(job -> job.getPk().startsWith(user.getPk()))
                 .toList();
         List<UserEducationEntity> educations = userEducations.stream()
-                .filter(education -> education.getPk().equals(user.getPk()))
+                .filter(education -> education.getPk().startsWith(user.getPk()))
                 .toList();
 
         return userMapper.toUserDto(user, jobs, educations);
@@ -64,10 +64,10 @@ public class UserRepository {
 
         for (UserEntity user : users) {
             List<UserJobEntity> jobs = userJobs.stream()
-                    .filter(job -> job.getPk().equals(user.getPk()))
+                    .filter(job -> job.getPk().startsWith(user.getPk()))
                     .toList();
             List<UserEducationEntity> educations = userEducations.stream()
-                    .filter(education -> education.getPk().equals(user.getPk()))
+                    .filter(education -> education.getPk().startsWith(user.getPk()))
                     .toList();
 
             userDtos.add(userMapper.toUserDto(user, jobs, educations));
