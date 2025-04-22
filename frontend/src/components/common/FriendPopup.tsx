@@ -21,7 +21,7 @@ const FriendPopup: React.FC<FriendPopupProps> = ({ open, onClose, profile, posts
       onClose={onClose}
       fullWidth
       maxWidth="md"
-      scroll="paper" // YES, use paper
+      scroll="paper"
       slotProps={{
         backdrop: { className: 'popup-backdrop' },
         paper: { className: 'popup-dialog-paper' },
