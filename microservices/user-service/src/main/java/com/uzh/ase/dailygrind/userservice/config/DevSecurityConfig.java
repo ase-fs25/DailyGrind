@@ -14,22 +14,22 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 
 @Configuration
-@Profile("!dev")
-@ConditionalOnProperty(name = "security.enabled", havingValue = "true", matchIfMissing = true)
+@Profile("dev") // optional: only active in 'dev' profile
+@ConditionalOnProperty(name = "security.enabled", havingValue = "false")
 @EnableWebSecurity
-public class SecurityConfiguration {
+public class DevSecurityConfig {
 
-        @Bean
-        public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-            http
-                    .cors(httpSecurityCorsConfigurer -> {})
-                    .csrf(AbstractHttpConfigurer::disable)
-                    .exceptionHandling(c -> c.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.FORBIDDEN)))
-                    .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                    .authorizeHttpRequests(r ->
-                            r.anyRequest().authenticated())
-                    .oauth2ResourceServer(s -> s.jwt(Customizer.withDefaults()));
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .cors(httpSecurityCorsConfigurer -> {})
+                .csrf(AbstractHttpConfigurer::disable)
+                .exceptionHandling(c -> c.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.FORBIDDEN)))
+                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(r ->
+                        r.anyRequest().permitAll())
+                .oauth2ResourceServer(s -> s.jwt(Customizer.withDefaults()));
 
-            return http.build();
-        }
+        return http.build();
+    }
 }

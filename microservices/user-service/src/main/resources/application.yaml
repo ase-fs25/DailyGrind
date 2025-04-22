@@ -26,6 +26,9 @@ spring:
 server:
   port: ${PORT:8080}
 
+security:
+  enabled: false
+
 #logging:
 #  level:
 #    org.springframework.security: DEBUG
