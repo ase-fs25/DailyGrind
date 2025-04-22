@@ -1,5 +1,6 @@
 package com.uzh.ase.dailygrind.userservice.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,13 +15,16 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 
 @Configuration
-@Profile("dev") // optional: only active in 'dev' profile
 @ConditionalOnProperty(name = "security.enabled", havingValue = "false")
 @EnableWebSecurity
+@Slf4j
 public class DevSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        log.warn("!!!!!!!!DevSecurityConfig filterChain!!!!!!!!");
+
         http
                 .cors(httpSecurityCorsConfigurer -> {})
                 .csrf(AbstractHttpConfigurer::disable)
