@@ -36,6 +36,12 @@ public class UserRepository {
         return user;
     }
 
+    /**
+     * Finds a user by their ID.
+     *
+     * @param userId the ID of the user to find
+     * @return the user entity if found, null otherwise
+     */
     public UserDto findUserDetailsById(String userId) {
 
         UserEntity user = table.scan().items().stream().filter(item -> item.getSk().equals("USER#" + userId)).findFirst().orElse(null);
@@ -54,6 +60,11 @@ public class UserRepository {
 
     }
 
+    /**
+     * Finds all user details.
+     *
+     * @return a list of user DTOs
+     */
     public List<UserDto> findAllUserDetails() {
 
        List<UserEntity> users = table.scan().items().stream().filter(item -> item.getSk().startsWith("USER#")).toList();
@@ -77,25 +88,37 @@ public class UserRepository {
 
     }
 
+    /**
+     * Follows a user.
+     *
+     * @param toFollow the user to follow
+     * @param follower the user who is following
+     */
     public void followUser(String toFollow, String follower) {
         UserEntity toFollowEntity = UserEntity.builder()
-                .pk("USER#" + toFollow)
-                .sk("FOLLOWER#" + follower).build();
+                .pk("USER#" + toFollow + "#FOLLOWER")
+                .sk("USER#" + follower).build();
         table.putItem(toFollowEntity);
         UserEntity followerEntity = UserEntity.builder()
-                .pk("USER#" + follower)
-                .sk("FOLLOWING#" + toFollow).build();
+                .pk("USER#" + follower + "#FOLLOWING")
+                .sk("USER#" + toFollow ).build();
         table.putItem(followerEntity);
     }
 
+    /**
+     * Unfollows a user.
+     *
+     * @param toUnfollow the user to unfollow
+     * @param follower   the user who is unfollowing
+     */
     public void unfollowUser(String toUnfollow, String follower) {
         UserEntity toUnfollowEntity = UserEntity.builder()
-                .pk("USER#" + toUnfollow)
-                .sk("FOLLOWER#" + follower).build();
+                .pk("USER#" + toUnfollow + "#FOLLOWER")
+                .sk("USER#" + follower).build();
         table.deleteItem(toUnfollowEntity);
         UserEntity followerEntity = UserEntity.builder()
-                .pk("USER#" + follower)
-                .sk("FOLLOWING#" + toUnfollow).build();
+                .pk("USER#" + follower + "#FOLLOWING")
+                .sk("USER#" + toUnfollow).build();
         table.deleteItem(followerEntity);
     }
 }
