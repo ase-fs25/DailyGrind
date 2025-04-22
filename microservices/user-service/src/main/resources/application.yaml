@@ -10,8 +10,8 @@ dg:
       secret-key: ${AWS_DYNAMODB_SECRET_ACCESS_KEY:test}
       base-url: http://localhost:${dg.us.aws.port}
       cognito:
-        user-pool-id: ${AWS_COGNITO_USER_POOL_ID:us-east-1_96f656d1e4884cfbb79a55975a2b9c27}
-        issuer-uri: http://localhost.localstack.cloud:${dg.us.aws.port}/${dg.us.aws.cognito.user-pool-id}
+        user-pool-id: ${AWS_COGNITO_USER_POOL_ID:us-east-1_56336d8ff1b14d87a8e16192d71ff9b7}
+        issuer-uri: http://localstack:${dg.us.aws.port}/${dg.us.aws.cognito.user-pool-id}
         jwk-set-uri: http://localhost:${dg.us.aws.port}/${dg.us.aws.cognito.user-pool-id}/.well-known/jwks.json
 
 spring:
@@ -23,10 +23,9 @@ spring:
         jwt:
           issuer-uri: ${dg.us.aws.cognito.issuer-uri}
           jwk-set-uri: ${dg.us.aws.cognito.jwk-set-uri}
-
 server:
   port: ${PORT:8080}
 
-logging:
-  level:
-    org.springframework.security: TRACE
+#logging:
+#  level:
+#    org.springframework.security: DEBUG

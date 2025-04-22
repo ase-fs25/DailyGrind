@@ -1,4 +1,4 @@
-data "aws_iam_policy_document" "assume_role" {
+data "aws_iam_policy_document" "assume_role_lambda" {
   statement {
     effect = "Allow"
 
@@ -13,7 +13,7 @@ data "aws_iam_policy_document" "assume_role" {
 
 resource "aws_iam_role" "iam_for_lambda" {
   name               = "iam_for_lambda"
-  assume_role_policy = data.aws_iam_policy_document.assume_role.json
+  assume_role_policy = data.aws_iam_policy_document.assume_role_lambda.json
 }
 
 data "archive_file" "lambda" {
@@ -25,7 +25,7 @@ data "archive_file" "lambda" {
 resource "aws_lambda_function" "confirm_user_lambda" {
   filename         = "./../lambda-functions/user-confirmation-lambda.zip"
   function_name    = "userConfirmationLambda"
-  role          = aws_iam_role.iam_for_lambda.arn
+  role             = aws_iam_role.iam_for_ecs.arn
   handler          = "handler.lambda_handler"
   runtime          = "python3.8"
   source_code_hash = data.archive_file.lambda.output_base64sha256

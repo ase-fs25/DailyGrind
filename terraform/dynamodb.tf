@@ -1,70 +1,24 @@
 # DynamoDB Table for Users
 resource "aws_dynamodb_table" "users" {
   name           = "users"
-  hash_key       = "user_id"
-  billing_mode   = "PROVISIONED"
-  read_capacity  = 5
-  write_capacity = 5
+  billing_mode   = "PAY_PER_REQUEST"
+  hash_key       = "PK"
+  range_key      = "SK"
 
   attribute {
-    name = "user_id"
+    name = "PK"
     type = "S"
   }
 
   attribute {
-    name = "email"
+    name = "SK"
     type = "S"
-  }
-
-  attribute {
-    name = "firstName"
-    type = "S"
-  }
-
-  attribute {
-    name = "lastName"
-    type = "S"
-  }
-
-  attribute {
-    name = "location"
-    type = "S"
-  }
-
-  global_secondary_index {
-    name               = "email-index"
-    hash_key           = "email"
-    projection_type    = "ALL"
-    read_capacity      = 5
-    write_capacity     = 5
-  }
-
-  global_secondary_index {
-    name               = "firstName-index"
-    hash_key           = "firstName"
-    projection_type    = "ALL"
-    read_capacity      = 5
-    write_capacity     = 5
-  }
-
-  global_secondary_index {
-    name               = "lastName-index"
-    hash_key           = "lastName"
-    projection_type    = "ALL"
-    read_capacity      = 5
-    write_capacity     = 5
-  }
-
-  global_secondary_index {
-    name               = "location-index"
-    hash_key           = "location"
-    projection_type    = "ALL"
-    read_capacity      = 5
-    write_capacity     = 5
   }
 
   tags = {
-    Name = "users-table"
+    Name = "users-table",
+    Environment = "dev",
+    Project = "daily-grind"
   }
 }
 
