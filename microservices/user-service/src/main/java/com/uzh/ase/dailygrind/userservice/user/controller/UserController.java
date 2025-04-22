@@ -22,7 +22,12 @@ public class UserController {
         return userService.getUserDetailsById(userId);
     }
 
-    @GetMapping("/details")
+    @GetMapping("/me")
+    public UserDto getMyDetails(Principal principal) {
+        return userService.getUserDetailsById(principal.getName());
+    }
+
+    @GetMapping
     public List<UserDto> getUsersDetails() {
         return userService.getAllUserDetails();
     }
@@ -53,5 +58,25 @@ public class UserController {
         }
         userService.unfollowUser(userId, principal.getName());
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{userId}/followers")
+    public List<UserDto> getFollowers(@PathVariable String userId) {
+        return userService.getFollowers(userId);
+    }
+
+    @GetMapping("/{userId}/following")
+    public List<UserDto> getFollowing(@PathVariable String userId) {
+        return userService.getFollowing(userId);
+    }
+
+    @GetMapping("/followers")
+    public List<UserDto> getMyFollowers(Principal principal) {
+        return userService.getFollowers(principal.getName());
+    }
+
+    @GetMapping("/following")
+    public List<UserDto> getMyFollowing(Principal principal) {
+        return userService.getFollowing(principal.getName());
     }
 }

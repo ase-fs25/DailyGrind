@@ -44,4 +44,19 @@ public class UserService {
     public void unfollowUser(String toUnfollow, String follower) {
         userRepository.unfollowUser(toUnfollow, follower);
     }
+
+    public List<UserDto> getFollowers(String userId) {
+        List<String> followerIds = userRepository.findAllFollowers(userId);
+        return followerIds.stream()
+                .map(userRepository::findUserDetailsById)
+                .toList();
+    }
+
+    public List<UserDto> getFollowing(String userId) {
+        List<String> followingIds = userRepository.findAllFollowing(userId);
+        System.out.println("Following IDs: " + followingIds);
+        return followingIds.stream()
+                .map(userRepository::findUserDetailsById)
+                .toList();
+    }
 }

@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserRepository {
 
-    private final DynamoDbTable<UserEntity> table;
+    private final DynamoDbTable<UserEntity> userTable;
 
     private final DynamoDbTable<UserJobEntity> jobTable;
 
@@ -30,7 +30,7 @@ public class UserRepository {
      * @return the saved user entity
      */
     public UserEntity save(UserEntity user, List<UserJobEntity> userJobs, List<UserEducationEntity> userEducations) {
-        table.putItem(user);
+        userTable.putItem(user);
         userJobs.forEach(jobTable::putItem);
         userEducations.forEach(educationTable::putItem);
         return user;
@@ -42,12 +42,24 @@ public class UserRepository {
      * @param userId the ID of the user to find
      * @return the user entity if found, null otherwise
      */
+    public UserEntity findUserById(String userId) {
+        return userTable.getItem(r -> r.key(k -> k.partitionValue("USER#" + userId)));
+    }
+
+    /**
+     * Finds a user by their ID.
+     *
+     * @param userId the ID of the user to find
+     * @return the user entity if found, null otherwise
+     */
     public UserDto findUserDetailsById(String userId) {
 
-        UserEntity user = table.scan().items().stream().filter(item -> item.getSk().equals("USER#" + userId)).findFirst().orElse(null);
+        UserEntity user = userTable.scan().items().stream().filter(item -> item.getSk().equals("USER#" + userId) && !(item.getPk().endsWith("#FOLLOWER") || (item.getPk().endsWith("#FOLLOWING")))).findFirst().orElse(null);
         if (user == null) return null;
-        List<UserJobEntity> userJobs = jobTable.scan().items().stream().filter(item -> item.getSk().startsWith("JOB#")).toList();
-        List<UserEducationEntity> userEducations = educationTable.scan().items().stream().filter(item -> item.getSk().startsWith("EDUCATION#")).toList();
+        List<UserJobEntity> userJobs = jobTable.scan().items().stream().filter(item -> item.getPk().equals("USER#" + userId + "#JOB")).toList();
+        List<UserEducationEntity> userEducations = educationTable.scan().items().stream().filter(item -> item.getPk().equals("USER#" + userId + "#EDUCATION")).toList();
+
+        System.out.println(userJobs.size());
 
         List<UserJobEntity> jobs = userJobs.stream()
                 .filter(job -> job.getPk().startsWith(user.getPk()))
@@ -67,7 +79,7 @@ public class UserRepository {
      */
     public List<UserDto> findAllUserDetails() {
 
-       List<UserEntity> users = table.scan().items().stream().filter(item -> item.getSk().startsWith("USER#")).toList();
+       List<UserEntity> users = userTable.scan().items().stream().filter(item -> item.getSk().startsWith("USER#") && !(item.getPk().endsWith("#FOLLOWER") || (item.getPk().endsWith("#FOLLOWING")))).toList();
        List<UserJobEntity> userJobs = jobTable.scan().items().stream().filter(item -> item.getSk().startsWith("JOB#")).toList();
        List<UserEducationEntity> userEducations = educationTable.scan().items().stream().filter(item -> item.getSk().startsWith("EDUCATION#")).toList();
 
@@ -98,11 +110,11 @@ public class UserRepository {
         UserEntity toFollowEntity = UserEntity.builder()
                 .pk("USER#" + toFollow + "#FOLLOWER")
                 .sk("USER#" + follower).build();
-        table.putItem(toFollowEntity);
+        userTable.putItem(toFollowEntity);
         UserEntity followerEntity = UserEntity.builder()
                 .pk("USER#" + follower + "#FOLLOWING")
                 .sk("USER#" + toFollow ).build();
-        table.putItem(followerEntity);
+        userTable.putItem(followerEntity);
     }
 
     /**
@@ -115,10 +127,37 @@ public class UserRepository {
         UserEntity toUnfollowEntity = UserEntity.builder()
                 .pk("USER#" + toUnfollow + "#FOLLOWER")
                 .sk("USER#" + follower).build();
-        table.deleteItem(toUnfollowEntity);
+        userTable.deleteItem(toUnfollowEntity);
         UserEntity followerEntity = UserEntity.builder()
                 .pk("USER#" + follower + "#FOLLOWING")
                 .sk("USER#" + toUnfollow).build();
-        table.deleteItem(followerEntity);
+        userTable.deleteItem(followerEntity);
     }
+
+    /**
+     * Finds all users that a user is following.
+     *
+     * @param userId the ID of the user
+     * @return a list of user IDs that the user is following
+     */
+    public List<String> findAllFollowing(String userId) {
+        return userTable.scan().items().stream()
+                .filter(item -> item.getPk().equals("USER#" + userId + "#FOLLOWING"))
+                .map(userEntity -> userEntity.getSk().split("#")[1])
+                .toList();
+    }
+
+    /**
+     * Finds all followers of a user
+     *
+     * @param userId the ID of the user
+     * @return a list of user IDs that are following the user
+     */
+    public List<String> findAllFollowers(String userId) {
+        return userTable.scan().items().stream()
+                .filter(item -> item.getSk().startsWith("USER#" + userId + "#FOLLOWER"))
+                .map(userEntity -> userEntity.getSk().split("#")[1])
+                .toList();
+    }
+
 }
