@@ -1,7 +1,7 @@
-// eslint.config.js
 import js from '@eslint/js';
 import parser from '@typescript-eslint/parser';
 import plugin from '@typescript-eslint/eslint-plugin';
+import prettier from 'eslint-config-prettier';
 
 export default [
   js.configs.recommended,
@@ -32,4 +32,19 @@ export default [
       // Add custom rules if needed
     },
   },
+  {
+    // for test files
+    files: ['**/*.test.{ts,tsx,js,jsx}'],
+    languageOptions: {
+      globals: {
+        test: 'readonly',
+        expect: 'readonly',
+        describe: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        vi: 'readonly', // for Vitest's mocking
+      },
+    },
+  },
+  prettier,
 ];
