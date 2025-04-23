@@ -8,17 +8,18 @@
     "build": "tsc && vite build",
     "test": "vitest",
     "preview": "vite preview",
-    "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx src/",
     "prettier": "prettier --write .",
-    "prettier:check": "prettier --check 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
-    "type-check": "tsc --noEmit"
+    "prettier:check": "prettier --check .",
+    "type-check": "tsc --noEmit",
+    "clean": "rimraf dist .vite"
   },
   "dependencies": {
     "@aws-amplify/ui-react": "^6.9.5",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
-    "@mui/icons-material": "^6.4.8",
-    "@mui/material": "^6.4.8",
+    "@mui/icons-material": "^7.0.2",
+    "@mui/material": "^7.0.2",
     "aws-amplify": "^6.14.1",
     "moment": "^2.30.1",
     "react": "^19.0.0",
@@ -26,6 +27,7 @@
     "react-router-dom": "^7.3.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.25.1",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
@@ -34,17 +36,20 @@
     "@types/node": "^22.13.10",
     "@types/react": "^19.0.11",
     "@types/react-dom": "^19.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.31.0",
+    "@typescript-eslint/parser": "^8.31.0",
     "@typescript-eslint/typescript-estree": "^8.26.1",
     "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.25.1",
     "eslint-config-prettier": "^10.1.1",
-    "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-prettier": "^5.2.3",
     "prettier": "^3.5.3",
+    "rimraf": "^6.0.1",
     "typescript": "^5.8.2",
     "vite": "^6.2.2",
     "vite-plugin-eslint": "^1.8.1",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.0.9",
+    "vitest": "^3.1.2",
     "web-vitals": "^4.2.4"
   },
   "eslintConfig": {
@@ -64,5 +69,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "overrides": {
+    "@xstate/react": {
+      "react": "^19.0.0"
+    }
   }
 }

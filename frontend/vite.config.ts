@@ -7,6 +7,18 @@ export default defineConfig({
   // depending on your application, base can also be "/"
   base: '',
   plugins: [react(), viteTsconfigPaths(), eslint()],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Splits these large libraries into separate chunks
+          react: ['react', 'react-dom'],
+          mui: ['@mui/material', '@emotion/react', '@emotion/styled'],
+          amplify: ['aws-amplify', '@aws-amplify/ui-react'],
+        },
+      },
+    },
+  },
   server: {
     // this ensures that the browser opens upon server start
     open: true,
