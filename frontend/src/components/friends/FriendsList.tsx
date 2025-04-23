@@ -1,21 +1,44 @@
+import React, { useState } from 'react';
 import { Box, Card, CardContent, Avatar, Typography } from '@mui/material';
-import { mockFriends } from '../../mockData/mockFriends';
+import { mockProfiles } from '../../mockData/mockProfiles';
+import { mockPosts } from '../../mockData/mockPosts';
+import { Profile } from '../../types/profile';
+import { PostType } from '../../types/post';
+import FriendPopup from '../common/FriendPopup';
 import '../../styles/components/friends/friendList.css';
 
 const FriendsList = () => {
-  // TODO: Replace 'mockFriends' with a backend API call to fetch the user's friends list.
+  const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = (profile: Profile) => {
+    setSelectedProfile(profile);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setSelectedProfile(null);
+    setOpen(false);
+  };
+
+  const userPosts: PostType[] = selectedProfile
+    ? mockPosts.filter((post) => post.user_id === String(selectedProfile.userId)).slice(0, 2)
+    : [];
+
   return (
     <Box className="friends-list-container">
-      {mockFriends.map((friend) => (
-        <Card key={friend.userId} className="friend-card">
-          <Avatar src={friend.profilePicture} className="friend-avatar" />
+      {mockProfiles.map((profile) => (
+        <Card key={profile.userId} className="friend-card" onClick={() => handleOpen(profile)}>
+          <Avatar src={profile.profileInfo.profilePicture} className="friend-avatar" />
           <CardContent className="friend-card-content">
             <Typography variant="h6" className="friend-username">
-              {friend.username}
+              {profile.username}
             </Typography>
           </CardContent>
         </Card>
       ))}
+
+      <FriendPopup open={open} onClose={handleClose} profile={selectedProfile} posts={userPosts} />
     </Box>
   );
 };
