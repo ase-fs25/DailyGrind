@@ -18,7 +18,7 @@ self.addEventListener('push', (event) => {
   const title = notificationData.title || 'DailyGrind Reminder';
 
   const options = {
-    body: notificationData.body || 'Hey there! It\'s 12pm – time to share your thoughts!',
+    body: notificationData.body || "Hey there! It's 12pm – time to share your thoughts!",
     icon: 'https://via.placeholder.com/128',
     badge: 'https://via.placeholder.com/64',
     timestamp: notificationData.timestamp ? parseInt(notificationData.timestamp) : Date.now(),

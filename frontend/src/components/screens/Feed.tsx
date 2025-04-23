@@ -1,15 +1,19 @@
 import { Box, Typography, Card } from '@mui/material';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import Header from '../common/Header';
 import { mockPosts } from '../../mockData/mockPosts';
-//import {mockVapidKeys} from "../../mockData/mockVapidKeys";
+// import {mockVapidKeys} from "../../mockData/mockVapidKeys";
 import { requestNotificationPermission, subscribeUserToPush } from '../../helpers/pushNotificationHelpers';
 import '../../styles/components/screens/screen.css';
 import '../../styles/components/screens/feed.css';
 
 const Feed = () => {
+  const initialized = useRef(false);
   useEffect(() => {
+    if (initialized.current) return;
+    initialized.current = true;
+
     console.log('Service Worker Registration');
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker
@@ -27,9 +31,7 @@ const Feed = () => {
           }
           return null;
         })
-        .then((subscription) => {
-          console.log('Subscription Object: ', subscription);
-        })
+        .then((subscription) => {})
         .catch((error) => console.error('Service worker or notification error:', error));
     }
   }, []);

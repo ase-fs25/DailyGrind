@@ -1,4 +1,5 @@
 import { mockVapidKeys } from '../mockData/mockVapidKeys';
+import { fetchAuthSession } from 'aws-amplify/auth';
 
 export const requestNotificationPermission = async (): Promise<string> => {
   return new Promise(function (resolve, reject) {
@@ -33,13 +34,9 @@ export const subscribeUserToPush = async () => {
       };
       subscription = await registration.pushManager.subscribe(subscribeOptions);
       console.log('Created new PushSubscription: ', JSON.stringify(subscription));
-
-      /*
-            if (subscription) {
-                await sendSubscriptionToBackend(subscription);
-            }
-
-            */
+      if (subscription) {
+        await saveSubscription(subscription);
+      }
     }
     return subscription;
   } catch (error) {
@@ -47,28 +44,41 @@ export const subscribeUserToPush = async () => {
   }
 };
 
-/*
- * TODO: Implement the Endpoint in the backend
-export const sendSubscriptionToBackend = async (subscription: PushSubscription): Promise<boolean> => {
+/* TODO: Implement the Endpoint in the backend*/
+export const saveSubscription = async (subscription: PushSubscription): Promise<boolean> => {
+  try {
+    let authToken = null;
     try {
-        const response = await fetch('API_ENDPOINT/subscribe', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(subscription),
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to send subscription to server');
-        }
-
-        console.log('Successfully sent subscription to server');
-        return true;
-    } catch (error) {
-        console.error('Error sending subscription to server:', error);
-        return false;
+      const session = await fetchAuthSession();
+      authToken = session.tokens?.accessToken.toString();
+      console.log('auth token: ', authToken);
+    } catch (e) {
+      console.error('Failed to fetch auth token: ', e);
+      return false;
     }
-};
 
- */
+    if (!authToken) {
+      console.error('User is not authenticated');
+      return false;
+    }
+
+    const response = await fetch('http://localhost:8082/push-notifications/subscribe', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`,
+      },
+      body: JSON.stringify(subscription),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to send subscription: ${response.status} ${response.statusText}`);
+    }
+
+    console.log('Successfully sent subscription to server');
+    return true;
+  } catch (error) {
+    console.error('Error sending subscription to server:', error);
+    return false;
+  }
+};

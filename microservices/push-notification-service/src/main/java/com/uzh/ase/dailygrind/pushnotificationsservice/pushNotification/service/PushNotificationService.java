@@ -55,7 +55,7 @@ public void sendNotification(String message) {
             Map<String, Object> payload = new HashMap<>();
             payload.put("subscription", subscriptionDto);
             payload.put("message", new HashMap<String, String>(){{
-                put("title", "New Notification");
+                put("title", "DailyGrind Reminder");
                 put("body", message.replaceAll("^\"|\"$", ""));
                 put("timestamp", String.valueOf(System.currentTimeMillis()));
             }});
