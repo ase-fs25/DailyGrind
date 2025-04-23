@@ -27,7 +27,7 @@ public interface UserMapper {
     }
 
     @Mapping(target = "pk", expression = "java(generateId(UserEntity.ID_NAME, null, userId))")
-    @Mapping(target = "sk", expression = "java(generateId(UserEntity.ID_NAME, null, userId))")
+    @Mapping(target = "sk", expression = "java(generateId(UserEntity.ID_NAME, null, userEntity.build().getPk()))")
     UserEntity toUserEntity(String userId, UserDto createUserDto);
 
     @Mapping(target = "pk", expression = "java(generateId(UserEntity.ID_NAME, UserJobEntity.ID_NAME, userId))")
