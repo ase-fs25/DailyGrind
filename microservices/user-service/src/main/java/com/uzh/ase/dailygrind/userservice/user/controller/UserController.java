@@ -38,7 +38,21 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
-    @PostMapping("follow/{userId}")
+    @GetMapping("/{userId}/is-following")
+    public ResponseEntity<Boolean> isFollowing(@PathVariable String userId, Principal principal) {
+        if (principal.getName().equals(userId)) return ResponseEntity.ok(false);
+        boolean isFollowing = userService.isFollowing(userId, principal.getName());
+        return ResponseEntity.ok(isFollowing);
+    }
+
+    @GetMapping("/{userId}/is-followed")
+    public ResponseEntity<Boolean> isFollowed(@PathVariable String userId, Principal principal) {
+        if (principal.getName().equals(userId)) return ResponseEntity.ok(false);
+        boolean isFollowed = userService.isFollowing(principal.getName(), userId);
+        return ResponseEntity.ok(isFollowed);
+    }
+
+    @PostMapping("/{userId}/follow")
     public ResponseEntity<?> followUser(@PathVariable String userId, Principal principal) {
         if (principal.getName().equals(userId)) {
             return ResponseEntity
@@ -49,7 +63,7 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("unfollow/{userId}")
+    @DeleteMapping("/{userId}/unfollow")
     public ResponseEntity<?> unfollowUser(@PathVariable String userId, Principal principal) {
         if (principal.getName().equals(userId)) {
             return ResponseEntity

@@ -54,9 +54,13 @@ public class UserService {
 
     public List<UserDto> getFollowing(String userId) {
         List<String> followingIds = userRepository.findAllFollowing(userId);
-        System.out.println("Following IDs: " + followingIds);
         return followingIds.stream()
                 .map(userRepository::findUserDetailsById)
                 .toList();
+    }
+
+    public boolean isFollowing(String follower, String following) {
+        List<String> followingIds = userRepository.findAllFollowing(follower);
+        return followingIds.contains(following);
     }
 }
