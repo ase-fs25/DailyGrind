@@ -1,4 +1,4 @@
-# Schedule notification Lambda function
+# Schedule notification Lambda triggers the daily reminder
 data "archive_file" "schedule_notification_lambda" {
   type        = "zip"
   source_dir  = "./../lambda-functions/schedule-notification-lambda/src"
@@ -21,22 +21,21 @@ resource "aws_lambda_function" "schedule_notification_lambda" {
   }
 }
 
-# Basic Lambda execution policy attachment for the existing role
 resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
   role       = aws_iam_role.iam_for_lambda.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
-# EventBridge rule to trigger Lambda every day at 12:00 PM
+# Rule to trigger Lambda every day at 12:00 PM
 resource "aws_cloudwatch_event_rule" "daily_notification_trigger" {
   name                = "DailyNotificationTrigger"
   description         = "Triggers push notification service daily at 12:00 PM"
   #schedule_expression = "cron(0 12 * * ? *)" #for production
   schedule_expression = "rate(1 minute)" #for testing
-  state = "ENABLED"
+  state = "DISABLE"
 }
 
-# Target to connect EventBridge rule to Lambda function
+# Target to connect EventBridge rule
 resource "aws_cloudwatch_event_target" "notification_lambda_target" {
   rule      = aws_cloudwatch_event_rule.daily_notification_trigger.name
   target_id = "ScheduleNotificationLambda"

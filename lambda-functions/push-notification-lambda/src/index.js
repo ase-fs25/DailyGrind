@@ -11,10 +11,8 @@ exports.handler = async (event, context) => {
 
         console.log('Event received:', JSON.stringify(event));
 
-        // Process payload whether it's in body or direct
         let payload;
         if (event.body) {
-            // Handle case when payload is wrapped in body field
             try {
                 payload = typeof event.body === 'string' ? JSON.parse(event.body) : event.body;
             } catch (e) {

@@ -12,7 +12,7 @@ dg:
       cognito:
         user-pool-id: ${AWS_COGNITO_USER_POOL_ID:us-east-1_4b4264f9c02e43e5b2c204b8d7f55fb2}
         issuer-uri: http://localhost.localstack.cloud:${dg.us.aws.port}/${dg.us.aws.cognito.user-pool-id}
-        jwk-set-uri: http://localhost:${dg.us.aws.port}/${dg.us.aws.cognito.user-pool-id}/.well-known/jwks.json
+        jwk-set-uri: http://localhost.localstack.cloud:${dg.us.aws.port}/${dg.us.aws.cognito.user-pool-id}/.well-known/jwks.json
 
 spring:
   application:
@@ -23,7 +23,6 @@ spring:
         jwt:
           issuer-uri: ${dg.us.aws.cognito.issuer-uri}
           jwk-set-uri: ${dg.us.aws.cognito.jwk-set-uri}
-
 server:
   port: ${PORT:8082}
 

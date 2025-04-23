@@ -4,7 +4,6 @@ exports.handler = async (event) => {
     try {
         console.log('Starting scheduled notification trigger');
 
-        // Configure based on environment variables
         const options = {
             hostname: process.env.API_HOSTNAME,
             port: parseInt(process.env.API_PORT),
@@ -17,10 +16,8 @@ exports.handler = async (event) => {
 
         console.log(`Sending request to: ${options.hostname}:${options.port}${options.path}`);
 
-        // Daily notification payload
-        const postData = "Test push through the eventBridge";
+        const message = "It's 12pm, time for your daily PoK!";
 
-        // Make HTTP request to push notification endpoint
         const response = await new Promise((resolve, reject) => {
             const req = http.request(options, (res) => {
                 let data = '';
@@ -42,7 +39,7 @@ exports.handler = async (event) => {
                 reject(error);
             });
 
-            req.write(postData);
+            req.write(message);
             req.end();
         });
 

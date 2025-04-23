@@ -41,14 +41,13 @@ public class SubscriptionDtoConverter implements DynamoDBTypeConverter<String, S
 
             System.out.println("Raw input: " + json);
 
-            // Check if the input is a wrapped binary representation
+            // prepare data
             if (json.contains("\"bytes\"") && json.contains("\"type\":\"Buffer\"")) {
                 try {
-                    // Parse the outer JSON structure
                     JsonNode node = objectMapper.readTree(json);
-                    // Extract the data array from the binary representation
+
                     byte[] bytes = objectMapper.convertValue(node.path("bytes").path("data"), byte[].class);
-                    // Convert bytes back to String
+
                     json = new String(bytes, StandardCharsets.UTF_8);
                     System.out.println("Extracted JSON from bytes: " + json);
                 } catch (Exception e) {
@@ -56,12 +55,13 @@ public class SubscriptionDtoConverter implements DynamoDBTypeConverter<String, S
                 }
             }
 
-            // Now parse the actual subscription JSON
+            // parse the subscription JSON
             SubscriptionDto result = objectMapper.readValue(json, SubscriptionDto.class);
             System.out.println("Successfully parsed SubscriptionDto with endpoint: " +
                     (result.endpoint() != null ? result.endpoint() : "null"));
 
             return result;
+
         } catch (JsonProcessingException e) {
             System.err.println("Error parsing JSON: " + json);
             System.err.println("Error details: " + e.getMessage());

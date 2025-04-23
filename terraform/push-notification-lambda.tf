@@ -1,4 +1,4 @@
-# Push-Notification Lambda Function
+# Push-Notification Lambda sends message to respective endpoint
 data "archive_file" "push_notification_lambda" {
   type       = "zip"
   source_dir  = "./../lambda-functions/push-notification-lambda/src"
