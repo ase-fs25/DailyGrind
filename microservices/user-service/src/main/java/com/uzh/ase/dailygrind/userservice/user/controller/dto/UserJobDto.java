@@ -1,10 +1,9 @@
 package com.uzh.ase.dailygrind.userservice.user.controller.dto;
 
-public record UserEducationDTO(
-        String educationId,
-        String schoolName,
-        String degree,
-        String fieldOfStudy,
+public record UserJobDto(
+        String jobId,
+        String jobTitle,
+        String companyName,
         String startDate,
         String endDate,
         String location,

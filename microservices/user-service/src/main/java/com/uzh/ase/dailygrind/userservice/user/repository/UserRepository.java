@@ -160,4 +160,29 @@ public class UserRepository {
                 .toList();
     }
 
+    public void deleteUserJob(String userId, String jobId) {
+        UserJobEntity userJobEntity = UserJobEntity.builder()
+                .pk(UserEntity.ID_NAME + "#" + userId + "#" + UserJobEntity.ID_NAME)
+                .sk(UserJobEntity.ID_NAME + "#" + jobId).build();
+        jobTable.deleteItem(userJobEntity);
+    }
+
+    public void deleteUserEducation(String userId, String educationId) {
+        UserEducationEntity userEducationEntity = UserEducationEntity.builder()
+                .pk(UserEntity.ID_NAME + "#" + userId + "#" + UserEducationEntity.ID_NAME)
+                .sk(UserEducationEntity.ID_NAME + "#" + educationId).build();
+        educationTable.deleteItem(userEducationEntity);
+    }
+
+    public List<UserJobEntity> findJobsForUser(String userId) {
+        return jobTable.scan().items().stream()
+                .filter(userJobEntity -> userJobEntity.getPk().equals(UserEntity.ID_NAME + "#" + userId + "#" + UserJobEntity.ID_NAME))
+                .toList();
+    }
+
+    public List<UserEducationEntity> findEducationForUser(String userId) {
+        return educationTable.scan().items().stream()
+                .filter(userEducationEntity -> userEducationEntity.getPk().equals(UserEntity.ID_NAME + "#" + userId + "#" + UserEducationEntity.ID_NAME))
+                .toList();
+    }
 }

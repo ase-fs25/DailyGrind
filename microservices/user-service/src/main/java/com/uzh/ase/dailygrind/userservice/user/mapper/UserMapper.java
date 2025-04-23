@@ -1,8 +1,8 @@
 package com.uzh.ase.dailygrind.userservice.user.mapper;
 
 import com.uzh.ase.dailygrind.userservice.user.controller.dto.UserDto;
-import com.uzh.ase.dailygrind.userservice.user.controller.dto.UserEducationDTO;
-import com.uzh.ase.dailygrind.userservice.user.controller.dto.UserJobDTO;
+import com.uzh.ase.dailygrind.userservice.user.controller.dto.UserEducationDto;
+import com.uzh.ase.dailygrind.userservice.user.controller.dto.UserJobDto;
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserEducationEntity;
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserEntity;
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserJobEntity;
@@ -38,20 +38,27 @@ public interface UserMapper {
     @Mapping(target = "companyName", source = "job.companyName")
     @Mapping(target = "jobLocation", source = "job.location")
     @Mapping(target = "jobDescription", source = "job.description")
-    UserJobEntity toJobEntity(String userId, UserJobDTO job);
+    UserJobEntity toJobEntity(String userId, UserJobDto job);
 
     @Mapping(target = "pk", expression = "java(this.generateId(UserEntity.ID_NAME, UserEducationEntity.ID_NAME, userId))")
     @Mapping(target = "sk", expression = "java(this.generateId(UserEducationEntity.ID_NAME, null, education.educationId()))")
-    UserEducationEntity toEducationEntity(String userId, UserEducationDTO education);
+    @Mapping(target = "degree", source = "education.degree")
+    @Mapping(target = "institution", source = "education.institution")
+    @Mapping(target = "startDate", source = "education.educationStartDate")
+    @Mapping(target = "endDate", source = "education.educationEndDate")
+    @Mapping(target = "fieldOfStudy", source = "education.fieldOfStudy")
+    @Mapping(target = "location", source = "education.educationLocation")
+    @Mapping(target = "description", source = "education.educationDescription")
+    UserEducationEntity toEducationEntity(String userId, UserEducationDto education);
 
-    default List<UserJobEntity> toJobEntities(String userId, List<UserJobDTO> jobs) {
+    default List<UserJobEntity> toJobEntities(String userId, List<UserJobDto> jobs) {
         if (jobs == null) return List.of();
         return jobs.stream()
                 .map(job -> toJobEntity(userId, job))
                 .toList();
     }
 
-    default List<UserEducationEntity> toEducationEntities(String userId, List<UserEducationDTO> education) {
+    default List<UserEducationEntity> toEducationEntities(String userId, List<UserEducationDto> education) {
         if (education == null) return List.of();
         return education.stream()
                 .map(edu -> toEducationEntity(userId, edu))
@@ -64,8 +71,8 @@ public interface UserMapper {
     @Mapping(target = "lastName", source = "userEntity.lastName")
     @Mapping(target = "birthday", source = "userEntity.birthday")
     @Mapping(target = "location", source = "userEntity.location")
-    @Mapping(target = "jobs", source = "userJobEntities", qualifiedByName = "toUserJobDTOs")
-    @Mapping(target = "education", source = "userEducationEntities", qualifiedByName = "toUserEducationDTOs")
+    @Mapping(target = "jobs", source = "userJobEntities", qualifiedByName = "toUserJobDtos")
+    @Mapping(target = "education", source = "userEducationEntities", qualifiedByName = "toUserEducationDtos")
     UserDto toUserDto(UserEntity userEntity, List<UserJobEntity> userJobEntities, List<UserEducationEntity> userEducationEntities);
 
     @Mapping(target = "jobId", expression = "java(userJobEntity.getSk().split(\"#\")[1])")
@@ -75,24 +82,31 @@ public interface UserMapper {
     @Mapping(target = "companyName", source = "userJobEntity.companyName")
     @Mapping(target = "location", source = "userJobEntity.jobLocation")
     @Mapping(target = "description", source = "userJobEntity.jobDescription")
-    UserJobDTO toUserJobDTO(UserJobEntity userJobEntity);
+    UserJobDto toUserJobDto(UserJobEntity userJobEntity);
 
     @Mapping(target = "educationId", expression = "java(userEducationEntity.getSk().split(\"#\")[1])")
-    UserEducationDTO toUserEducationDTO(UserEducationEntity userEducationEntity);
+    @Mapping(target = "degree", source = "userEducationEntity.degree")
+    @Mapping(target = "institution", source = "userEducationEntity.institution")
+    @Mapping(target = "educationStartDate", source = "userEducationEntity.startDate")
+    @Mapping(target = "educationEndDate", source = "userEducationEntity.endDate")
+    @Mapping(target = "fieldOfStudy", source = "userEducationEntity.fieldOfStudy")
+    @Mapping(target = "educationLocation", source = "userEducationEntity.location")
+    @Mapping(target = "educationDescription", source = "userEducationEntity.description")
+    UserEducationDto toUserEducationDto(UserEducationEntity userEducationEntity);
 
-    @Named("toUserJobDTOs")
-    default List<UserJobDTO> toUserJobDTOs(List<UserJobEntity> userJobEntities) {
+    @Named("toUserJobDtos")
+    default List<UserJobDto> toUserJobDtos(List<UserJobEntity> userJobEntities) {
         if (userJobEntities == null) return List.of();
         return userJobEntities.stream()
-                .map(this::toUserJobDTO)
+                .map(this::toUserJobDto)
                 .toList();
     }
 
-    @Named("toUserEducationDTOs")
-    default List<UserEducationDTO> toUserEducationDTOs(List<UserEducationEntity> userEducationEntities) {
+    @Named("toUserEducationDtos")
+    default List<UserEducationDto> toUserEducationDtos(List<UserEducationEntity> userEducationEntities) {
         if (userEducationEntities == null) return List.of();
         return userEducationEntities.stream()
-                .map(this::toUserEducationDTO)
+                .map(this::toUserEducationDto)
                 .toList();
     }
 }

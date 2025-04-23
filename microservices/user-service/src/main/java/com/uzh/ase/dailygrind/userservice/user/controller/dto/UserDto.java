@@ -9,7 +9,7 @@ public record UserDto(
         String lastName,
         String birthday,
         String location,
-        List<UserJobDTO> jobs,
-        List<UserEducationDTO> education
+        List<UserJobDto> jobs,
+        List<UserEducationDto> education
 ) {
 }

@@ -1,6 +1,8 @@
 package com.uzh.ase.dailygrind.userservice.user.service;
 
 import com.uzh.ase.dailygrind.userservice.user.controller.dto.UserDto;
+import com.uzh.ase.dailygrind.userservice.user.controller.dto.UserEducationDto;
+import com.uzh.ase.dailygrind.userservice.user.controller.dto.UserJobDto;
 import com.uzh.ase.dailygrind.userservice.user.mapper.UserMapper;
 import com.uzh.ase.dailygrind.userservice.user.repository.UserRepository;
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserEducationEntity;
@@ -64,5 +66,23 @@ public class UserService {
     public boolean isFollowing(String follower, String following) {
         List<String> followingIds = userRepository.findAllFollowing(follower);
         return followingIds.contains(following);
+    }
+
+    public void deleteUserJob(String userId, String jobId) {
+        userRepository.deleteUserJob(userId, jobId);
+    }
+
+    public void deleteUserEducation(String userId, String educationId) {
+        userRepository.deleteUserEducation(userId, educationId);
+    }
+
+    public List<UserJobDto> getJobsForUser(String userId) {
+        List<UserJobEntity> userJobEntities = userRepository.findJobsForUser(userId);
+        return userMapper.toUserJobDtos(userJobEntities);
+    }
+
+    public List<UserEducationDto> getEducationForUser(String userId) {
+        List<UserEducationEntity> userEducationEntities = userRepository.findEducationForUser(userId);
+        return userMapper.toUserEducationDtos(userEducationEntities);
     }
 }

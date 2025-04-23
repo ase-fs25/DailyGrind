@@ -20,9 +20,12 @@ public class UserEducationEntity {
     private String sk;  // EDUCATION#<educationID>
 
     private String institution;
+    private String location;
     private String degree;
+    private String fieldOfStudy;
     private String startDate;
     private String endDate;
+    private String description;
 
     @DynamoDbPartitionKey
     @DynamoDbAttribute("PK")
