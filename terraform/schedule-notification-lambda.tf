@@ -32,7 +32,7 @@ resource "aws_cloudwatch_event_rule" "daily_notification_trigger" {
   description         = "Triggers push notification service daily at 12:00 PM"
   #schedule_expression = "cron(0 12 * * ? *)" #for production
   schedule_expression = "rate(1 minute)" #for testing
-  state = "DISABLE"
+  state = "ENABLED"
 }
 
 # Target to connect EventBridge rule

@@ -16,7 +16,7 @@ exports.handler = async (event) => {
 
         console.log(`Sending request to: ${options.hostname}:${options.port}${options.path}`);
 
-        const message = "It's 12pm, time for your daily PoK!";
+        const message = "Hey there! It's 12pm – time to share your knowledge!";
 
         const response = await new Promise((resolve, reject) => {
             const req = http.request(options, (res) => {

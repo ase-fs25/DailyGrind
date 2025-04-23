@@ -1,16 +1,3 @@
-// self.addEventListener('push', (event) => {
-//
-//   console.log("push event received");
-//   const data = event.data ? event.data.text() : 'This is a push notification text';
-//   const options = {
-//     body: data,
-//     icon: 'https://via.placeholder.com/128', // placeholder icon
-//     badge: 'https://via.placeholder.com/64', // placeholder badge
-//   };
-//
-//   event.waitUntil(self.registration.showNotification('Push Notification', options));
-// });
-
 self.addEventListener('push', (event) => {
   console.log('Push event received');
 
@@ -28,10 +15,10 @@ self.addEventListener('push', (event) => {
     };
   }
 
-  const title = notificationData.title || 'Push Notification';
+  const title = notificationData.title || 'DailyGrind Reminder';
 
   const options = {
-    body: notificationData.body || 'No message content',
+    body: notificationData.body || 'Hey there! It\'s 12pm – time to share your thoughts!',
     icon: 'https://via.placeholder.com/128',
     badge: 'https://via.placeholder.com/64',
     timestamp: notificationData.timestamp ? parseInt(notificationData.timestamp) : Date.now(),
