@@ -47,6 +47,7 @@ public class UserService {
 
     public List<UserDto> getFollowers(String userId) {
         List<String> followerIds = userRepository.findAllFollowers(userId);
+        followerIds.forEach(System.out::println);
         return followerIds.stream()
                 .map(userRepository::findUserDetailsById)
                 .toList();
@@ -54,6 +55,7 @@ public class UserService {
 
     public List<UserDto> getFollowing(String userId) {
         List<String> followingIds = userRepository.findAllFollowing(userId);
+        followingIds.forEach(System.out::println);
         return followingIds.stream()
                 .map(userRepository::findUserDetailsById)
                 .toList();

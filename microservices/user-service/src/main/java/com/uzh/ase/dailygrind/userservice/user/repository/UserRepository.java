@@ -142,7 +142,7 @@ public class UserRepository {
      */
     public List<String> findAllFollowing(String userId) {
         return userTable.scan().items().stream()
-                .filter(item -> item.getPk().equals(UserEntity.ID_NAME + "+" + userId + "#FOLLOWING"))
+                .filter(userEntity -> userEntity.getPk().equals(UserEntity.ID_NAME + "#" + userId + "#FOLLOWING"))
                 .map(userEntity -> userEntity.getSk().split("#")[1])
                 .toList();
     }
@@ -155,7 +155,7 @@ public class UserRepository {
      */
     public List<String> findAllFollowers(String userId) {
         return userTable.scan().items().stream()
-                .filter(item -> item.getSk().startsWith(UserEntity.ID_NAME + "#" + userId + "#FOLLOWER"))
+                .filter(userEntity -> userEntity.getPk().equals(UserEntity.ID_NAME + "#" + userId + "#FOLLOWER"))
                 .map(userEntity -> userEntity.getSk().split("#")[1])
                 .toList();
     }
