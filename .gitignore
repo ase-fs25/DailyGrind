@@ -15,3 +15,6 @@ localstack-data/
 # Ignore other common files
 node_modules/
 *.env
+
+
+docker-compose.override.yaml
