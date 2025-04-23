@@ -8,6 +8,7 @@ import '@aws-amplify/ui-react/styles.css';
 import Feed from './components/screens/Feed';
 import Posts from './components/screens/Posts';
 import Friends from './components/screens/Friends';
+import Registration from './components/login/Registration';
 
 Amplify.configure({
   Auth: {
@@ -47,6 +48,7 @@ function App() {
           <Route path="/" element={<Feed />} />
           <Route path="/posts" element={<Posts />} />
           <Route path="/friends" element={<Friends />} />
+          <Route path="/registration" element={<Registration />} />
         </Routes>
       </div>
     </Authenticator>

@@ -1,5 +1,7 @@
 import { Profile, ProfileInfo } from '../types/profile';
 
+// TODO Change the structure so that it matches the one from Postman
+// TODO Change getters and setters to use the new structure
 class ProfileStore {
   private profile: Profile = {
     userId: 0,

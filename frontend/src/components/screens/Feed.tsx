@@ -4,8 +4,37 @@ import Header from '../common/Header';
 import { mockPosts } from '../../mockData/mockPosts';
 import '../../styles/components/screens/screen.css';
 import '../../styles/components/screens/feed.css';
+import { useEffect } from 'react';
+import { fetchAuthSession } from 'aws-amplify/auth';
+import { useNavigate } from 'react-router-dom';
 
 const Feed = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // TODO Only check this once when the user is logged in
+    (async () => {
+      try {
+        const session = await fetchAuthSession();
+        const authToken = session.tokens?.accessToken.toString();
+
+        const res = await fetch('http://localhost:8080/users/me', {
+          headers: { Authorization: 'Bearer ' + authToken! },
+        });
+        const { exists } = await res.json();
+
+        if (exists) {
+          // TODO Put user information in profile storage (with the new setters)
+          console.log('User exists');
+        } else {
+          navigate('/registration', { replace: true });
+        }
+      } catch (e) {
+        console.error('post‑auth check failed', e);
+      }
+    })();
+  }, [navigate]);
+
   const formatDate = (timestamp: string) => {
     const date = new Date(timestamp);
     return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1)

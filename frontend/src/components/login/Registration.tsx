@@ -13,6 +13,13 @@ const Registration = () => {
   const [error, setError] = useState('');
 
   const handleRegister = () => {
+    // TODO Create user in our backend and store data there as well as store it locally in profile storage
+
+    // Implement 5 fields for email, first name, last name, location, and birthday
+
+    // On register: Make createUser api call with the object (like in Postman, leave job array empty for now)
+
+    // Place all the data in the profile storage (with all the new setters)
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;

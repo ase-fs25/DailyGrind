@@ -1,3 +1,5 @@
+// TODO Change the structure so that it matches the one from Postman
+
 export interface Profile {
   userId: number;
   username: string;
