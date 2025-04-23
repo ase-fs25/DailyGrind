@@ -13,7 +13,10 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortK
 @AllArgsConstructor
 @Builder
 public class UserEducationEntity {
-    private String pk;  // USER#<userID>
+
+    public static final String ID_NAME = "EDUCATION";
+
+    private String pk;  // USER#<userID>#EDUCATION
     private String sk;  // EDUCATION#<educationID>
 
     private String institution;

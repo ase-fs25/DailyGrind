@@ -43,7 +43,7 @@ public class UserRepository {
      * @return the user entity if found, null otherwise
      */
     public UserEntity findUserById(String userId) {
-        return userTable.getItem(r -> r.key(k -> k.partitionValue("USER#" + userId)));
+        return userTable.getItem(r -> r.key(k -> k.partitionValue(UserEntity.ID_NAME + "#" + userId)));
     }
 
     /**
@@ -54,10 +54,10 @@ public class UserRepository {
      */
     public UserDto findUserDetailsById(String userId) {
 
-        UserEntity user = userTable.scan().items().stream().filter(item -> item.getSk().equals("USER#" + userId) && !(item.getPk().endsWith("#FOLLOWER") || (item.getPk().endsWith("#FOLLOWING")))).findFirst().orElse(null);
+        UserEntity user = userTable.scan().items().stream().filter(item -> item.getSk().equals(UserEntity.ID_NAME + "#" + userId) && !(item.getPk().endsWith("#FOLLOWER") || (item.getPk().endsWith("#FOLLOWING")))).findFirst().orElse(null);
         if (user == null) return null;
-        List<UserJobEntity> userJobs = jobTable.scan().items().stream().filter(item -> item.getPk().equals("USER#" + userId + "#JOB")).toList();
-        List<UserEducationEntity> userEducations = educationTable.scan().items().stream().filter(item -> item.getPk().equals("USER#" + userId + "#EDUCATION")).toList();
+        List<UserJobEntity> userJobs = jobTable.scan().items().stream().filter(item -> item.getPk().equals(UserEntity.ID_NAME + "#" + userId + "#" + UserJobEntity.ID_NAME)).toList();
+        List<UserEducationEntity> userEducations = educationTable.scan().items().stream().filter(item -> item.getPk().equals(UserEntity.ID_NAME + "#" + userId + "#" + UserEducationEntity.ID_NAME)).toList();
 
         System.out.println(userJobs.size());
 
@@ -79,9 +79,9 @@ public class UserRepository {
      */
     public List<UserDto> findAllUserDetails() {
 
-       List<UserEntity> users = userTable.scan().items().stream().filter(item -> item.getSk().startsWith("USER#") && !(item.getPk().endsWith("#FOLLOWER") || (item.getPk().endsWith("#FOLLOWING")))).toList();
-       List<UserJobEntity> userJobs = jobTable.scan().items().stream().filter(item -> item.getSk().startsWith("JOB#")).toList();
-       List<UserEducationEntity> userEducations = educationTable.scan().items().stream().filter(item -> item.getSk().startsWith("EDUCATION#")).toList();
+       List<UserEntity> users = userTable.scan().items().stream().filter(item -> item.getSk().startsWith(UserEntity.ID_NAME) && !(item.getPk().endsWith("#FOLLOWER") || (item.getPk().endsWith("#FOLLOWING")))).toList();
+       List<UserJobEntity> userJobs = jobTable.scan().items().stream().filter(item -> item.getSk().startsWith(UserJobEntity.ID_NAME)).toList();
+       List<UserEducationEntity> userEducations = educationTable.scan().items().stream().filter(item -> item.getSk().startsWith(UserEducationEntity.ID_NAME)).toList();
 
        List<UserDto> userDtos = new ArrayList<>();
 
@@ -108,12 +108,12 @@ public class UserRepository {
      */
     public void followUser(String toFollow, String follower) {
         UserEntity toFollowEntity = UserEntity.builder()
-                .pk("USER#" + toFollow + "#FOLLOWER")
-                .sk("USER#" + follower).build();
+                .pk(UserEntity.ID_NAME + "#" + toFollow + "#FOLLOWER")
+                .sk(UserEntity.ID_NAME + "#" + follower).build();
         userTable.putItem(toFollowEntity);
         UserEntity followerEntity = UserEntity.builder()
-                .pk("USER#" + follower + "#FOLLOWING")
-                .sk("USER#" + toFollow ).build();
+                .pk(UserEntity.ID_NAME + "#" + follower + "#FOLLOWING")
+                .sk(UserEntity.ID_NAME + "#" + toFollow ).build();
         userTable.putItem(followerEntity);
     }
 
@@ -125,12 +125,12 @@ public class UserRepository {
      */
     public void unfollowUser(String toUnfollow, String follower) {
         UserEntity toUnfollowEntity = UserEntity.builder()
-                .pk("USER#" + toUnfollow + "#FOLLOWER")
-                .sk("USER#" + follower).build();
+                .pk(UserEntity.ID_NAME + "#" + toUnfollow + "#FOLLOWER")
+                .sk(UserEntity.ID_NAME + "#" + follower).build();
         userTable.deleteItem(toUnfollowEntity);
         UserEntity followerEntity = UserEntity.builder()
-                .pk("USER#" + follower + "#FOLLOWING")
-                .sk("USER#" + toUnfollow).build();
+                .pk(UserEntity.ID_NAME + "#" + follower + "#FOLLOWING")
+                .sk(UserEntity.ID_NAME + "#" + toUnfollow).build();
         userTable.deleteItem(followerEntity);
     }
 
@@ -142,7 +142,7 @@ public class UserRepository {
      */
     public List<String> findAllFollowing(String userId) {
         return userTable.scan().items().stream()
-                .filter(item -> item.getPk().equals("USER#" + userId + "#FOLLOWING"))
+                .filter(item -> item.getPk().equals(UserEntity.ID_NAME + "+" + userId + "#FOLLOWING"))
                 .map(userEntity -> userEntity.getSk().split("#")[1])
                 .toList();
     }
@@ -155,7 +155,7 @@ public class UserRepository {
      */
     public List<String> findAllFollowers(String userId) {
         return userTable.scan().items().stream()
-                .filter(item -> item.getSk().startsWith("USER#" + userId + "#FOLLOWER"))
+                .filter(item -> item.getSk().startsWith(UserEntity.ID_NAME + "#" + userId + "#FOLLOWER"))
                 .map(userEntity -> userEntity.getSk().split("#")[1])
                 .toList();
     }

@@ -13,7 +13,10 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortK
 @AllArgsConstructor
 @Builder
 public class UserJobEntity {
-    private String pk; // USER#<userID>
+
+    public static final String ID_NAME = "JOB";
+
+    private String pk; // USER#<userID>#JOB
     private String sk; // JOB#<jobID>
 
     private String jobTitle;

@@ -26,12 +26,12 @@ public interface UserMapper {
         return prefix + id + postfix;
     }
 
-    @Mapping(target = "pk", expression = "java(generateId(\"USER\", null, userId))")
-    @Mapping(target = "sk", expression = "java(generateId(\"USER\", null, userId))")
+    @Mapping(target = "pk", expression = "java(generateId(UserEntity.ID_NAME, null, userId))")
+    @Mapping(target = "sk", expression = "java(generateId(UserEntity.ID_NAME, null, userId))")
     UserEntity toUserEntity(String userId, UserDto createUserDto);
 
-    @Mapping(target = "pk", expression = "java(generateId(\"USER\", \"JOB\", userId))")
-    @Mapping(target = "sk", expression = "java(generateId(\"JOB\", null, job.jobId()))")
+    @Mapping(target = "pk", expression = "java(generateId(UserEntity.ID_NAME, UserJobEntity.ID_NAME, userId))")
+    @Mapping(target = "sk", expression = "java(generateId(UserJobEntity.ID_NAME, null, job.jobId()))")
     @Mapping(target = "jobStartDate", source = "job.startDate")
     @Mapping(target = "jobEndDate", source = "job.endDate")
     @Mapping(target = "jobTitle", source = "job.jobTitle")
@@ -40,8 +40,8 @@ public interface UserMapper {
     @Mapping(target = "jobDescription", source = "job.description")
     UserJobEntity toJobEntity(String userId, UserJobDTO job);
 
-    @Mapping(target = "pk", expression = "java(this.generateId(\"USER#\", \"EDUCATION\", userId))")
-    @Mapping(target = "sk", expression = "java(this.generateId(\"EDUCATION#\", null, education.educationId()))")
+    @Mapping(target = "pk", expression = "java(this.generateId(UserEntity.ID_NAME, UserEducationEntity.ID_NAME, userId))")
+    @Mapping(target = "sk", expression = "java(this.generateId(UserEducationEntity.ID_NAME, null, education.educationId()))")
     UserEducationEntity toEducationEntity(String userId, UserEducationDTO education);
 
     default List<UserJobEntity> toJobEntities(String userId, List<UserJobDTO> jobs) {

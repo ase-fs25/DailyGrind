@@ -16,6 +16,8 @@ public class UserEntity {
 
     public static final String TABLE_NAME = "users";
 
+    public static final String ID_NAME = "USER";
+
     private String pk;
     private String sk;
 
