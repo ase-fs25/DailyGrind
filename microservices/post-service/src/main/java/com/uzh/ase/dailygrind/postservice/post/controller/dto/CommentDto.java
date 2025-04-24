@@ -1,8 +1,7 @@
 package com.uzh.ase.dailygrind.postservice.post.controller.dto;
 
-public record PostDto(
-        String postId,
-        String title,
+public record CommentDto(
+        String commentId,
         String content,
         String timestamp
 ) {
