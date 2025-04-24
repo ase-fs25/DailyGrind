@@ -4,8 +4,59 @@ import Header from '../common/Header';
 import { mockPosts } from '../../mockData/mockPosts';
 import '../../styles/components/screens/screen.css';
 import '../../styles/components/screens/feed.css';
+import { useEffect } from 'react';
+import { fetchAuthSession } from 'aws-amplify/auth';
+import { useNavigate } from 'react-router-dom';
+import userStore from '../../stores/userStore';
 
 const Feed = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Only fetch user information when not already in userStore
+    if (userStore.getUser().userId === '') {
+      (async () => {
+        try {
+          const session = await fetchAuthSession();
+          const authToken = session.tokens?.accessToken.toString();
+          console.log('auth token: ', authToken);
+
+          const res = await fetch('http://localhost:8080/me', {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          });
+
+          if (res.ok) {
+            const text = await res.text();
+
+            if (text) {
+              const userData = JSON.parse(text);
+              console.log('User exists:', userData);
+
+              userStore.setUser({
+                userId: userData.userId,
+                email: userData.email,
+                firstName: userData.firstName,
+                lastName: userData.lastName,
+                birthday: userData.birthday,
+                location: userData.location,
+                jobs: userData.jobs || [],
+                education: userData.education || [],
+              });
+            } else {
+              console.log('User authenticated but not registered');
+              navigate('/registration', { replace: true });
+            }
+          }
+        } catch (e) {
+          console.error('post‑auth check failed', e);
+        }
+      })();
+    }
+  }, [navigate]);
+
   const formatDate = (timestamp: string) => {
     const date = new Date(timestamp);
     return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1)

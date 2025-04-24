@@ -1,83 +1,127 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TextField, Button, Paper, Typography, Box } from '@mui/material';
-
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+import { Dayjs } from 'dayjs';
 import '../../styles/components/login/registration.css';
 import { registerUser } from '../../helpers/loginHelpers';
 
 const Registration = () => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [birthday, setBirthday] = useState<Dayjs | null>(null);
+  const [location, setLocation] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleRegister = () => {
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
+  const handleRegister = async () => {
+    // TODO: Create input fields for job and education history
+    if (!firstName || !lastName || !email || !location || !birthday) {
+      setError('Please fill in all required fields');
       return;
     }
 
-    const registrationSuccess = registerUser(username, password);
+    setLoading(true);
+    const formattedBirthday = birthday.format('YYYY-MM-DD');
 
-    if (!registrationSuccess) {
-      setError('Username already exists. Please choose another one.');
-      return;
+    const result = await registerUser({
+      firstName,
+      lastName,
+      email,
+      location,
+      birthday: formattedBirthday,
+    });
+
+    setLoading(false);
+
+    if (result.success) {
+      navigate('/feed', { replace: true });
+    } else {
+      setError(result.error || 'Registration failed. Please try again.');
     }
-
-    setError('');
-    navigate('/feed');
   };
 
   return (
     <Box className="registration-container">
       <Paper elevation={6} className="registration-paper">
         <Typography variant="h5" textAlign="center">
-          Register
+          Complete your Profile
         </Typography>
         <TextField
-          label="Username"
+          label="First Name"
           variant="outlined"
           fullWidth
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          value={firstName}
+          onChange={(e) => setFirstName(e.target.value)}
           className="registration-input"
+          margin="normal"
         />
         <TextField
-          label="Password"
-          type="password"
+          label="Last Name"
           variant="outlined"
           fullWidth
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={lastName}
+          onChange={(e) => setLastName(e.target.value)}
           className="registration-input"
+          margin="normal"
         />
+
         <TextField
-          label="Confirm Password"
-          type="password"
+          label="Email"
+          type="email"
           variant="outlined"
           fullWidth
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           className="registration-input"
+          margin="normal"
         />
+
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker
+            label="Birthday"
+            value={birthday}
+            onChange={(newValue) => setBirthday(newValue)}
+            slotProps={{
+              textField: {
+                fullWidth: true,
+                margin: 'normal',
+                className: 'registration-input',
+              },
+            }}
+          />
+        </LocalizationProvider>
+
+        <TextField
+          label="Location"
+          variant="outlined"
+          fullWidth
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          className="registration-input"
+          margin="normal"
+        />
+
         {error && (
           <Typography className="error-text" color="error" textAlign="center">
             {error}
           </Typography>
         )}
-        <Button
-          variant="contained"
-          color="secondary"
-          fullWidth
-          disabled={!username || !password || !confirmPassword}
-          onClick={handleRegister}
-        >
-          Register
-        </Button>
-        <Button variant="text" color="inherit" fullWidth onClick={() => navigate('/')}>
-          Already have an account? Login here
-        </Button>
+
+        <Box mt={2}>
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
+            disabled={loading || !firstName || !lastName || !email || !location || !birthday}
+            onClick={handleRegister}
+          >
+            {loading ? 'Registering...' : 'Complete Registration'}
+          </Button>
+        </Box>
       </Paper>
     </Box>
   );

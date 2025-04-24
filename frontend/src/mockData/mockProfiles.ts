@@ -1,6 +1,6 @@
-import { Profile } from '../types/profile';
+import { User } from '../types/user';
 
-export const mockProfiles: Profile[] = [
+export const mockProfiles: User[] = [
   {
     userId: 1,
     username: 'Alice',
