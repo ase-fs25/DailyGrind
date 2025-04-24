@@ -46,6 +46,7 @@ function App() {
       <div className="app">
         <Routes>
           <Route path="/" element={<Feed />} />
+          <Route path="/feed" element={<Feed />} />
           <Route path="/posts" element={<Posts />} />
           <Route path="/friends" element={<Friends />} />
           <Route path="/registration" element={<Registration />} />

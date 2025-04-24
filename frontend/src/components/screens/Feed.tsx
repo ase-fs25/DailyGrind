@@ -7,32 +7,54 @@ import '../../styles/components/screens/feed.css';
 import { useEffect } from 'react';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import { useNavigate } from 'react-router-dom';
+import userStore from '../../stores/userStore';
 
 const Feed = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // TODO Only check this once when the user is logged in
-    (async () => {
-      try {
-        const session = await fetchAuthSession();
-        const authToken = session.tokens?.accessToken.toString();
+    // Only fetch user information when not already in userStore
+    if (userStore.getUser().userId === '') {
+      (async () => {
+        try {
+          const session = await fetchAuthSession();
+          const authToken = session.tokens?.accessToken.toString();
+          console.log('auth token: ', authToken);
 
-        const res = await fetch('http://localhost:8080/users/me', {
-          headers: { Authorization: 'Bearer ' + authToken! },
-        });
-        const { exists } = await res.json();
+          const res = await fetch('http://localhost:8080/me', {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          });
 
-        if (exists) {
-          // TODO Put user information in profile storage (with the new setters)
-          console.log('User exists');
-        } else {
-          navigate('/registration', { replace: true });
+          if (res.ok) {
+            const text = await res.text();
+
+            if (text) {
+              const userData = JSON.parse(text);
+              console.log('User exists:', userData);
+
+              userStore.setUser({
+                userId: userData.userId,
+                email: userData.email,
+                firstName: userData.firstName,
+                lastName: userData.lastName,
+                birthday: userData.birthday,
+                location: userData.location,
+                jobs: userData.jobs || [],
+                education: userData.education || [],
+              });
+            } else {
+              console.log('User authenticated but not registered');
+              navigate('/registration', { replace: true });
+            }
+          }
+        } catch (e) {
+          console.error('post‑auth check failed', e);
         }
-      } catch (e) {
-        console.error('post‑auth check failed', e);
-      }
-    })();
+      })();
+    }
   }, [navigate]);
 
   const formatDate = (timestamp: string) => {
