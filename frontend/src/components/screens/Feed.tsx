@@ -14,6 +14,7 @@ const Feed = () => {
 
   useEffect(() => {
     // Only fetch user information when not already in userStore
+    console.log(userStore);
     if (userStore.getUser().userId === '') {
       (async () => {
         try {

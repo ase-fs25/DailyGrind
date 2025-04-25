@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TextField, Button, Paper, Typography, Box } from '@mui/material';
+import { TextField, Button, Paper, Typography, Box, Divider } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { Dayjs } from 'dayjs';
 import '../../styles/components/login/registration.css';
+import { UserJob, UserEducation } from '../../types/user';
+import JobsSection from '../common/JobsSection';
+import EducationSection from '../common/EducationSection';
 import { registerUser } from '../../helpers/loginHelpers';
 
 const Registration = () => {
@@ -14,8 +17,11 @@ const Registration = () => {
   const [email, setEmail] = useState('');
   const [birthday, setBirthday] = useState<Dayjs | null>(null);
   const [location, setLocation] = useState('');
+  const [jobs, setJobs] = useState<UserJob[]>([]);
+  const [education, setEducation] = useState<UserEducation[]>([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showJobDialog, setShowJobDialog] = useState(false);
 
   const handleRegister = async () => {
     // TODO: Create input fields for job and education history
@@ -33,6 +39,8 @@ const Registration = () => {
       email,
       location,
       birthday: formattedBirthday,
+      jobs,
+      education,
     });
 
     setLoading(false);
@@ -47,8 +55,12 @@ const Registration = () => {
   return (
     <Box className="registration-container">
       <Paper elevation={6} className="registration-paper">
-        <Typography variant="h5" textAlign="center">
+        <Typography variant="h5" textAlign="center" gutterBottom>
           Complete your Profile
+        </Typography>
+
+        <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
+          Personal Information
         </Typography>
         <TextField
           label="First Name"
@@ -68,7 +80,6 @@ const Registration = () => {
           className="registration-input"
           margin="normal"
         />
-
         <TextField
           label="Email"
           type="email"
@@ -79,7 +90,6 @@ const Registration = () => {
           className="registration-input"
           margin="normal"
         />
-
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker
             label="Birthday"
@@ -94,7 +104,6 @@ const Registration = () => {
             }}
           />
         </LocalizationProvider>
-
         <TextField
           label="Location"
           variant="outlined"
@@ -105,13 +114,19 @@ const Registration = () => {
           margin="normal"
         />
 
+        <Divider sx={{ my: 3 }} />
+        <JobsSection jobs={jobs} onChange={setJobs} />
+
+        <Divider sx={{ my: 3 }} />
+        <EducationSection education={education} onChange={setEducation} />
+
         {error && (
           <Typography className="error-text" color="error" textAlign="center">
             {error}
           </Typography>
         )}
 
-        <Box mt={2}>
+        <Box mt={3}>
           <Button
             variant="contained"
             color="primary"

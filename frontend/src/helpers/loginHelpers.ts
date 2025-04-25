@@ -1,6 +1,6 @@
 import { mockProfiles } from '../mockData/mockProfiles';
 import userStore from '../stores/userStore';
-import { User } from '../types/user';
+import { User, UserEducation, UserJob } from '../types/user';
 import { fetchAuthSession } from 'aws-amplify/auth';
 
 // Login function
@@ -21,6 +21,8 @@ export async function registerUser(userData: {
   email: string;
   location: string;
   birthday: string;
+  jobs: UserJob[];
+  education: UserEducation[];
 }) {
   try {
     const session = await fetchAuthSession();
@@ -38,8 +40,6 @@ export async function registerUser(userData: {
       },
       body: JSON.stringify({
         ...userData,
-        jobs: [],
-        education: [],
       }),
     });
 
