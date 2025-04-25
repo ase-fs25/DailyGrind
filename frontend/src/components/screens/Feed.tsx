@@ -71,7 +71,7 @@ const Feed = () => {
       <Box className="feed-content">
         <Box className="feed-grid">
           {mockPosts.map((post) => (
-            <Box key={post.post_id} className="feed-item">
+            <Box key={post.postId} className="feed-item">
               <Card className="post-card">
                 <div className="post-card-header">
                   <Typography variant="h6" className="post-title">

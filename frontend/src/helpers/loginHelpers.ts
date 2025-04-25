@@ -1,7 +1,7 @@
 import { mockProfiles } from '../mockData/mockProfiles';
 import userStore from '../stores/userStore';
 import { User, UserEducation, UserJob } from '../types/user';
-import { fetchAuthSession } from 'aws-amplify/auth';
+import { getAuthToken } from './authHelper';
 
 // Login function
 export function checkLogin(username: string, password: string): boolean {
@@ -14,7 +14,6 @@ export function checkLogin(username: string, password: string): boolean {
   return false;
 }
 
-//TODO: include job and education history
 export async function registerUser(userData: {
   firstName: string;
   lastName: string;
@@ -25,12 +24,7 @@ export async function registerUser(userData: {
   education: UserEducation[];
 }) {
   try {
-    const session = await fetchAuthSession();
-    const authToken = session.tokens?.accessToken.toString();
-
-    if (!authToken) {
-      throw new Error('Authentication failed. Please log in again.');
-    }
+    const authToken = await getAuthToken();
 
     const response = await fetch('http://localhost:8080/users', {
       method: 'POST',

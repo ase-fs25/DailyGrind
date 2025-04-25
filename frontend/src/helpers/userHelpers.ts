@@ -1,19 +1,8 @@
-import { fetchAuthSession } from 'aws-amplify/auth';
 import { UserEducation, UserJob } from '../types/user';
 import userStore from '../stores/userStore';
+import { getAuthToken } from './authHelper';
 
 const API_URL = 'http://localhost:8080';
-
-async function getAuthToken(): Promise<string> {
-  const session = await fetchAuthSession();
-  const authToken = session.tokens?.accessToken.toString();
-
-  if (!authToken) {
-    throw new Error('Authentication failed. Please log in again.');
-  }
-
-  return authToken;
-}
 
 export async function updateUser(userData: {
   firstName: string;
@@ -42,9 +31,9 @@ export async function updateUser(userData: {
       throw new Error(`Registration failed: ${response.status}`);
     }
 
-    const createdUser = await response.json();
-    if (createdUser) {
-      userStore.setUser(createdUser);
+    const updatedUser = await response.json();
+    if (updatedUser) {
+      userStore.setUser(updatedUser);
     }
 
     return { success: true };
