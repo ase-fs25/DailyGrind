@@ -4,6 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 import { useNavigate } from 'react-router-dom';
+import { signOut } from 'aws-amplify/auth';
 
 import '../../styles/components/common/settingsPopup.css';
 import userStore from '../../stores/userStore';
@@ -18,7 +19,6 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ open, onClose }) => {
   const navigate = useNavigate();
 
   const [profile, setProfile] = useState<User>(userStore.getUser());
-  console.log('profileStore: ', profile);
 
   useEffect(() => {
     if (open) {
@@ -26,43 +26,48 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ open, onClose }) => {
     }
   }, [open]);
   /*
-  const handleProfilePictureChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      const fileReader = new FileReader();
-      fileReader.onload = (e) => {
-        if (e.target && typeof e.target.result === 'string') {
-          setProfile((prev) => ({
-            ...prev,
-            profilePicture: e.target?.result as string,
-          }));
-          console.log('Profile picture changed');
-        }
-      };
-      fileReader.readAsDataURL(event.target.files[0]);
+            const handleProfilePictureChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+              if (event.target.files && event.target.files[0]) {
+                const fileReader = new FileReader();
+                fileReader.onload = (e) => {
+                  if (e.target && typeof e.target.result === 'string') {
+                    setProfile((prev) => ({
+                      ...prev,
+                      profilePicture: e.target?.result as string,
+                    }));
+                    console.log('Profile picture changed');
+                  }
+                };
+                fileReader.readAsDataURL(event.target.files[0]);
+              }
+          
+              <Box className="profile-section">
+                    <Button component="label" variant="outlined" className="profile-upload-button">
+                      <Avatar src={profile.profileInfo.profilePicture} className="profile-avatar" style={{ cursor: 'pointer' }} />
+                      <input type="file" hidden accept="image/png" onChange={handleProfilePictureChange} />
+                    </Button>
+                  </Box>
+          
+                  {editingField === 'username' && tempValue !== 'username' && (
+                        <Box className="edit-buttons">
+                          <IconButton onClick={handleCancel} className="cancel-button">
+                            <ClearIcon />
+                          </IconButton>
+                          <IconButton onClick={handleConfirm} className="confirm-button">
+                            <CheckIcon />
+                          </IconButton>
+                        </Box>
+                      )}
+            };*/
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      userStore.deleteUser();
+      navigate('/');
+    } catch (e) {
+      console.error('Error signing out: ', e);
     }
-
-    <Box className="profile-section">
-          <Button component="label" variant="outlined" className="profile-upload-button">
-            <Avatar src={profile.profileInfo.profilePicture} className="profile-avatar" style={{ cursor: 'pointer' }} />
-            <input type="file" hidden accept="image/png" onChange={handleProfilePictureChange} />
-          </Button>
-        </Box>
-
-        {editingField === 'username' && tempValue !== 'username' && (
-              <Box className="edit-buttons">
-                <IconButton onClick={handleCancel} className="cancel-button">
-                  <ClearIcon />
-                </IconButton>
-                <IconButton onClick={handleConfirm} className="confirm-button">
-                  <CheckIcon />
-                </IconButton>
-              </Box>
-            )}
-  };*/
-
-  const handleLogout = () => {
-    userStore.deleteUser();
-    navigate('/');
   };
 
   return (
