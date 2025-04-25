@@ -19,10 +19,11 @@ import { UserEducation } from '../../types/user';
 interface EducationSectionProps {
   education: UserEducation[];
   onChange: (education: UserEducation[]) => void;
-  readOnly?: boolean;
+  onDelete?: (educationId: string) => void;
+  readOnly: boolean;
 }
 
-const EducationSection: React.FC<EducationSectionProps> = ({ education, onChange, readOnly = false }) => {
+const EducationSection: React.FC<EducationSectionProps> = ({ education, onChange, onDelete, readOnly = false }) => {
   const [showEducationDialog, setShowEducationDialog] = useState(false);
   const [currentEducation, setCurrentEducation] = useState<UserEducation>({
     educationId: '',
@@ -74,7 +75,11 @@ const EducationSection: React.FC<EducationSectionProps> = ({ education, onChange
   };
 
   const deleteEducation = (educationId: string) => {
-    onChange(education.filter((edu) => edu.educationId !== educationId));
+    if (onDelete && educationId) {
+      onDelete(educationId);
+    } else {
+      onChange(education.filter((edu) => edu.educationId !== educationId));
+    }
   };
 
   return (

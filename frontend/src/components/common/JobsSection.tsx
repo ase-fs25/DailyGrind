@@ -19,10 +19,11 @@ import { UserJob } from '../../types/user';
 interface JobsSectionProps {
   jobs: UserJob[];
   onChange: (jobs: UserJob[]) => void;
-  readOnly?: boolean;
+  onDelete?: (jobId: string) => void;
+  readOnly: boolean;
 }
 
-const JobsSection: React.FC<JobsSectionProps> = ({ jobs, onChange, readOnly = false }) => {
+const JobsSection: React.FC<JobsSectionProps> = ({ jobs, onChange, onDelete, readOnly = false }) => {
   const [showJobDialog, setShowJobDialog] = useState(false);
   const [currentJob, setCurrentJob] = useState<UserJob>({
     jobId: '',
@@ -70,7 +71,11 @@ const JobsSection: React.FC<JobsSectionProps> = ({ jobs, onChange, readOnly = fa
   };
 
   const deleteJob = (jobId: string) => {
-    onChange(jobs.filter((job) => job.jobId !== jobId));
+    if (onDelete && jobId) {
+      onDelete(jobId);
+    } else {
+      onChange(jobs.filter((job) => job.jobId !== jobId));
+    }
   };
 
   return (

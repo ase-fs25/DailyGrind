@@ -201,6 +201,7 @@ import { User, UserJob, UserEducation } from '../../types/user';
 import JobsSection from './JobsSection';
 import EducationSection from './EducationSection';
 import { registerUser } from '../../helpers/loginHelpers';
+import { updateUser, deleteUserJob, deleteUserEducation } from '../../helpers/userHelpers';
 
 interface SettingsPopupProps {
   open: boolean;
@@ -242,6 +243,45 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ open, onClose }) => {
     setUser((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleDeleteJob = async (jobId: string) => {
+    try {
+      const result = await deleteUserJob(jobId);
+      if (result.success) {
+        setJobs(jobs.filter((job) => job.jobId !== jobId));
+        setStatusMessage('Job deleted successfully');
+      } else {
+        setStatusMessage('Failed to delete job');
+      }
+
+      setTimeout(() => {
+        setStatusMessage(null);
+      }, 2000);
+    } catch (error) {
+      console.error('Error deleting job:', error);
+      setStatusMessage('Error deleting job');
+    }
+  };
+
+  const handleDeleteEducation = async (educationId: string) => {
+    try {
+      const result = await deleteUserEducation(educationId);
+
+      if (result.success) {
+        setEducation(education.filter((edu) => edu.educationId !== educationId));
+        setStatusMessage('Education entry deleted successfully');
+      } else {
+        setStatusMessage('Failed to delete education entry');
+      }
+
+      setTimeout(() => {
+        setStatusMessage(null);
+      }, 2000);
+    } catch (error) {
+      console.error('Error deleting education:', error);
+      setStatusMessage('Error deleting education entry');
+    }
+  };
+
   useEffect(() => {
     if (open) {
       const user = userStore.getUser();
@@ -267,7 +307,7 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ open, onClose }) => {
       };
 
       userStore.setUser(updatedUser);
-      await registerUser(updatedUser);
+      await updateUser(updatedUser);
 
       setStatusMessage('Profile updated successfully');
       setTimeout(() => {
@@ -382,14 +422,19 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ open, onClose }) => {
         {/* Work Experience Tab */}
         <TabPanel value={tabValue} index={1}>
           <Box sx={{ p: 2 }}>
-            <JobsSection jobs={jobs} onChange={setJobs} />
+            <JobsSection jobs={jobs} onChange={setJobs} onDelete={handleDeleteJob} readOnly={false} />
           </Box>
         </TabPanel>
 
         {/* Education Tab */}
         <TabPanel value={tabValue} index={2}>
           <Box sx={{ p: 2 }}>
-            <EducationSection education={education} onChange={setEducation} />
+            <EducationSection
+              education={education}
+              onChange={setEducation}
+              onDelete={handleDeleteEducation}
+              readOnly={false}
+            />
           </Box>
         </TabPanel>
 
