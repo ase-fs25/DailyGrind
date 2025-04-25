@@ -125,6 +125,14 @@ public class UserController {
         return userService.getFollowers(principal.getName());
     }
 
+    @Operation(summary = "Get current user's followers IDs", description = "Fetches the list of IDs of users who follow the authenticated user.")
+    @ApiResponse(responseCode = "200", description = "Followers IDs retrieved successfully",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = String[].class)))
+    @GetMapping("/me/followers/ids")
+    public ResponseEntity<String[]> getMyFollowersIds(Principal principal) {
+        return ResponseEntity.ok(userService.getFollowersIds(principal.getName()));
+    }
+
     @Operation(summary = "Get current user's following list", description = "Fetches the list of users whom the authenticated user is following.")
     @ApiResponse(responseCode = "200", description = "Following list retrieved successfully",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)))

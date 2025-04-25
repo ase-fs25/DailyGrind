@@ -55,6 +55,11 @@ public class UserService {
                 .toList();
     }
 
+    public String[] getFollowersIds(String userId) {
+        List<String> followerIds = userRepository.findAllFollowers(userId);
+        return followerIds.toArray(new String[0]);
+    }
+
     public List<UserDto> getFollowing(String userId) {
         List<String> followingIds = userRepository.findAllFollowing(userId);
         followingIds.forEach(System.out::println);
