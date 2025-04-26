@@ -16,12 +16,14 @@ import java.util.List;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final DailyPostRepository dailyPostRepository;
     private final UserServiceClient userServiceClient;
     private final PostMapper postMapper;
 
     public PostDto createPost(PostDto postDto, String userId) {
         PostEntity postEntity = postMapper.toPostEntity(userId, postDto);
         postRepository.savePost(postEntity);
+        postRepository.saveDailyPost(postEntity);
         userServiceClient.getFriends()
                 .subscribe(friendIds -> {
                     for (String friendId : friendIds) {
@@ -79,5 +81,10 @@ public class PostService {
         return postEntities.stream()
                 .map(postMapper::toPostDto)
                 .toList();
+    }
+
+    public PostDto getDailyPostForUser(String userId) {
+        PostEntity postEntity = postRepository.findDailyPostForUser(userId);
+        return postMapper.toPostDto(postEntity);
     }
 }

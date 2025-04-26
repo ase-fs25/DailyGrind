@@ -18,17 +18,27 @@ public class PostController {
 
     private final PostService postService;
 
-    @GetMapping("/me/posts")
+    @GetMapping("/users/me/daily-post")
+    public ResponseEntity<PostDto> getMyDailyPost(Principal principal) {
+        return ResponseEntity.ok(postService.getDailyPostForUser(principal.getName()));
+    }
+
+    @GetMapping("/users/{userId}/daily-post")
+    public ResponseEntity<PostDto> getDailyPostForUser(@PathVariable String userId) {
+        return ResponseEntity.ok(postService.getDailyPostForUser(userId));
+    }
+
+    @GetMapping("/users/me/posts")
     public ResponseEntity<List<PostDto>> getMyPosts(Principal principal) {
         return ResponseEntity.ok(postService.getPostsForUser(principal.getName()));
     }
 
-    @GetMapping("/me/timeline")
+    @GetMapping("/users/me/timeline")
     public ResponseEntity<List<PostDto>> getMyTimeline(Principal principal) {
         return ResponseEntity.ok(postService.getTimelineForUser(principal.getName()));
     }
 
-    @GetMapping("/{userId}/posts")
+    @GetMapping("/users/{userId}/posts")
     public ResponseEntity<List<PostDto>> getUserPosts(@PathVariable String userId) {
         return ResponseEntity.ok(postService.getPostsForUser(userId));
     }

@@ -23,7 +23,8 @@ class UserMapperTest {
                 "John",
                 "Doe",
                 "1990-01-01",
-                "New York"
+                "New York",
+                "http://example.com/profile.jpg"
         );
 
         // when
@@ -34,7 +35,7 @@ class UserMapperTest {
                 .isNotNull()
                 .extracting(UserEntity::getPk, UserEntity::getSk, UserEntity::getEmail, UserEntity::getFirstName, UserEntity::getLastName, UserEntity::getBirthday, UserEntity::getLocation, UserEntity::getProfilePictureUrl, UserEntity::getNumFollowers, UserEntity::getNumFollowing
                 )
-                .containsExactly("USER#12345", "INFO", "test@example.com", "John", "Doe", "1990-01-01", "New York", null, 0, 0);
+                .containsExactly("USER#12345", "INFO", "test@example.com", "John", "Doe", "1990-01-01", "New York", userCreateDto.profilePictureUrl(), 0, 0);
     }
 
     @Test
@@ -46,7 +47,7 @@ class UserMapperTest {
                 .firstName("John")
                 .email("john.doe@gmail.com")
                 .lastName("Doe")
-                .profilePictureUrl("1990-01-01")
+                .profilePictureUrl("profile.jpg")
                 .birthday("1990-01-01")
                 .location("New York")
                 .numFollowers(10)

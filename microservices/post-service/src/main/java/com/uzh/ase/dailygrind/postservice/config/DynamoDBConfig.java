@@ -71,4 +71,9 @@ public class DynamoDBConfig {
         return dynamoDbEnhancedClient.table(TABLE_NAME, TableSchema.fromBean(CommentEntity.class));
     }
 
+    @Bean
+    public DynamoDbTable<DailyPostEntity> dailyPostTable(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
+        return dynamoDbEnhancedClient.table(TABLE_NAME, TableSchema.fromBean(PostEntity.class));
+    }
+
 }

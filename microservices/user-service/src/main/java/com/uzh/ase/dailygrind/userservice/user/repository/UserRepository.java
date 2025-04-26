@@ -16,22 +16,22 @@ public class UserRepository {
     private final DynamoDbTable<UserEntity> userTable;
 
     public UserEntity findUserById(String userId) {
-        return userTable.getItem(r -> r.key(k -> k.partitionValue("USER#" + userId)));
+        return userTable.getItem(r -> r.key(k -> k
+            .partitionValue("USER#" + userId)
+            .sortValue("INFO")
+        ));
     }
 
     public List<UserEntity> findAllUserEntities() {
-        QueryConditional queryConditional = QueryConditional.keyEqualTo(
-                Key.builder()
-                        .sortValue("INFO")
-                        .build()
-        );
-        return userTable.query(r -> r.queryConditional(queryConditional))
-                .items()
-                .stream()
-                .toList();
+        return userTable.scan()
+            .items()
+            .stream()
+            .filter(user -> user.getPk().startsWith("USER#") && user.getSk().equals("INFO"))
+            .toList();
     }
 
     public void saveUser(UserEntity userEntity) {
+        System.out.println("Saving user: " + userEntity.getPk() + " " + userEntity.getSk());
         userTable.putItem(userEntity);
     }
 

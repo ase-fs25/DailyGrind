@@ -32,6 +32,14 @@ public class UserController {
         return userService.getAllUserInfos(principal.getName());
     }
 
+    @Operation(summary = "Get current user's info", description = "Fetches the details of the authenticated info.")
+    @ApiResponse(responseCode = "200", description = "User details retrieved successfully",
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserInfoDto.class)))
+    @GetMapping("/users/me")
+    public UserInfoDto getMyInfo(Principal principal) {
+        return userService.getUserInfoById(principal.getName(), principal.getName());
+    }
+
     @Operation(summary = "Get current user's details", description = "Fetches the details of the authenticated user.")
     @ApiResponse(responseCode = "200", description = "User details retrieved successfully",
         content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDetailsDto.class)))

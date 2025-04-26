@@ -38,6 +38,11 @@ resource "aws_dynamodb_table" "posts" {
     type = "S"
   }
 
+  ttl {
+    attribute_name = "ttl"
+    enabled        = true
+  }
+
   tags = {
     Name = "posts-table",
     Environment = "dev",

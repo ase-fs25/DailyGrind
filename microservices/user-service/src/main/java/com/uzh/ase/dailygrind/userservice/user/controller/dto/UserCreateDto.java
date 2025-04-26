@@ -6,6 +6,7 @@ public record UserCreateDto(
         String firstName,
         String lastName,
         String birthday,
-        String location
+        String location,
+        String profilePictureUrl
 ) {
 }

@@ -56,6 +56,14 @@ public class UserService {
         return new UserDetailsDto(userInfoDto, userJobDtos, userEducationDtos);
     }
 
+    public UserInfoDto getUserInfoById(String userId, String requesterId) {
+        UserEntity userEntity = userRepository.findUserById(userId);
+        if (userEntity == null) {
+            return null;
+        }
+        return userMapper.toUserInfoDto(userEntity, false);
+    }
+
     public UserInfoDto createUser(UserCreateDto createUserDto, String userId) {
         UserEntity userEntity = userMapper.toUserEntity(createUserDto, userId);
         userRepository.saveUser(userEntity);
