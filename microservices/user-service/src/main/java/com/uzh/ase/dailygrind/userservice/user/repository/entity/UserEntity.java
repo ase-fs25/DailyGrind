@@ -15,8 +15,8 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortK
 public class UserEntity {
 
     public static final String TABLE_NAME = "users";
-
-    public static final String ID_NAME = "USER";
+    public static final String PK_PREFIX = "USER";
+    public static final String SK_PREFIX = "INFO";
 
     private String pk;
     private String sk;
@@ -27,17 +27,18 @@ public class UserEntity {
     private String profilePicture;
     private String birthday;
     private String location;
+    private int numFollowers;
+    private int numFollowing;
 
-    @DynamoDbPartitionKey
-    @DynamoDbAttribute("PK")
-    public String getPk() {
-        return pk;
+    public static String generatePK(String id) {
+        return PK_PREFIX + "#" + id;
     }
 
-    @DynamoDbSortKey
-    @DynamoDbAttribute("SK")
-    public String getSk() {
-        return sk;
+    public static String generateSK() {
+        return SK_PREFIX;
     }
 
+    public String getId() {
+        return pk.split("#")[1];
+    }
 }

@@ -1,10 +1,9 @@
 package com.uzh.ase.dailygrind.userservice.user.repository.entity;
 
 import lombok.*;
-import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttribute;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
-import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
-import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
+
+import java.util.UUID;
 
 @DynamoDbBean
 @Getter
@@ -14,7 +13,7 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortK
 @Builder
 public class UserJobEntity {
 
-    public static final String ID_NAME = "JOB";
+    public static final String PK_SUFFIX = "JOB";
 
     private String pk; // USER#<userID>#JOB
     private String sk; // JOB#<jobID>
@@ -26,16 +25,16 @@ public class UserJobEntity {
     private String jobEndDate;
     private String jobDescription;
 
-    @DynamoDbPartitionKey
-    @DynamoDbAttribute("PK")
-    public String getPk() {
-        return pk;
+    public static String generatePK(String userId) {
+        return UserEntity.PK_PREFIX + "#" + userId + "#" + PK_SUFFIX;
     }
 
-    @DynamoDbSortKey
-    @DynamoDbAttribute("SK")
-    public String getSk() {
-        return sk;
+    public static String generateSK(String jobId) {
+        if (jobId == null || jobId.isEmpty()) jobId = UUID.randomUUID().toString();
+        return PK_SUFFIX + "#" + jobId;
     }
 
+    public String getId() {
+        return sk.split("#")[1];
+    }
 }

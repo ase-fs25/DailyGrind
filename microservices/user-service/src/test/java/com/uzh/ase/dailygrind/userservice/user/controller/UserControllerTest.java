@@ -1,11 +1,11 @@
-//package com.uzh.ase.dailygrind.userservice.user.controller;
+//package com.uzh.ase.dailygrind.userservice.userInfo.controller;
 //
 //import static org.mockito.Mockito.*;
 //import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 //import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 //
-//import com.uzh.ase.dailygrind.userservice.user.repository.entity.User;
-//import com.uzh.ase.dailygrind.userservice.user.service.UserService;
+//import com.uzh.ase.dailygrind.userservice.userInfo.repository.entity.User;
+//import com.uzh.ase.dailygrind.userservice.userInfo.service.UserService;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;
 //import org.springframework.beans.factory.annotation.Autowired;
@@ -24,16 +24,16 @@
 //    @MockitoBean
 //    private UserService userService;
 //
-//    private User user;
+//    private User userInfo;
 //
 //    @BeforeEach
 //    void setUp() {
-//        user = new User("1", "John Doe");
+//        userInfo = new User("1", "John Doe");
 //    }
 //
 //    @Test
 //    void testGetUserById_Success() throws Exception {
-//        when(userService.getUserById("1")).thenReturn(user);
+//        when(userService.getUserById("1")).thenReturn(userInfo);
 //
 //        mockMvc.perform(get("/users/1"))
 //                .andExpect(status().isOk())

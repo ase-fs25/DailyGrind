@@ -1,11 +1,11 @@
 package com.uzh.ase.dailygrind.userservice.user.service;
 
-import com.uzh.ase.dailygrind.userservice.user.controller.dto.UserDto;
-import com.uzh.ase.dailygrind.userservice.user.controller.dto.UserEducationDto;
+import com.uzh.ase.dailygrind.userservice.user.controller.dto.UserCreateDto;
+import com.uzh.ase.dailygrind.userservice.user.controller.dto.UserDetailsDto;
+import com.uzh.ase.dailygrind.userservice.user.controller.dto.UserInfoDto;
 import com.uzh.ase.dailygrind.userservice.user.controller.dto.UserJobDto;
 import com.uzh.ase.dailygrind.userservice.user.mapper.UserMapper;
 import com.uzh.ase.dailygrind.userservice.user.repository.UserRepository;
-import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserEducationEntity;
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserEntity;
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserJobEntity;
 import lombok.RequiredArgsConstructor;
@@ -19,75 +19,38 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    private final UserJobService userJobService;
+
     private final UserMapper userMapper;
 
-    public UserDto getUserDetailsById(String userId) {
-        return userRepository.findUserDetailsById(userId);
-    }
+    public List<UserInfoDto> getAllUserInfos(String requesterId) {
+        List<UserEntity> userEntities = userRepository.findAllUserEntities();
+        List<String> followingIds = userEntities.stream()
+                .map(UserEntity::getSk)
+                .map(sk -> sk.split("#")[1])
+                .toList();
 
-    public List<UserDto> getAllUserDetails() {
-        return userRepository.findAllUserDetails();
-    }
-
-    public UserDto createUser(UserDto createUserDto, String userId) {
-        UserEntity userEntity = userMapper.toUserEntity(userId, createUserDto);
-        List<UserJobEntity> userJobEntities = userMapper.toJobEntities(userId, createUserDto.jobs());
-        List<UserEducationEntity> userEducationEntities = userMapper.toEducationEntities(userId, createUserDto.education());
-
-        userRepository.save(userEntity, userJobEntities, userEducationEntities);
-
-        return userMapper.toUserDto(userEntity, userJobEntities, userEducationEntities);
-    }
-
-    public void followUser(String toFollow, String follower) {
-        userRepository.followUser(toFollow, follower);
-    }
-
-    public void unfollowUser(String toUnfollow, String follower) {
-        userRepository.unfollowUser(toUnfollow, follower);
-    }
-
-    public List<UserDto> getFollowers(String userId) {
-        List<String> followerIds = userRepository.findAllFollowers(userId);
-        followerIds.forEach(System.out::println);
-        return followerIds.stream()
-                .map(userRepository::findUserDetailsById)
+        return userEntities.stream()
+                .map(userEntity -> userMapper.toUserInfoDto(userEntity, followingIds.contains(requesterId)))
                 .toList();
     }
 
-    public String[] getFollowersIds(String userId) {
-        List<String> followerIds = userRepository.findAllFollowers(userId);
-        return followerIds.toArray(new String[0]);
+    public UserDetailsDto getUserDetailsById(String userId, String requesterId) {
+        UserEntity userEntity = userRepository.findUserById(userId);
+        if (userEntity == null) {
+            return null;
+        }
+        List<String> followingIds = userRepository.findAllFollowing(requesterId);
+        boolean isFollowing = followingIds.contains(userId);
+        List<UserJobDto> userJobDtos = userJobService.getJobsForUser(userId);
+        return null;
     }
 
-    public List<UserDto> getFollowing(String userId) {
-        List<String> followingIds = userRepository.findAllFollowing(userId);
-        followingIds.forEach(System.out::println);
-        return followingIds.stream()
-                .map(userRepository::findUserDetailsById)
-                .toList();
+    public UserInfoDto createUser(UserCreateDto createUserDto, String name) {
+        return null;
     }
 
-    public boolean isFollowing(String follower, String following) {
-        List<String> followingIds = userRepository.findAllFollowing(follower);
-        return followingIds.contains(following);
-    }
-
-    public void deleteUserJob(String userId, String jobId) {
-        userRepository.deleteUserJob(userId, jobId);
-    }
-
-    public void deleteUserEducation(String userId, String educationId) {
-        userRepository.deleteUserEducation(userId, educationId);
-    }
-
-    public List<UserJobDto> getJobsForUser(String userId) {
-        List<UserJobEntity> userJobEntities = userRepository.findJobsForUser(userId);
-        return userMapper.toUserJobDtos(userJobEntities);
-    }
-
-    public List<UserEducationDto> getEducationForUser(String userId) {
-        List<UserEducationEntity> userEducationEntities = userRepository.findEducationForUser(userId);
-        return userMapper.toUserEducationDtos(userEducationEntities);
+    public UserInfoDto updateUser(UserCreateDto updateUserDto, String name) {
+        return null;
     }
 }

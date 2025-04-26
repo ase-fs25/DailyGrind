@@ -5,9 +5,9 @@ public record UserEducationDto(
         String institution,
         String degree,
         String fieldOfStudy,
-        String educationStartDate,
-        String educationEndDate,
-        String educationLocation,
-        String educationDescription
+        String startDate,
+        String endDate,
+        String location,
+        String description
 ) {
 }

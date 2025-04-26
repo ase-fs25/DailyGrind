@@ -6,6 +6,8 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
 
+import java.util.UUID;
+
 @DynamoDbBean
 @Getter
 @Setter
@@ -14,29 +16,30 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortK
 @Builder
 public class UserEducationEntity {
 
-    public static final String ID_NAME = "EDUCATION";
+    public static final String PK_PREFIX = "USER";
+    public static final String PK_SUFFIX = "EDUCATION";
 
     private String pk;  // USER#<userID>#EDUCATION
     private String sk;  // EDUCATION#<educationID>
 
     private String institution;
-    private String location;
+    private String educationLocation;
     private String degree;
     private String fieldOfStudy;
-    private String startDate;
-    private String endDate;
-    private String description;
+    private String educationStartDate;
+    private String educationEndDate;
+    private String educationDescription;
 
-    @DynamoDbPartitionKey
-    @DynamoDbAttribute("PK")
-    public String getPk() {
-        return pk;
+    public static String generatePK(String id) {
+        return PK_PREFIX + "#" + id + "#" + PK_SUFFIX;
     }
 
-    @DynamoDbSortKey
-    @DynamoDbAttribute("SK")
-    public String getSk() {
-        return sk;
+    public static String generateSK(String educationId) {
+        if (educationId == null || educationId.isEmpty()) educationId = UUID.randomUUID().toString();
+        return PK_SUFFIX + "#" + educationId;
     }
 
+    public String getId() {
+        return sk.split("#")[1];
+    }
 }
