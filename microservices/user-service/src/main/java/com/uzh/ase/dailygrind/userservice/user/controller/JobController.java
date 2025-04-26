@@ -15,7 +15,7 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping
+@RequestMapping("${api.base-path}")
 @RequiredArgsConstructor
 public class JobController {
 
@@ -24,7 +24,7 @@ public class JobController {
     @Operation(summary = "Get a user's jobs", description = "Fetches the list of jobs associated with the specified user.")
     @ApiResponse(responseCode = "200", description = "Jobs retrieved successfully",
         content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserJobDto[].class)))
-    @GetMapping("/users/{userId}/jobs")
+    @GetMapping("/{userId}/jobs")
     public List<UserJobDto> getUserJobs(@PathVariable String userId) {
         return userJobService.getJobsForUser(userId);
     }

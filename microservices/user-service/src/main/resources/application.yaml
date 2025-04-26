@@ -26,3 +26,6 @@ spring:
 server:
   port: ${PORT:8080}
 
+api:
+  base-path: /users
+

@@ -14,7 +14,7 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping
+@RequestMapping("${api.base-path}")
 @RequiredArgsConstructor
 public class FollowerController {
 
@@ -91,7 +91,7 @@ public class FollowerController {
     @Operation(summary = "Get followers of a user", description = "Fetches the list of users who follow the specified userInfo.")
     @ApiResponse(responseCode = "200", description = "Followers list retrieved successfully",
         content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserInfoDto[].class)))
-    @GetMapping("/users/{userId}/followers")
+    @GetMapping("/{userId}/followers")
     public List<UserInfoDto> getFollowers(@PathVariable String userId) {
         return userFollowerService.getFollowers(userId);
     }
@@ -99,7 +99,7 @@ public class FollowerController {
     @Operation(summary = "Get following users of a user", description = "Fetches the list of users whom the specified userInfo is following.")
     @ApiResponse(responseCode = "200", description = "Following list retrieved successfully",
         content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserInfoDto.class)))
-    @GetMapping("/users/{userId}/following")
+    @GetMapping("/{userId}/following")
     public List<UserInfoDto> getFollowing(@PathVariable String userId) {
         return userFollowerService.getFollowing(userId);
     }
