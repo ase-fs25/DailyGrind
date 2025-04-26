@@ -9,6 +9,7 @@ public record UserInfoDto(
         String location,
         int numFollowers,
         int numFollowing,
+        String profilePictureUrl,
         boolean isFollowing
 ) {
 }

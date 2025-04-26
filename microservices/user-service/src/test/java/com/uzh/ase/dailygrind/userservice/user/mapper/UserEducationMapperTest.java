@@ -102,7 +102,7 @@ public class UserEducationMapperTest {
                 )
                 .containsExactly(
                     "USER#"+userId+"#EDUCATION",
-                    "EDUCATION#"+mockedUUID.toString(),
+                    "EDUCATION#"+mockedUUID,
                     "University of Zurich",
                     "Bachelor of Science",
                     "Computer Science",
@@ -113,5 +113,49 @@ public class UserEducationMapperTest {
                 );
         }
     }
+
+    @Test
+    void toUserEducationDto() {
+        // given
+        UserEducationEntity userEducationEntity = UserEducationEntity.builder()
+            .pk("USER#12345#EDUCATION")
+            .sk("EDUCATION#123e4567-e89b-12d3-a456-426614174000")
+            .institution("University of Zurich")
+            .degree("Bachelor of Science")
+            .fieldOfStudy("Computer Science")
+            .educationStartDate("2018-09-01")
+            .educationEndDate("2021-06-30")
+            .educationLocation("Zurich")
+            .educationDescription("Studied Computer Science fundamentals")
+            .build();
+
+        // when
+        UserEducationDto userEducationDto = userEducationMapper.toUserEducationDto(userEducationEntity);
+
+        // then
+        assertThat(userEducationDto)
+            .isNotNull()
+            .extracting(
+                UserEducationDto::educationId,
+                UserEducationDto::institution,
+                UserEducationDto::degree,
+                UserEducationDto::fieldOfStudy,
+                UserEducationDto::startDate,
+                UserEducationDto::endDate,
+                UserEducationDto::location,
+                UserEducationDto::description
+            )
+            .containsExactly(
+                "123e4567-e89b-12d3-a456-426614174000",
+                userEducationEntity.getInstitution(),
+                userEducationEntity.getDegree(),
+                userEducationEntity.getFieldOfStudy(),
+                userEducationEntity.getEducationStartDate(),
+                userEducationEntity.getEducationEndDate(),
+                userEducationEntity.getEducationLocation(),
+                userEducationEntity.getEducationDescription()
+            );
+    }
+
 
 }

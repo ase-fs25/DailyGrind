@@ -80,8 +80,8 @@ public class UserJobMapperTest {
                     UserJobEntity::getJobDescription
                 )
                 .containsExactly(
-                    "USER#" + userId + "#JOB", // notice .toString() here
-                    "JOB#" + mockedUUID.toString(), // notice .toString() here
+                    "USER#" + userId + "#JOB",
+                    "JOB#" + mockedUUID,
                     userJobDto.jobTitle(),
                     userJobDto.companyName(),
                     userJobDto.startDate(),
@@ -90,5 +90,37 @@ public class UserJobMapperTest {
                     userJobDto.description()
                 );
         }
+    }
+
+    @Test
+    void toUserJobDto() {
+        // given
+        UserJobEntity userJobEntity = UserJobEntity.builder()
+            .pk("USER#12345#JOB")
+            .sk("JOB#123e4567-e89b-12d3-a456-426614174000")
+            .jobTitle("Software Engineer")
+            .companyName("Google")
+            .jobStartDate("2022-01-01")
+            .jobEndDate("2023-01-01")
+            .jobLocation("New York")
+            .jobDescription("Developed software applications")
+            .build();
+
+        // when
+        UserJobDto userJobDto = userJobMapper.toUserJobDto(userJobEntity);
+
+        // then
+        assertThat(userJobDto)
+            .isNotNull()
+            .extracting(UserJobDto::jobId, UserJobDto::jobTitle, UserJobDto::companyName, UserJobDto::startDate, UserJobDto::endDate, UserJobDto::location, UserJobDto::description)
+            .containsExactly(
+                "123e4567-e89b-12d3-a456-426614174000",
+                userJobEntity.getJobTitle(),
+                userJobEntity.getCompanyName(),
+                userJobEntity.getJobStartDate(),
+                userJobEntity.getJobEndDate(),
+                userJobEntity.getJobLocation(),
+                userJobEntity.getJobDescription()
+            );
     }
 }

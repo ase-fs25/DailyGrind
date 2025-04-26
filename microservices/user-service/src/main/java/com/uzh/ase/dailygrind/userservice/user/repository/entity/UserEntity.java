@@ -1,10 +1,7 @@
 package com.uzh.ase.dailygrind.userservice.user.repository.entity;
 
 import lombok.*;
-import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttribute;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
-import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
-import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
 
 @DynamoDbBean
 @Getter
@@ -24,7 +21,7 @@ public class UserEntity {
     private String email;
     private String firstName;
     private String lastName;
-    private String profilePicture;
+    private String profilePictureUrl;
     private String birthday;
     private String location;
     private int numFollowers;
