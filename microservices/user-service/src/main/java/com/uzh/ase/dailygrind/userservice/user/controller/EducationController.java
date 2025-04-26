@@ -23,7 +23,7 @@ public class EducationController {
 
     @Operation(summary = "Get a user's education details", description = "Fetches the list of education details associated with the specified user.")
     @ApiResponse(responseCode = "200", description = "Education details retrieved successfully",
-        content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)))
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserEducationDto[].class)))
     @GetMapping("/users/{userId}/education")
     public List<UserEducationDto> getUserEducation(@PathVariable String userId) {
         return userEducationService.getEducationForUser(userId);
@@ -31,7 +31,7 @@ public class EducationController {
 
     @Operation(summary = "Get current user's education details", description = "Fetches the list of education details associated with the authenticated user.")
     @ApiResponse(responseCode = "200", description = "Education details retrieved successfully",
-        content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)))
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserEducationDto[].class)))
     @GetMapping("/me/education")
     public List<UserEducationDto> getMyEducations(Principal principal) {
         return userEducationService.getEducationForUser(principal.getName());

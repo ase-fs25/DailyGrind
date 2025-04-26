@@ -23,7 +23,7 @@ public class JobController {
 
     @Operation(summary = "Get a user's jobs", description = "Fetches the list of jobs associated with the specified user.")
     @ApiResponse(responseCode = "200", description = "Jobs retrieved successfully",
-        content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)))
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserJobDto[].class)))
     @GetMapping("/users/{userId}/jobs")
     public List<UserJobDto> getUserJobs(@PathVariable String userId) {
         return userJobService.getJobsForUser(userId);
@@ -31,7 +31,7 @@ public class JobController {
 
     @Operation(summary = "Get current user's jobs", description = "Fetches the list of jobs associated with the authenticated user.")
     @ApiResponse(responseCode = "200", description = "Jobs retrieved successfully",
-        content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)))
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserJobDto[].class)))
     @GetMapping("/me/jobs")
     public List<UserJobDto> getMyJobs(Principal principal) {
         return userJobService.getJobsForUser(principal.getName());

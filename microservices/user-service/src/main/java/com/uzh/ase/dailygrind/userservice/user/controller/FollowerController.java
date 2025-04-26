@@ -40,7 +40,7 @@ public class FollowerController {
     // --- Current userInfo followers/following lists ---
     @Operation(summary = "Get current user's followers", description = "Fetches the list of followers of the authenticated user.")
     @ApiResponse(responseCode = "200", description = "Followers list retrieved successfully",
-        content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)))
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserInfoDto[].class)))
     @GetMapping("/me/followers")
     public List<UserInfoDto> getMyFollowers(Principal principal) {
         return userFollowerService.getFollowers(principal.getName());
@@ -56,7 +56,7 @@ public class FollowerController {
 
     @Operation(summary = "Get current userInfo's following list", description = "Fetches the list of users whom the authenticated userInfo is following.")
     @ApiResponse(responseCode = "200", description = "Following list retrieved successfully",
-        content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)))
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserInfoDto[].class)))
     @GetMapping("/me/following")
     public List<UserInfoDto> getMyFollowing(Principal principal) {
         return userFollowerService.getFollowing(principal.getName());
@@ -90,7 +90,7 @@ public class FollowerController {
     // --- Other users' followers/following lists ---
     @Operation(summary = "Get followers of a user", description = "Fetches the list of users who follow the specified userInfo.")
     @ApiResponse(responseCode = "200", description = "Followers list retrieved successfully",
-        content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)))
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserInfoDto[].class)))
     @GetMapping("/users/{userId}/followers")
     public List<UserInfoDto> getFollowers(@PathVariable String userId) {
         return userFollowerService.getFollowers(userId);
@@ -98,7 +98,7 @@ public class FollowerController {
 
     @Operation(summary = "Get following users of a user", description = "Fetches the list of users whom the specified userInfo is following.")
     @ApiResponse(responseCode = "200", description = "Following list retrieved successfully",
-        content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)))
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserInfoDto.class)))
     @GetMapping("/users/{userId}/following")
     public List<UserInfoDto> getFollowing(@PathVariable String userId) {
         return userFollowerService.getFollowing(userId);
