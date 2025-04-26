@@ -3,6 +3,7 @@ package com.uzh.ase.dailygrind.userservice.config;
 
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserEducationEntity;
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserEntity;
+import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserFollowerEntity;
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserJobEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -75,6 +76,9 @@ public class DynamoDBConfig {
         return dynamoDbEnhancedClient.table(TABLE_NAME, TableSchema.fromBean(UserEducationEntity.class));
     }
 
-
+    @Bean
+    public DynamoDbTable<UserFollowerEntity> userFollowerTable(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
+        return dynamoDbEnhancedClient.table(TABLE_NAME, TableSchema.fromBean(UserFollowerEntity.class));
+    }
 
 }
