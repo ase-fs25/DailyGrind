@@ -41,8 +41,8 @@ public class EducationController {
     @ApiResponse(responseCode = "201", description = "Education created successfully",
         content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserEducationDto.class)))
     @PostMapping("/me/education")
-    public ResponseEntity<List<UserEducationDto>> createUserEducation(@RequestBody List<UserEducationDto> createUserEducationDtos, Principal principal) {
-        List<UserEducationDto> createdUserEducation = userEducationService.createUserEducation(createUserEducationDtos, principal.getName());
+    public ResponseEntity<UserEducationDto> createUserEducation(@RequestBody UserEducationDto createUserEducationDtos, Principal principal) {
+        UserEducationDto createdUserEducation = userEducationService.createUserEducation(createUserEducationDtos, principal.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUserEducation);
     }
 
