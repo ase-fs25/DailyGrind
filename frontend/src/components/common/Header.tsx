@@ -8,7 +8,7 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import SettingsPopup from './SettingsPopup';
-import AddPostPopup from './AddPostPopup';
+// import AddPostPopup from './AddPostPopup';
 import '../../styles/components/common/header.css';
 import { POSTING_TIME } from '../../constants/postTime';
 
@@ -18,7 +18,7 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [addPostOpen, setAddPostOpen] = useState(false);
+  // const [addPostOpen, setAddPostOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [currentTime, setCurrentTime] = useState(moment());
 
@@ -70,7 +70,7 @@ const Header = () => {
         millisecond: 0,
       });
       if (now <= endTimeNow) {
-        setAddPostOpen(true);
+        // setAddPostOpen(true);
       } else {
         checkTime();
       }
@@ -129,7 +129,7 @@ const Header = () => {
         </Toolbar>
       </AppBar>
       <SettingsPopup open={settingsOpen} onClose={() => setSettingsOpen(false)} />
-      <AddPostPopup open={addPostOpen} onClose={() => setAddPostOpen(false)} />
+      {/* <AddPostPopup open={addPostOpen} onClose={() => setAddPostOpen(false)} /> */}
     </>
   );
 };

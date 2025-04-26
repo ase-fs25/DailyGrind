@@ -3,13 +3,13 @@ import { Box, TextField, Button, Typography } from '@mui/material';
 import { mockProfiles } from '../../mockData/mockProfiles';
 import '../../styles/components/friends/friendsSearch.css';
 
-const FriendsSearch: React.FC = () => {
+const FriendsSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   // TODO: In the future, replace the local filter logic with an API call to search for users.
   // Filter profiles that match the search term (using local mock data for now)
-  const filteredProfiles = mockProfiles.filter((profile) =>
-    profile.username.toLowerCase().startsWith(searchTerm.toLowerCase()),
+  const filteredProfiles = mockProfiles.filter((user) =>
+    user.firstName.toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
 
   return (
@@ -26,9 +26,9 @@ const FriendsSearch: React.FC = () => {
       {/* Conditionally render search results only when there's input */}
       {searchTerm.trim() !== '' && (
         <Box className="search-results">
-          {filteredProfiles.map((profile) => (
-            <Box key={profile.userId} className="search-result-item">
-              <Typography variant="subtitle1">{profile.username}</Typography>
+          {filteredProfiles.map((user) => (
+            <Box key={user.userId} className="search-result-item">
+              <Typography variant="subtitle1">{user.firstName + ' ' + user.lastName}</Typography>
               <Button
                 variant="outlined"
                 color="secondary"
