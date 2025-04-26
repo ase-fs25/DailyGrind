@@ -21,7 +21,6 @@ const Registration = () => {
   const [education, setEducation] = useState<UserEducation[]>([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showJobDialog, setShowJobDialog] = useState(false);
 
   const handleRegister = async () => {
     // TODO: Create input fields for job and education history

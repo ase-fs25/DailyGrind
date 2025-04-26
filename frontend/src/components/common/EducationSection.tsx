@@ -1,3 +1,5 @@
+// TODO This should be avoided
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import {
   Box,
@@ -18,12 +20,12 @@ import { UserEducation } from '../../types/user';
 
 interface EducationSectionProps {
   education: UserEducation[];
-  onChange: (education: UserEducation[]) => void;
+  onChange: (educationToChange: UserEducation[]) => void;
   onDelete?: (educationId: string) => void;
-  readOnly: boolean;
+  readOnly?: boolean;
 }
 
-const EducationSection: React.FC<EducationSectionProps> = ({ education, onChange, onDelete, readOnly = false }) => {
+const EducationSection = ({ education, onChange, onDelete, readOnly = false }: EducationSectionProps) => {
   const [showEducationDialog, setShowEducationDialog] = useState(false);
   const [currentEducation, setCurrentEducation] = useState<UserEducation>({
     educationId: '',

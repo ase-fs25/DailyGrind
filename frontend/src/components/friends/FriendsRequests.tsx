@@ -3,7 +3,7 @@ import { Box, Typography, Button } from '@mui/material';
 import { mockFriendRequests } from '../../mockData/mockFriendRequests';
 import '../../styles/components/friends/friendRequests.css';
 
-const FriendsRequests: React.FC = () => {
+const FriendsRequests = () => {
   // TODO: Replace 'mockFriendRequests' with an API call to fetch friend requests.
   const [requests, setRequests] = useState(mockFriendRequests);
 

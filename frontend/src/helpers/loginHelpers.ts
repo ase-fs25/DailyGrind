@@ -1,18 +1,6 @@
-import { mockProfiles } from '../mockData/mockProfiles';
 import userStore from '../stores/userStore';
-import { User, UserEducation, UserJob } from '../types/user';
+import { UserEducation, UserJob } from '../types/user';
 import { getAuthToken } from './authHelper';
-
-// Login function
-export function checkLogin(username: string, password: string): boolean {
-  // TODO In this function we would need to call the API to check the user's profile
-  const user = mockProfiles.find((profile: User) => profile.username === username && profile.password === password);
-  if (user) {
-    userStore.setUser(user);
-    return true;
-  }
-  return false;
-}
 
 export async function registerUser(userData: {
   firstName: string;

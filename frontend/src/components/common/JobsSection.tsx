@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+// TODO This should be avoided
+/* eslint-disable no-unused-vars */
+import { useState } from 'react';
 import {
   Box,
   Button,
@@ -18,12 +20,12 @@ import { UserJob } from '../../types/user';
 
 interface JobsSectionProps {
   jobs: UserJob[];
-  onChange: (jobs: UserJob[]) => void;
+  onChange: (jobsToChange: UserJob[]) => void;
   onDelete?: (jobId: string) => void;
-  readOnly: boolean;
+  readOnly?: boolean;
 }
 
-const JobsSection: React.FC<JobsSectionProps> = ({ jobs, onChange, onDelete, readOnly = false }) => {
+const JobsSection = ({ jobs, onChange, onDelete, readOnly = false }: JobsSectionProps) => {
   const [showJobDialog, setShowJobDialog] = useState(false);
   const [currentJob, setCurrentJob] = useState<UserJob>({
     jobId: '',
