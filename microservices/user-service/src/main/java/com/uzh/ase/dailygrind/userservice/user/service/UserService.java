@@ -4,7 +4,6 @@ import com.uzh.ase.dailygrind.userservice.user.controller.dto.*;
 import com.uzh.ase.dailygrind.userservice.user.mapper.UserMapper;
 import com.uzh.ase.dailygrind.userservice.user.repository.UserRepository;
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserEntity;
-import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserJobEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +29,14 @@ public class UserService {
         return userEntities.stream()
                 .map(userEntity -> userMapper.toUserInfoDto(userEntity, followingIds.contains(requesterId)))
                 .toList();
+    }
+
+    public UserInfoDto getUserInfo(String followerId, boolean following) {
+        UserEntity userEntity = userRepository.findUserById(followerId);
+        if (userEntity == null) {
+            return null;
+        }
+        return userMapper.toUserInfoDto(userEntity, following);
     }
 
     public UserDetailsDto getUserDetailsById(String userId, String requesterId) {
