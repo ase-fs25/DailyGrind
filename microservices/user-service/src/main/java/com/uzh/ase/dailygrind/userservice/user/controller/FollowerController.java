@@ -20,8 +20,8 @@ public class FollowerController {
 
     private final UserFollowerService userFollowerService;
 
-    // --- Check current userInfo's following/follower status ---
-    @Operation(summary = "Check if the current userInfo is following another userInfo", description = "Checks if the authenticated userInfo is following the userInfo with the specified ID.")
+    // --- Check current user's following/follower status ---
+    @Operation(summary = "Check if the current user is following another user", description = "Checks if the authenticated user is following the user with the specified ID.")
     @ApiResponse(responseCode = "200", description = "Following status retrieved successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class)))
     @GetMapping("/me/following/{userId}")
     public ResponseEntity<Boolean> isFollowing(@PathVariable String userId, Principal principal) {
@@ -29,7 +29,7 @@ public class FollowerController {
         return ResponseEntity.ok(userFollowerService.isFollowing(principal.getName(), userId));
     }
 
-    @Operation(summary = "Check if the current userInfo is followed by another userInfo", description = "Checks if the authenticated userInfo is followed by the userInfo with the specified ID.")
+    @Operation(summary = "Check if the current user is followed by another user", description = "Checks if the authenticated user is followed by the user with the specified ID.")
     @ApiResponse(responseCode = "200", description = "Followed status retrieved successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class)))
     @GetMapping("/me/followers/{userId}")
     public ResponseEntity<Boolean> isFollowed(@PathVariable String userId, Principal principal) {
@@ -38,7 +38,7 @@ public class FollowerController {
     }
 
     // --- Current userInfo followers/following lists ---
-    @Operation(summary = "Get current userInfo's followers", description = "Fetches the list of followers of the authenticated userInfo.")
+    @Operation(summary = "Get current user's followers", description = "Fetches the list of followers of the authenticated user.")
     @ApiResponse(responseCode = "200", description = "Followers list retrieved successfully",
         content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)))
     @GetMapping("/me/followers")
@@ -46,7 +46,7 @@ public class FollowerController {
         return userFollowerService.getFollowers(principal.getName());
     }
 
-    @Operation(summary = "Get current userInfo's followers IDs", description = "Fetches the list of IDs of users who follow the authenticated userInfo.")
+    @Operation(summary = "Get current user's followers IDs", description = "Fetches the list of IDs of users who follow the authenticated userInfo.")
     @ApiResponse(responseCode = "200", description = "Followers IDs retrieved successfully",
         content = @Content(mediaType = "application/json", schema = @Schema(implementation = String[].class)))
     @GetMapping("/me/followers/ids")
@@ -75,7 +75,7 @@ public class FollowerController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "Unfollow a userInfo", description = "Allows the authenticated userInfo to unfollow the specified userInfo.")
+    @Operation(summary = "Unfollow a user", description = "Allows the authenticated user to unfollow the specified user.")
     @ApiResponse(responseCode = "200", description = "User unfollowed successfully")
     @ApiResponse(responseCode = "400", description = "Cannot unfollow yourself", content = @Content(mediaType = "application/json"))
     @DeleteMapping("/me/following/{userId}")
@@ -88,7 +88,7 @@ public class FollowerController {
     }
 
     // --- Other users' followers/following lists ---
-    @Operation(summary = "Get followers of a userInfo", description = "Fetches the list of users who follow the specified userInfo.")
+    @Operation(summary = "Get followers of a user", description = "Fetches the list of users who follow the specified userInfo.")
     @ApiResponse(responseCode = "200", description = "Followers list retrieved successfully",
         content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)))
     @GetMapping("/users/{userId}/followers")
@@ -96,7 +96,7 @@ public class FollowerController {
         return userFollowerService.getFollowers(userId);
     }
 
-    @Operation(summary = "Get following users of a userInfo", description = "Fetches the list of users whom the specified userInfo is following.")
+    @Operation(summary = "Get following users of a user", description = "Fetches the list of users whom the specified userInfo is following.")
     @ApiResponse(responseCode = "200", description = "Following list retrieved successfully",
         content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)))
     @GetMapping("/users/{userId}/following")

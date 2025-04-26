@@ -21,7 +21,7 @@ public class EducationController {
 
     private final UserEducationService userEducationService;
 
-    @Operation(summary = "Get a userInfo's education details", description = "Fetches the list of education details associated with the specified userInfo.")
+    @Operation(summary = "Get a user's education details", description = "Fetches the list of education details associated with the specified user.")
     @ApiResponse(responseCode = "200", description = "Education details retrieved successfully",
         content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)))
     @GetMapping("/users/{userId}/education")
@@ -29,7 +29,7 @@ public class EducationController {
         return userEducationService.getEducationForUser(userId);
     }
 
-    @Operation(summary = "Get current userInfo's education details", description = "Fetches the list of education details associated with the authenticated userInfo.")
+    @Operation(summary = "Get current user's education details", description = "Fetches the list of education details associated with the authenticated user.")
     @ApiResponse(responseCode = "200", description = "Education details retrieved successfully",
         content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)))
     @GetMapping("/me/education")
@@ -37,7 +37,7 @@ public class EducationController {
         return userEducationService.getEducationForUser(principal.getName());
     }
 
-    @Operation(summary = "Create a new education for the current userInfo", description = "Creates a new education record for the authenticated userInfo.")
+    @Operation(summary = "Create a new education for the current user", description = "Creates a new education record for the authenticated user.")
     @ApiResponse(responseCode = "201", description = "Education created successfully",
         content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserEducationDto.class)))
     @PostMapping("/me/education")
@@ -46,7 +46,7 @@ public class EducationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUserEducation);
     }
 
-    @Operation(summary = "Update an education for the current userInfo", description = "Updates an existing education record for the authenticated userInfo.")
+    @Operation(summary = "Update an education for the current user", description = "Updates an existing education record for the authenticated user.")
     @ApiResponse(responseCode = "200", description = "Education updated successfully",
         content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserEducationDto.class)))
     @PutMapping("/me/education/{educationId}")
@@ -55,7 +55,7 @@ public class EducationController {
         return ResponseEntity.ok(updatedUserEducation);
     }
 
-    @Operation(summary = "Delete education for the current userInfo", description = "Deletes an education record from the authenticated userInfo's profile.")
+    @Operation(summary = "Delete education for the current user", description = "Deletes an education record from the authenticated user's profile.")
     @ApiResponse(responseCode = "200", description = "Education record deleted successfully")
     @DeleteMapping("/me/education/{educationId}")
     public ResponseEntity<?> deleteUserEducation(@PathVariable String educationId, Principal principal) {
