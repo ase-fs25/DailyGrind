@@ -2,6 +2,7 @@ package com.uzh.ase.dailygrind.userservice.user.service;
 
 import com.uzh.ase.dailygrind.userservice.user.controller.dto.*;
 import com.uzh.ase.dailygrind.userservice.user.mapper.UserMapper;
+import com.uzh.ase.dailygrind.userservice.user.repository.UserFollowerRepository;
 import com.uzh.ase.dailygrind.userservice.user.repository.UserRepository;
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ public class UserService {
 
     private final UserJobService userJobService;
     private final UserEducationService userEducationService;
-    private final UserFollowerService userFollowerService;
+    private final UserFollowerRepository userFollowerRepository;
 
     private final UserMapper userMapper;
 
@@ -37,7 +38,7 @@ public class UserService {
         if (userEntity == null) {
             return null;
         }
-        boolean isFollowing = userFollowerService.isFollowing(followerId, requesterId);
+        boolean isFollowing = userFollowerRepository.isFollowing(followerId, requesterId);
         return userMapper.toUserInfoDto(userEntity, isFollowing);
     }
 
