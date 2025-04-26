@@ -61,7 +61,11 @@ public class UserService {
         if (userEntity == null) {
             return null;
         }
-        return userMapper.toUserInfoDto(userEntity, false);
+        boolean isFollowing = false;
+        if (!userId.equals(requesterId)) {
+            isFollowing = userFollowerRepository.isFollowing(userId, requesterId);
+        }
+        return userMapper.toUserInfoDto(userEntity, isFollowing);
     }
 
     public UserInfoDto createUser(UserCreateDto createUserDto, String userId) {
