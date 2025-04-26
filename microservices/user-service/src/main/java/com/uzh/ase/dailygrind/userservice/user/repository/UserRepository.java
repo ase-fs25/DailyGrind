@@ -31,7 +31,6 @@ public class UserRepository {
     }
 
     public void saveUser(UserEntity userEntity) {
-        System.out.println("Saving user: " + userEntity.getPk() + " " + userEntity.getSk());
         userTable.putItem(userEntity);
     }
 

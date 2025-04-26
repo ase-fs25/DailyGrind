@@ -61,7 +61,7 @@ class UserMapperTest {
         // then
         assertThat(userInfoDto)
                 .isNotNull()
-                .extracting(UserInfoDto::userId, UserInfoDto::email, UserInfoDto::firstName, UserInfoDto::lastName, UserInfoDto::birthday, UserInfoDto::location, UserInfoDto::profilePictureUrl, UserInfoDto::numFollowers, UserInfoDto::numFollowing, UserInfoDto::isFollowing)
+                .extracting(UserInfoDto::userId, UserInfoDto::email, UserInfoDto::firstName, UserInfoDto::lastName, UserInfoDto::birthday, UserInfoDto::location, UserInfoDto::profilePictureUrl, UserInfoDto::numFollowers, UserInfoDto::numFollowing, UserInfoDto::isFollowed)
                 .containsExactly(
                         "12345", userEntity.getEmail(), userEntity.getFirstName(), userEntity.getLastName(), userEntity.getBirthday(), userEntity.getLocation(), userEntity.getProfilePictureUrl(), userEntity.getNumFollowers(), userEntity.getNumFollowing(), isFollowing
                 );

@@ -15,7 +15,7 @@ public class UserFollowerService {
     private final UserService userService;
 
     public Boolean isFollowing(String followingId, String followerId) {
-        return userFollowerRepository.isFollowing(followingId, followerId);
+        return userFollowerRepository.isFollowed(followingId, followerId);
     }
 
     public List<String> getFollowersIds(String userId) {

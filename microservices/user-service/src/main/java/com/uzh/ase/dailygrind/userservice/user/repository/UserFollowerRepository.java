@@ -1,6 +1,7 @@
 package com.uzh.ase.dailygrind.userservice.user.repository;
 
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserFollowerEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
@@ -9,11 +10,12 @@ import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 import java.util.List;
 
 @Repository
+@RequiredArgsConstructor
 public class UserFollowerRepository {
 
-    DynamoDbTable<UserFollowerEntity> userFollowerTable;
+    private final DynamoDbTable<UserFollowerEntity> userFollowerTable;
 
-    public Boolean isFollowing(String followingId, String followerId) {
+    public Boolean isFollowed(String followingId, String followerId) {
         Key key = Key.builder()
                 .partitionValue("USER#" + followingId + "#FOLLOWER")
                 .sortValue("USER#" + followerId)
@@ -30,7 +32,7 @@ public class UserFollowerRepository {
         return userFollowerTable.query(r -> r.queryConditional(queryConditional))
                 .items()
                 .stream()
-                .map(UserFollowerEntity::getSk)
+                .map(UserFollowerEntity::getId)
                 .toList();
     }
 
@@ -43,26 +45,26 @@ public class UserFollowerRepository {
         return userFollowerTable.query(r -> r.queryConditional(queryConditional))
                 .items()
                 .stream()
-                .map(UserFollowerEntity::getSk)
+                .map(UserFollowerEntity::getId)
                 .toList();
     }
 
     public void followUser(String toFollowId, String userId) {
         UserFollowerEntity userFollowingEntity = UserFollowerEntity.builder()
-                .pk("USER#" + toFollowId + "#FOLLOWING")
-                .sk(userId)
+                .pk("USER#" + toFollowId + "#FOLLOWER")
+                .sk("USER#" + userId)
                 .build();
         UserFollowerEntity userFollowerEntity = UserFollowerEntity.builder()
-                .pk("USER#" + userId + "#FOLLOWER")
-                .sk(toFollowId)
+                .pk("USER#" + userId + "#FOLLOWING")
+                .sk("USER#" + toFollowId)
                 .build();
         userFollowerTable.putItem(userFollowingEntity);
         userFollowerTable.putItem(userFollowerEntity);
     }
 
     public void unfollowUser(String toUnfollowId, String userId) {
-        userFollowerTable.deleteItem(r -> r.key(k -> k.partitionValue("USER#" + toUnfollowId + "#FOLLOWING").sortValue(userId)));
-        userFollowerTable.deleteItem(r -> r.key(k -> k.partitionValue("USER#" + userId + "#FOLLOWER").sortValue(toUnfollowId)));
+        userFollowerTable.deleteItem(r -> r.key(k -> k.partitionValue("USER#" + toUnfollowId + "#FOLLOWER").sortValue(userId)));
+        userFollowerTable.deleteItem(r -> r.key(k -> k.partitionValue("USER#" + userId + "#FOLLOWING").sortValue(toUnfollowId)));
     }
 
 }

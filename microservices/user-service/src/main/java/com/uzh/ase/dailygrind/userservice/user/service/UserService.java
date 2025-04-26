@@ -24,22 +24,20 @@ public class UserService {
 
     public List<UserInfoDto> getAllUserInfos(String requesterId) {
         List<UserEntity> userEntities = userRepository.findAllUserEntities();
-        List<String> followingIds = userEntities.stream()
-                .map(UserEntity::getId)
-                .toList();
+        List<String> followingIds = userFollowerRepository.findAllFollowing(requesterId);
 
         return userEntities.stream()
                 .map(userEntity -> userMapper.toUserInfoDto(userEntity, followingIds.contains(requesterId)))
                 .toList();
     }
 
-    public UserInfoDto getUserInfo(String followerId, String requesterId) {
-        UserEntity userEntity = userRepository.findUserById(followerId);
+    public UserInfoDto getUserInfo(String followingId, String requesterId) {
+        UserEntity userEntity = userRepository.findUserById(followingId);
         if (userEntity == null) {
             return null;
         }
-        boolean isFollowing = userFollowerRepository.isFollowing(followerId, requesterId);
-        return userMapper.toUserInfoDto(userEntity, isFollowing);
+        boolean isFollowed = userFollowerRepository.isFollowed(followingId, requesterId);
+        return userMapper.toUserInfoDto(userEntity, isFollowed);
     }
 
     public UserDetailsDto getUserDetailsById(String userId, String requesterId) {
@@ -63,7 +61,7 @@ public class UserService {
         }
         boolean isFollowing = false;
         if (!userId.equals(requesterId)) {
-            isFollowing = userFollowerRepository.isFollowing(userId, requesterId);
+            isFollowing = userFollowerRepository.isFollowed(userId, requesterId);
         }
         return userMapper.toUserInfoDto(userEntity, isFollowing);
     }

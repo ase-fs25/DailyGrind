@@ -30,7 +30,7 @@ public class UserEducationService {
 
     public UserEducationDto updateUserEducation(String educationId, UserEducationDto updateUserEducationDto, String name) {
         UserEducationEntity userEducationEntity = userEducationMapper.toUserEducationEntity(updateUserEducationDto, name);
-        userEducationEntity.setPk(UserEducationEntity.generatePK(educationId));
+        userEducationEntity.setSk(UserEducationEntity.generateSK(educationId));
         userEducationRepository.updateUserEducation(userEducationEntity);
         return userEducationMapper.toUserEducationDto(userEducationEntity);
     }

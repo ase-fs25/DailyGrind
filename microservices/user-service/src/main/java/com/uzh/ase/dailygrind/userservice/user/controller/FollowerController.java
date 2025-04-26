@@ -20,10 +20,9 @@ public class FollowerController {
 
     private final UserFollowerService userFollowerService;
 
-    // --- Check current user's following/follower status ---
     @Operation(summary = "Check if the current user is following another user", description = "Checks if the authenticated user is following the user with the specified ID.")
     @ApiResponse(responseCode = "200", description = "Following status retrieved successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class)))
-    @GetMapping("/me/following/{userId}")
+    @GetMapping("/{userId}/is-followed")
     public ResponseEntity<Boolean> isFollowing(@PathVariable String userId, Principal principal) {
         if (principal.getName().equals(userId)) return ResponseEntity.ok(false);
         return ResponseEntity.ok(userFollowerService.isFollowing(principal.getName(), userId));
@@ -31,7 +30,7 @@ public class FollowerController {
 
     @Operation(summary = "Check if the current user is followed by another user", description = "Checks if the authenticated user is followed by the user with the specified ID.")
     @ApiResponse(responseCode = "200", description = "Followed status retrieved successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class)))
-    @GetMapping("/me/followers/{userId}")
+    @GetMapping("/{userId}/is-follower")
     public ResponseEntity<Boolean> isFollowed(@PathVariable String userId, Principal principal) {
         if (principal.getName().equals(userId)) return ResponseEntity.ok(false);
         return ResponseEntity.ok(userFollowerService.isFollowing(userId, principal.getName()));
@@ -66,7 +65,7 @@ public class FollowerController {
     @Operation(summary = "Follow a userInfo", description = "Allows the authenticated userInfo to follow the specified userInfo.")
     @ApiResponse(responseCode = "200", description = "User followed successfully")
     @ApiResponse(responseCode = "400", description = "Cannot follow yourself", content = @Content(mediaType = "application/json"))
-    @PostMapping("/me/following/{userId}")
+    @PostMapping("/{userId}/follow")
     public ResponseEntity<?> followUser(@PathVariable String userId, Principal principal) {
         if (principal.getName().equals(userId)) {
             return ResponseEntity.badRequest().body("You cannot follow yourself.");
@@ -78,7 +77,7 @@ public class FollowerController {
     @Operation(summary = "Unfollow a user", description = "Allows the authenticated user to unfollow the specified user.")
     @ApiResponse(responseCode = "200", description = "User unfollowed successfully")
     @ApiResponse(responseCode = "400", description = "Cannot unfollow yourself", content = @Content(mediaType = "application/json"))
-    @DeleteMapping("/me/following/{userId}")
+    @DeleteMapping("/{userId}/unfollow")
     public ResponseEntity<?> unfollowUser(@PathVariable String userId, Principal principal) {
         if (principal.getName().equals(userId)) {
             return ResponseEntity.badRequest().body("You cannot unfollow yourself.");

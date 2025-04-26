@@ -1,6 +1,5 @@
 package com.uzh.ase.dailygrind.userservice.user.repository;
 
-import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserEntity;
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserJobEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -18,15 +17,15 @@ public class UserJobRepository {
 
     public List<UserJobEntity> findAllUserJobs(String userId) {
         QueryConditional queryConditional = QueryConditional.keyEqualTo(
-                Key.builder()
-                        .partitionValue("USER#" + userId + "#JOB")
-                        .build()
+            Key.builder()
+                .partitionValue("USER#" + userId + "#JOB")
+                .build()
         );
 
         return userJobTable.query(r -> r.queryConditional(queryConditional))
-                .items()
-                .stream()
-                .toList();
+            .items()
+            .stream()
+            .toList();
     }
 
     public void saveUserJob(UserJobEntity userJobEntity) {

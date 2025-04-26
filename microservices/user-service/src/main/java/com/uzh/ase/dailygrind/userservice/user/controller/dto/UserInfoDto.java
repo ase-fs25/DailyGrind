@@ -10,6 +10,6 @@ public record UserInfoDto(
         int numFollowers,
         int numFollowing,
         String profilePictureUrl,
-        boolean isFollowing
+        boolean isFollowed
 ) {
 }

@@ -3,7 +3,6 @@ package com.uzh.ase.dailygrind.userservice.user.service;
 import com.uzh.ase.dailygrind.userservice.user.controller.dto.UserJobDto;
 import com.uzh.ase.dailygrind.userservice.user.mapper.UserJobMapper;
 import com.uzh.ase.dailygrind.userservice.user.repository.UserJobRepository;
-import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserEntity;
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserJobEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,8 +29,9 @@ public class UserJobService {
     }
 
     public UserJobDto updateUserJob(String jobId, UserJobDto updateUserJobDto, String requestingUserId) {
+        System.out.println("Updating job with ID: " + jobId);
         UserJobEntity userJobEntity = userJobMapper.toUserJobEntity(updateUserJobDto, requestingUserId);
-        userJobEntity.setPk(UserEntity.generatePK(jobId));
+        userJobEntity.setSk(UserJobEntity.generateSK(jobId));
         userJobRepository.updateUserJob(userJobEntity);
         return userJobMapper.toUserJobDto(userJobEntity);
     }

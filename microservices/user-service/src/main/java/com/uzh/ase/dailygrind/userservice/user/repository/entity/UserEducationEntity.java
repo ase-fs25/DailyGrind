@@ -19,8 +19,10 @@ public class UserEducationEntity {
     public static final String PK_PREFIX = "USER";
     public static final String PK_SUFFIX = "EDUCATION";
 
-    private String pk;  // USER#<userID>#EDUCATION
-    private String sk;  // EDUCATION#<educationID>
+    @Getter(onMethod_ = {@DynamoDbPartitionKey, @DynamoDbAttribute("PK")})
+    private String pk;
+    @Getter(onMethod_ = {@DynamoDbSortKey, @DynamoDbAttribute("SK")})
+    private String sk;
 
     private String institution;
     private String educationLocation;
