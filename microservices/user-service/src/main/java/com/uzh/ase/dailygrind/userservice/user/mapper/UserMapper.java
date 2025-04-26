@@ -35,6 +35,7 @@ public interface UserMapper {
     @Mapping(target = "numFollowers", source = "user.numFollowers")
     @Mapping(target = "numFollowing", source = "user.numFollowing")
     @Mapping(target = "isFollowing", source = "isFollowing")
+    @Mapping(target = "profilePictureUrl", source = "user.profilePictureUrl")
     UserInfoDto toUserInfoDto(UserEntity user, boolean isFollowing);
 
 
