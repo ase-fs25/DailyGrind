@@ -22,7 +22,7 @@ const Feed = () => {
           const authToken = session.tokens?.accessToken.toString();
           console.log('auth token: ', authToken);
 
-          const res = await fetch('http://localhost:8080/me', {
+          const res = await fetch('http://localhost:8080/users/me', {
             method: 'GET',
             headers: {
               Authorization: `Bearer ${authToken}`,

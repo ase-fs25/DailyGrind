@@ -123,7 +123,21 @@ const JobsSection = ({ jobs, onChange, onDelete, readOnly = false }: JobsSection
       )}
 
       {/* Job Dialog */}
-      <Dialog open={showJobDialog} onClose={() => setShowJobDialog(false)} maxWidth="md" fullWidth>
+      <Dialog
+        open={showJobDialog}
+        onClose={() => setShowJobDialog(false)}
+        maxWidth="md"
+        fullWidth
+        slotProps={{
+          backdrop: {
+            timeout: 600,
+            style: {
+              backgroundColor: 'rgba(255, 255, 255, 0.5)',
+              backdropFilter: 'blur(4px)',
+            },
+          },
+        }}
+      >
         <DialogTitle>{jobEditMode ? 'Edit Work Experience' : 'Add Work Experience'}</DialogTitle>
         <DialogContent>
           <TextField

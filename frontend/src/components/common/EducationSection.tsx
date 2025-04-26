@@ -129,7 +129,21 @@ const EducationSection = ({ education, onChange, onDelete, readOnly = false }: E
       )}
 
       {/* Education Dialog */}
-      <Dialog open={showEducationDialog} onClose={() => setShowEducationDialog(false)} maxWidth="md" fullWidth>
+      <Dialog
+        open={showEducationDialog}
+        onClose={() => setShowEducationDialog(false)}
+        maxWidth="md"
+        fullWidth
+        slotProps={{
+          backdrop: {
+            timeout: 600,
+            style: {
+              backgroundColor: 'rgba(255, 255, 255, 0.5)',
+              backdropFilter: 'blur(4px)',
+            },
+          },
+        }}
+      >
         <DialogTitle>{educationEditMode ? 'Edit Education' : 'Add Education'}</DialogTitle>
         <DialogContent>
           <TextField

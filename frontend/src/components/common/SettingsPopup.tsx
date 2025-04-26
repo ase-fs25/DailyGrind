@@ -158,6 +158,15 @@ const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
       fullWidth
       maxWidth="md"
       sx={{ '& .MuiDialog-paper': { height: '80vh', display: 'flex', flexDirection: 'column' } }}
+      slotProps={{
+        backdrop: {
+          timeout: 600,
+          style: {
+            backgroundColor: 'rgba(255, 255, 255, 0.5)',
+            backdropFilter: 'blur(4px)',
+          },
+        },
+      }}
     >
       <DialogTitle className="settings-header">
         Settings

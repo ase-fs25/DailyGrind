@@ -2,19 +2,21 @@
   height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   background-color: #f3e5f5;
-  overflow: auto;
+  overflow-y: hidden;
 }
 
 .registration-paper {
+  height: 90vh;
   padding: 16px;
-  width: 320px;
+  width: 30vw;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 0.2vh;
   background-color: #9c27b0;
   color: white;
+  overflow-y: auto;
 }
 
 .registration-input {

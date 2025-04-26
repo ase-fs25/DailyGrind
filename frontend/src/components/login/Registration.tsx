@@ -57,10 +57,6 @@ const Registration = () => {
         <Typography variant="h5" textAlign="center" gutterBottom>
           Complete your Profile
         </Typography>
-
-        <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
-          Personal Information
-        </Typography>
         <TextField
           label="First Name"
           variant="outlined"
@@ -121,7 +117,7 @@ const Registration = () => {
 
         {error && (
           <Typography className="error-text" color="error" textAlign="center">
-            {error}
+            Something went wrong during registration. Please try again.
           </Typography>
         )}
 
