@@ -5,8 +5,6 @@ import java.util.List;
 public record UserDetailsDto(
         UserInfoDto userInfo,
         List<UserJobDto> jobs,
-        List<UserEducationDto> educations,
-        int numFollowers,
-        int numFollowing
+        List<UserEducationDto> educations
 ) {
 }
