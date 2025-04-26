@@ -1,7 +1,6 @@
 package com.uzh.ase.dailygrind.userservice.user.repository;
 
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserEducationEntity;
-import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserJobEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;

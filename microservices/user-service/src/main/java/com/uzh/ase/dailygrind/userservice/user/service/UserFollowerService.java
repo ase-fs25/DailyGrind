@@ -1,6 +1,5 @@
 package com.uzh.ase.dailygrind.userservice.user.service;
 
-import com.uzh.ase.dailygrind.userservice.user.controller.dto.UserCreateDto;
 import com.uzh.ase.dailygrind.userservice.user.controller.dto.UserInfoDto;
 import com.uzh.ase.dailygrind.userservice.user.repository.UserFollowerRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,19 +25,26 @@ public class UserFollowerService {
     public List<UserInfoDto> getFollowers(String userId) {
         List<String> followersIds = userFollowerRepository.findAllFollowers(userId);
         return followersIds.stream()
-                .map(id -> userService.getUserInfo(id, true))
+                .map(id -> userService.getUserInfo(id, userId))
                 .toList();
     }
 
-
-
-    public List<UserCreateDto> getFollowing(String name) {
-        return null;
+    public List<UserInfoDto> getFollowing(String userId) {
+        List<String> followingIds = userFollowerRepository.findAllFollowing(userId);
+        return followingIds.stream()
+                .map(id -> userService.getUserInfo(id, userId))
+                .toList();
     }
 
-    public void followUser(String userId, String name) {
+    public void followUser(String toFollowId, String userId) {
+        userFollowerRepository.followUser(toFollowId, userId);
+        userService.increaseFollowerCount(toFollowId);
+        userService.increaseFollowingCount(userId);
     }
 
-    public void unfollowUser(String userId, String name) {
+    public void unfollowUser(String toUnfollowId, String userId) {
+        userFollowerRepository.unfollowUser(toUnfollowId, userId);
+        userService.decreaseFollowerCount(toUnfollowId);
+        userService.decreaseFollowingCount(userId);
     }
 }

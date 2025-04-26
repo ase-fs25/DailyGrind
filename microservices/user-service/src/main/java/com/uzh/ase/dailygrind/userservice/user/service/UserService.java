@@ -17,6 +17,7 @@ public class UserService {
 
     private final UserJobService userJobService;
     private final UserEducationService userEducationService;
+    private final UserFollowerService userFollowerService;
 
     private final UserMapper userMapper;
 
@@ -31,12 +32,13 @@ public class UserService {
                 .toList();
     }
 
-    public UserInfoDto getUserInfo(String followerId, boolean following) {
+    public UserInfoDto getUserInfo(String followerId, String requesterId) {
         UserEntity userEntity = userRepository.findUserById(followerId);
         if (userEntity == null) {
             return null;
         }
-        return userMapper.toUserInfoDto(userEntity, following);
+        boolean isFollowing = userFollowerService.isFollowing(followerId, requesterId);
+        return userMapper.toUserInfoDto(userEntity, isFollowing);
     }
 
     public UserDetailsDto getUserDetailsById(String userId, String requesterId) {
@@ -63,5 +65,37 @@ public class UserService {
         UserEntity userEntity = userMapper.toUserEntity(updateUserDto, name);
         userRepository.updateUser(userEntity);
         return userMapper.toUserInfoDto(userEntity, false);
+    }
+
+    public void increaseFollowerCount(String userId) {
+        UserEntity userEntity = userRepository.findUserById(userId);
+        if (userEntity != null) {
+            userEntity.setNumFollowers(userEntity.getNumFollowers() + 1);
+            userRepository.updateUser(userEntity);
+        }
+    }
+
+    public void increaseFollowingCount(String userId) {
+        UserEntity userEntity = userRepository.findUserById(userId);
+        if (userEntity != null) {
+            userEntity.setNumFollowing(userEntity.getNumFollowing() + 1);
+            userRepository.updateUser(userEntity);
+        }
+    }
+
+    public void decreaseFollowerCount(String userId) {
+        UserEntity userEntity = userRepository.findUserById(userId);
+        if (userEntity != null) {
+            userEntity.setNumFollowers(userEntity.getNumFollowers() - 1);
+            userRepository.updateUser(userEntity);
+        }
+    }
+
+    public void decreaseFollowingCount(String userId) {
+        UserEntity userEntity = userRepository.findUserById(userId);
+        if (userEntity != null) {
+            userEntity.setNumFollowing(userEntity.getNumFollowing() - 1);
+            userRepository.updateUser(userEntity);
+        }
     }
 }

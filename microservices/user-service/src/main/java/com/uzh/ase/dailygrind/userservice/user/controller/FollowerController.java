@@ -1,6 +1,6 @@
 package com.uzh.ase.dailygrind.userservice.user.controller;
 
-import com.uzh.ase.dailygrind.userservice.user.controller.dto.UserCreateDto;
+import com.uzh.ase.dailygrind.userservice.user.controller.dto.UserInfoDto;
 import com.uzh.ase.dailygrind.userservice.user.service.UserFollowerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -42,7 +42,7 @@ public class FollowerController {
     @ApiResponse(responseCode = "200", description = "Followers list retrieved successfully",
         content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)))
     @GetMapping("/me/followers")
-    public List<UserCreateDto> getMyFollowers(Principal principal) {
+    public List<UserInfoDto> getMyFollowers(Principal principal) {
         return userFollowerService.getFollowers(principal.getName());
     }
 
@@ -50,7 +50,7 @@ public class FollowerController {
     @ApiResponse(responseCode = "200", description = "Followers IDs retrieved successfully",
         content = @Content(mediaType = "application/json", schema = @Schema(implementation = String[].class)))
     @GetMapping("/me/followers/ids")
-    public ResponseEntity<String[]> getMyFollowersIds(Principal principal) {
+    public ResponseEntity<List<String>> getMyFollowersIds(Principal principal) {
         return ResponseEntity.ok(userFollowerService.getFollowersIds(principal.getName()));
     }
 
@@ -58,7 +58,7 @@ public class FollowerController {
     @ApiResponse(responseCode = "200", description = "Following list retrieved successfully",
         content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)))
     @GetMapping("/me/following")
-    public List<UserCreateDto> getMyFollowing(Principal principal) {
+    public List<UserInfoDto> getMyFollowing(Principal principal) {
         return userFollowerService.getFollowing(principal.getName());
     }
 
@@ -92,7 +92,7 @@ public class FollowerController {
     @ApiResponse(responseCode = "200", description = "Followers list retrieved successfully",
         content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)))
     @GetMapping("/users/{userId}/followers")
-    public List<UserCreateDto> getFollowers(@PathVariable String userId) {
+    public List<UserInfoDto> getFollowers(@PathVariable String userId) {
         return userFollowerService.getFollowers(userId);
     }
 
@@ -100,7 +100,7 @@ public class FollowerController {
     @ApiResponse(responseCode = "200", description = "Following list retrieved successfully",
         content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)))
     @GetMapping("/users/{userId}/following")
-    public List<UserCreateDto> getFollowing(@PathVariable String userId) {
+    public List<UserInfoDto> getFollowing(@PathVariable String userId) {
         return userFollowerService.getFollowing(userId);
     }
 }

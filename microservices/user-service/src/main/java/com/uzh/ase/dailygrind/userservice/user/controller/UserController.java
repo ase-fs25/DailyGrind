@@ -24,8 +24,6 @@ public class UserController {
 
     private final UserService userService;
 
-    // ───── USER INFO ─────────────────────────────
-
     @Operation(summary = "Get all users info", description = "Fetches all users info.")
     @ApiResponse(responseCode = "200", description = "List of users info retrieved successfully",
         content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)))
@@ -33,14 +31,6 @@ public class UserController {
     public List<UserInfoDto> getUsers(Principal principal) {
         return userService.getAllUserInfos(principal.getName());
     }
-
-//    @Operation(summary = "Get all users with jobs and education", description = "Fetches all users along with their jobs and education details.")
-//    @ApiResponse(responseCode = "200", description = "List of users with jobs and education retrieved successfully",
-//        content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)))
-//    @GetMapping("/users/details")
-//    public List<UserDetailsDto> getUsersDetailsWithJobsAndEducation() {
-//        return userServiceOLD.getAllUserDetailsWithJobsAndEducation();
-//    }
 
     @Operation(summary = "Get current user's details", description = "Fetches the details of the authenticated user.")
     @ApiResponse(responseCode = "200", description = "User details retrieved successfully",

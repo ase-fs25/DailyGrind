@@ -39,20 +39,6 @@ public class UserRepository {
         userTable.updateItem(userEntity);
     }
 
-    public List<String> findAllFollowers(String userId) {
-        QueryConditional queryConditional = QueryConditional.keyEqualTo(
-                Key.builder()
-                        .partitionValue("USER#" + userId + "#FOLLOWER")
-                        .build()
-        );
-        return userTable.query(r -> r.queryConditional(queryConditional))
-                .items()
-                .stream()
-                .map(UserEntity::getSk)
-                .map(sk -> sk.split("#")[1])
-                .toList();
-    }
-
     public List<String> findAllFollowing(String userId) {
         QueryConditional queryConditional = QueryConditional.keyEqualTo(
                 Key.builder()

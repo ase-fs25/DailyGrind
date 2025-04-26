@@ -47,22 +47,22 @@ public class UserFollowerRepository {
                 .toList();
     }
 
-    public void followUser(String followerId, String followingId) {
+    public void followUser(String toFollowId, String userId) {
         UserFollowerEntity userFollowingEntity = UserFollowerEntity.builder()
-                .pk("USER#" + followerId + "#FOLLOWING")
-                .sk(followingId)
+                .pk("USER#" + toFollowId + "#FOLLOWING")
+                .sk(userId)
                 .build();
         UserFollowerEntity userFollowerEntity = UserFollowerEntity.builder()
-                .pk("USER#" + followingId + "#FOLLOWER")
-                .sk(followerId)
+                .pk("USER#" + userId + "#FOLLOWER")
+                .sk(toFollowId)
                 .build();
         userFollowerTable.putItem(userFollowingEntity);
         userFollowerTable.putItem(userFollowerEntity);
     }
 
-    public void unfollowUser(String followerId, String followingId) {
-        userFollowerTable.deleteItem(r -> r.key(k -> k.partitionValue("USER#" + followerId + "#FOLLOWING").sortValue(followingId)));
-        userFollowerTable.deleteItem(r -> r.key(k -> k.partitionValue("USER#" + followingId + "#FOLLOWER").sortValue(followerId)));
+    public void unfollowUser(String toUnfollowId, String userId) {
+        userFollowerTable.deleteItem(r -> r.key(k -> k.partitionValue("USER#" + toUnfollowId + "#FOLLOWING").sortValue(userId)));
+        userFollowerTable.deleteItem(r -> r.key(k -> k.partitionValue("USER#" + userId + "#FOLLOWER").sortValue(toUnfollowId)));
     }
 
 }
