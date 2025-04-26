@@ -22,7 +22,7 @@ public class DevSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        log.warn("!!!!!!!!DevSecurityConfig filterChain!!!!!!!!");
+        log.warn("=== [Dev Profile] Security is DISABLED: All requests are permitted without authentication. ===");
 
         http
                 .cors(httpSecurityCorsConfigurer -> {})

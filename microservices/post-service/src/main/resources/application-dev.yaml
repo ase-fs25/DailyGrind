@@ -1,0 +1,6 @@
+security:
+  enabled: false
+
+logging:
+  level:
+    org.springframework.security: DEBUG

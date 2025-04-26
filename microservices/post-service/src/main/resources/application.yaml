@@ -26,10 +26,3 @@ spring:
 
 server:
   port: ${PORT:8081}
-
-security:
-  enabled: false
-
-logging:
-  level:
-    org.springframework.security: TRACE
