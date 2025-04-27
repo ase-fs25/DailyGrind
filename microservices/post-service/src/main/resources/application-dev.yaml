@@ -4,3 +4,6 @@ security:
 logging:
   level:
     org.springframework.security: DEBUG
+
+post:
+  ttlMinutes: true

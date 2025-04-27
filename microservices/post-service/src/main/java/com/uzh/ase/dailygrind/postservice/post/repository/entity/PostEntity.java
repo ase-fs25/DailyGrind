@@ -6,6 +6,8 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
 
+import java.util.UUID;
+
 @DynamoDbBean
 @Getter
 @Setter
@@ -20,22 +22,33 @@ public class PostEntity {
 
     public static String POSTFIX = "POST";
 
+    @Getter(onMethod_ =  {@DynamoDbPartitionKey, @DynamoDbAttribute("PK")})
     private String pk;
+    @Getter(onMethod_ =  {@DynamoDbSortKey, @DynamoDbAttribute("SK")})
     private String sk;
 
     private String postTitle;
     private String postContent;
     private String postTimestamp;
 
-    @DynamoDbPartitionKey
-    @DynamoDbAttribute("PK")
-    public String getPk() {
-        return pk;
+    private Long likeCount;
+    private Long commentCount;
+
+    public static String generatePK(String userId) {
+        return PREFIX + "#" + userId + "#" + POSTFIX;
     }
 
-    @DynamoDbSortKey
-    @DynamoDbAttribute("SK")
-    public String getSk() {
-        return sk;
+    public static String generateSK(String postId) {
+        if (postId == null || postId.isEmpty()) postId = UUID.randomUUID().toString();
+        return POSTFIX + "#" + postId;
     }
+
+    public String getUserId() {
+        return pk.split("#")[1];
+    }
+
+    public String getPostId() {
+        return sk.split("#")[1];
+    }
+
 }
