@@ -13,8 +13,6 @@ import '../../styles/components/common/header.css';
 import { POSTING_TIME } from '../../constants/postTime';
 import { getUserPosts, userHasPostedAlready, validPostingTime } from '../../helpers/postHelper';
 
-// TODO add logic for only being able to post once a day
-
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -59,33 +57,13 @@ const Header = () => {
     setCurrentTime(moment());
   };
 
-  console.log('hasPosted:', hasPosted);
-  //
-  // const startTime = moment(currentTime).set({
-  //   hour: POSTING_TIME.POST_TIME_START_HOUR,
-  //   minute: POSTING_TIME.POST_TIME_START_MINUTES,
-  //   second: 0,
-  //   millisecond: 0,
-  // });
-  //
-  // const endTime = moment(currentTime).set({
-  //   hour: POSTING_TIME.POST_TIME_END_HOUR,
-  //   minute: POSTING_TIME.POST_TIME_END_MINUTES,
-  //   second: 0,
-  //   millisecond: 0,
-  // });
-
-  // const isValidPostingTime = currentTime.isBetween(startTime, endTime, null, '[]');
   const isValidPostingTime = validPostingTime(moment());
-
-  console.log(isValidPostingTime);
 
   let leftText = '';
   let buttonIcon = null;
   let buttonText = '';
   let onClickHandler = null;
 
-  //TODO: Add a post.postFromToday() function in the postHelper.ts
   if (isValidPostingTime && !hasPosted) {
     buttonIcon = <AddIcon />;
     buttonText = 'Add daily Post';
