@@ -4,15 +4,14 @@ import { useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, Button, DialogActions, TextField } from '@mui/material';
 import { createPost } from '../../helpers/postHelper';
 import '../../styles/components/common/addPostPopup.css';
-import { Post } from '../../types/post';
+import postStore from '../../stores/postsStore';
 
 interface AddPostPopupProps {
   open: boolean;
   onClose: () => void;
-  onPostCreated: (newPost: Post) => void;
 }
 
-const AddPostPopup = ({ open, onClose, onPostCreated }: AddPostPopupProps) => {
+const AddPostPopup = ({ open, onClose }: AddPostPopupProps) => {
   const [postTitle, setPostTitle] = useState('');
   const [postContent, setPostContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -29,12 +28,12 @@ const AddPostPopup = ({ open, onClose, onPostCreated }: AddPostPopupProps) => {
     if (!isFormValid) return;
 
     try {
-      setIsSubmitting(true);
       const newPost = await createPost(postTitle, postContent);
+
+      postStore.addPost(newPost);
 
       setPostTitle('');
       setPostContent('');
-      onPostCreated(newPost);
       onClose();
     } catch (error) {
       console.error('Error creating post:', error);

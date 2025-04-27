@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AppBar, Tabs, Tab, IconButton, Toolbar, Box, Button } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import AddIcon from '@mui/icons-material/Add';
@@ -8,9 +8,10 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import SettingsPopup from './SettingsPopup';
-// import AddPostPopup from './AddPostPopup';
+import AddPostPopup from './AddPostPopup';
 import '../../styles/components/common/header.css';
 import { POSTING_TIME } from '../../constants/postTime';
+import { getUserPosts, userHasPostedAlready, validPostingTime } from '../../helpers/postHelper';
 
 // TODO add logic for only being able to post once a day
 
@@ -18,11 +19,32 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [settingsOpen, setSettingsOpen] = useState(false);
-  // const [addPostOpen, setAddPostOpen] = useState(false);
+  const [addPostOpen, setAddPostOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [currentTime, setCurrentTime] = useState(moment());
+  const [hasPosted, setHasPosted] = useState(false);
 
   const tabIndex = ['/', '/posts', '/friends'].indexOf(location.pathname);
+
+  useEffect(() => {
+    const checkPostingStatus = async () => {
+      try {
+        const posts = await getUserPosts();
+        setHasPosted(userHasPostedAlready(posts));
+      } catch (error) {
+        console.error('Error checking posting status:', error);
+      }
+    };
+
+    checkPostingStatus();
+
+    const timer = setInterval(() => {
+      setCurrentTime(moment());
+      checkPostingStatus();
+    }, 60000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   const handleTabChange = (event: React.SyntheticEvent, newIndex: number) => {
     const paths = ['/', '/posts', '/friends'];
@@ -37,51 +59,54 @@ const Header = () => {
     setCurrentTime(moment());
   };
 
-  const startTime = moment(currentTime).set({
-    hour: POSTING_TIME.POST_TIME_START_HOUR,
-    minute: POSTING_TIME.POST_TIME_START_MINUTES,
-    second: 0,
-    millisecond: 0,
-  });
+  console.log('hasPosted:', hasPosted);
+  //
+  // const startTime = moment(currentTime).set({
+  //   hour: POSTING_TIME.POST_TIME_START_HOUR,
+  //   minute: POSTING_TIME.POST_TIME_START_MINUTES,
+  //   second: 0,
+  //   millisecond: 0,
+  // });
+  //
+  // const endTime = moment(currentTime).set({
+  //   hour: POSTING_TIME.POST_TIME_END_HOUR,
+  //   minute: POSTING_TIME.POST_TIME_END_MINUTES,
+  //   second: 0,
+  //   millisecond: 0,
+  // });
 
-  const endTime = moment(currentTime).set({
-    hour: POSTING_TIME.POST_TIME_END_HOUR,
-    minute: POSTING_TIME.POST_TIME_END_MINUTES,
-    second: 0,
-    millisecond: 0,
-  });
+  // const isValidPostingTime = currentTime.isBetween(startTime, endTime, null, '[]');
+  const isValidPostingTime = validPostingTime(moment());
 
-  const isValidPostingTime = currentTime.isBetween(startTime, endTime, null, '[]');
+  console.log(isValidPostingTime);
 
   let leftText = '';
   let buttonIcon = null;
   let buttonText = '';
   let onClickHandler = null;
 
-  if (isValidPostingTime) {
+  //TODO: Add a post.postFromToday() function in the postHelper.ts
+  if (isValidPostingTime && !hasPosted) {
     buttonIcon = <AddIcon />;
     buttonText = 'Add daily Post';
-    onClickHandler = () => {
-      const now = moment();
-      const endTimeNow = moment(now).set({
-        hour: POSTING_TIME.POST_TIME_END_HOUR,
-        minute: POSTING_TIME.POST_TIME_END_MINUTES,
-        second: 0,
-        millisecond: 0,
-      });
-      if (now <= endTimeNow) {
-        // setAddPostOpen(true);
-      } else {
-        checkTime();
-      }
-    };
+    onClickHandler = () => setAddPostOpen(true);
   } else {
     buttonIcon = isLoading ? <CircularProgress size={24} color="inherit" /> : <RefreshIcon />;
 
-    // If currentTime is before the posting window, suggest the start time; otherwise, ask to come back tomorrow.
-    leftText = currentTime.isBefore(startTime)
-      ? `Come back at ${startTime.format('HH:mm')} to post`
-      : 'Come back tomorrow to post';
+    if (hasPosted && isValidPostingTime) {
+      leftText = 'You have already posted today';
+    } else {
+      const startTime = moment(currentTime).set({
+        hour: POSTING_TIME.POST_TIME_START_HOUR,
+        minute: POSTING_TIME.POST_TIME_START_MINUTES,
+        second: 0,
+        millisecond: 0,
+      });
+
+      leftText = currentTime.isBefore(startTime)
+        ? `Come back at ${startTime.format('HH:mm')} to post`
+        : 'Come back tomorrow to post';
+    }
 
     onClickHandler = () => {
       setIsLoading(true);
@@ -129,7 +154,7 @@ const Header = () => {
         </Toolbar>
       </AppBar>
       <SettingsPopup open={settingsOpen} onClose={() => setSettingsOpen(false)} />
-      {/* <AddPostPopup open={addPostOpen} onClose={() => setAddPostOpen(false)} /> */}
+      <AddPostPopup open={addPostOpen} onClose={() => setAddPostOpen(false)} />
     </>
   );
 };

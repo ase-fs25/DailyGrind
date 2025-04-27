@@ -1,5 +1,7 @@
 import { getAuthToken } from './authHelper';
 import { Post } from '../types/post';
+import moment from 'moment';
+import { POSTING_TIME } from '../constants/postTime';
 
 const API_URL = 'http://localhost:8081';
 
@@ -78,4 +80,46 @@ export async function deletePost(postId: string): Promise<void> {
     console.error('Error deleting post:', error);
     throw error;
   }
+}
+
+function getPostingTimeRange(currentTime: moment.Moment) {
+  const startTime = moment(currentTime).set({
+    hour: POSTING_TIME.POST_TIME_START_HOUR,
+    minute: POSTING_TIME.POST_TIME_START_MINUTES,
+    second: 0,
+    millisecond: 0,
+  });
+
+  const endTime = moment(currentTime).set({
+    hour: POSTING_TIME.POST_TIME_END_HOUR,
+    minute: POSTING_TIME.POST_TIME_END_MINUTES,
+    second: 0,
+    millisecond: 0,
+  });
+
+  return { startTime, endTime };
+}
+
+export function userHasPostedAlready(posts: Post[]): boolean {
+  const today = moment().startOf('day');
+
+  const todayStartTime = moment(today).add({
+    hours: POSTING_TIME.POST_TIME_START_HOUR,
+    minutes: POSTING_TIME.POST_TIME_START_MINUTES,
+  });
+
+  const todayEndTime = moment(today).add({
+    hours: POSTING_TIME.POST_TIME_END_HOUR,
+    minutes: POSTING_TIME.POST_TIME_END_MINUTES,
+  });
+
+  return posts.some((post) => {
+    const postTime = moment(post.timestamp);
+    return postTime.isBetween(todayStartTime, todayEndTime, null, '[]');
+  });
+}
+
+export function validPostingTime(currentTime: moment.Moment): boolean {
+  const { startTime, endTime } = getPostingTimeRange(currentTime);
+  return currentTime.isBetween(startTime, endTime, null, '[]');
 }

@@ -1,22 +1,22 @@
 import { useState, useEffect } from 'react';
-import { Box, Typography, Card, IconButton, CircularProgress, Button } from '@mui/material';
+import { Box, Typography, Card, IconButton, CircularProgress } from '@mui/material';
 import Header from '../common/Header';
 import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
 import { getUserPosts, deletePost } from '../../helpers/postHelper';
-import { Post } from '../../types/post';
-import AddPostPopup from '../common/AddPostPopup';
+import postsStore from '../../stores/postsStore';
 import '../../styles/components/screens/screen.css';
 import '../../styles/components/screens/posts.css';
 
 const Posts = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [openDialog, setOpenDialog] = useState(false);
 
   useEffect(() => {
-    fetchPosts();
+    if (postsStore.getPosts().length > 0) {
+      setLoading(false);
+    } else {
+      fetchPosts();
+    }
   }, []);
 
   const fetchPosts = async () => {
@@ -28,7 +28,7 @@ const Posts = () => {
         return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
       });
 
-      setPosts(sortedPosts);
+      postsStore.setPosts(sortedPosts);
       setError(null);
     } catch (err) {
       console.error('Failed to fetch posts:', err);
@@ -41,16 +41,11 @@ const Posts = () => {
   const handleDelete = async (postId: string) => {
     try {
       await deletePost(postId);
-      setPosts(posts.filter((post) => post.postId !== postId));
+      postsStore.removePost(postId);
     } catch (err) {
       console.error('Error deleting post:', err);
       setError('Failed to delete post. Please try again later.');
     }
-  };
-
-  const handlePostCreated = (newPost: Post) => {
-    // TODO Probably not enough as it needs to be set in the store as well
-    setPosts((prevPosts) => [newPost, ...prevPosts]);
   };
 
   const formatDate = (timestamp: string) => {
@@ -64,13 +59,6 @@ const Posts = () => {
     <Box className="screen-container">
       <Header />
       <Box className="post-content">
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-          <Typography variant="h4">My Posts</Typography>
-          <Button variant="contained" color="primary" startIcon={<AddIcon />} onClick={() => setOpenDialog(true)}>
-            Add New Post
-          </Button>
-        </Box>
-
         {error && (
           <Box mb={3}>
             <Typography color="error">{error}</Typography>
@@ -81,13 +69,13 @@ const Posts = () => {
           <Box display="flex" justifyContent="center" alignItems="center" height="60vh">
             <CircularProgress />
           </Box>
-        ) : posts.length === 0 ? (
+        ) : postsStore.getPosts().length === 0 ? (
           <Box textAlign="center" my={4}>
             <Typography>No posts found. Create your first post!</Typography>
           </Box>
         ) : (
           <Box className="post-grid">
-            {posts.map((post) => (
+            {postsStore.getPosts().map((post) => (
               <Box key={post.postId} className="post-item">
                 <Card className="personal-post-card">
                   <div className="personal-post-header">
@@ -106,9 +94,6 @@ const Posts = () => {
             ))}
           </Box>
         )}
-
-        {/* AddPostPopup  */}
-        <AddPostPopup open={openDialog} onClose={() => setOpenDialog(false)} onPostCreated={handlePostCreated} />
       </Box>
     </Box>
   );
