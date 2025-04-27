@@ -11,7 +11,7 @@ import SettingsPopup from './SettingsPopup';
 import AddPostPopup from './AddPostPopup';
 import '../../styles/components/common/header.css';
 import { POSTING_TIME } from '../../constants/postTime';
-import { getUserPosts, userHasPostedAlready, validPostingTime } from '../../helpers/postHelper';
+import { userHasPostedAlready, validPostingTime } from '../../helpers/postHelper';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -27,8 +27,8 @@ const Header = () => {
   useEffect(() => {
     const checkPostingStatus = async () => {
       try {
-        const posts = await getUserPosts();
-        setHasPosted(userHasPostedAlready(posts));
+        const hasPostedToday = await userHasPostedAlready();
+        setHasPosted(hasPostedToday);
       } catch (error) {
         console.error('Error checking posting status:', error);
       }

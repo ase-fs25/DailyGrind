@@ -9,7 +9,7 @@ export async function getUserPosts(): Promise<Post[]> {
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(`${API_URL}/me/posts`, {
+    const response = await fetch(`${API_URL}/users/me/posts`, {
       headers: {
         Authorization: `Bearer ${authToken}`,
       },
@@ -100,23 +100,26 @@ function getPostingTimeRange(currentTime: moment.Moment) {
   return { startTime, endTime };
 }
 
-export function userHasPostedAlready(posts: Post[]): boolean {
-  const today = moment().startOf('day');
+export async function userHasPostedAlready(): Promise<boolean> {
+  try {
+    const authToken = await getAuthToken();
 
-  const todayStartTime = moment(today).add({
-    hours: POSTING_TIME.POST_TIME_START_HOUR,
-    minutes: POSTING_TIME.POST_TIME_START_MINUTES,
-  });
+    const response = await fetch(`${API_URL}/users/me/daily-post`, {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    console.log(response);
+    if (response.ok) {
+      const data = await response.json();
+      return !!data && !!data.postId;
+    }
 
-  const todayEndTime = moment(today).add({
-    hours: POSTING_TIME.POST_TIME_END_HOUR,
-    minutes: POSTING_TIME.POST_TIME_END_MINUTES,
-  });
-
-  return posts.some((post) => {
-    const postTime = moment(post.timestamp);
-    return postTime.isBetween(todayStartTime, todayEndTime, null, '[]');
-  });
+    return false;
+  } catch (error) {
+    console.error('Error checking if user has posted already:', error);
+    return false;
+  }
 }
 
 export function validPostingTime(currentTime: moment.Moment): boolean {
