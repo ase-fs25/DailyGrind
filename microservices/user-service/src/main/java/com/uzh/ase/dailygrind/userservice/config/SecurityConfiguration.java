@@ -27,7 +27,8 @@ public class SecurityConfiguration {
                     .exceptionHandling(c -> c.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.FORBIDDEN)))
                     .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .authorizeHttpRequests(r ->
-                            r.anyRequest().authenticated())
+                            r.requestMatchers("/users/**").authenticated()
+                            .requestMatchers("swagger-ui/**", "/v3/api-docs/**").permitAll())
                     .oauth2ResourceServer(s -> s.jwt(Customizer.withDefaults()));
 
             return http.build();
