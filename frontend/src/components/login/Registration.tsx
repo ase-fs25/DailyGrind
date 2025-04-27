@@ -4,11 +4,13 @@ import { TextField, Button, Paper, Typography, Box, Divider } from '@mui/materia
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { Dayjs } from 'dayjs';
-import '../../styles/components/login/registration.css';
+
 import { UserJob, UserEducation } from '../../types/user';
 import JobsSection from '../common/JobsSection';
 import EducationSection from '../common/EducationSection';
 import { registerUser } from '../../helpers/loginHelpers';
+
+import '../../styles/components/login/registration.css';
 
 const Registration = () => {
   const navigate = useNavigate();
@@ -109,10 +111,10 @@ const Registration = () => {
         />
 
         <Divider sx={{ my: 3 }} />
-        <JobsSection jobs={jobs} onChange={setJobs} />
+        <JobsSection jobs={jobs} onChange={setJobs} registration />
 
         <Divider sx={{ my: 3 }} />
-        <EducationSection education={education} onChange={setEducation} />
+        <EducationSection education={education} onChange={setEducation} registration />
 
         {error && (
           <Typography className="error-text" color="error" textAlign="center">

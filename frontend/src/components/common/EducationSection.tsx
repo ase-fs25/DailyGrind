@@ -16,17 +16,19 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+
 import { UserEducation } from '../../types/user';
-import { addUserEducation } from '../../helpers/userHelpers';
+import { addUserEducation, updateUserEducation } from '../../helpers/userHelpers';
 
 interface EducationSectionProps {
   education: UserEducation[];
   onChange: (educationToChange: UserEducation[]) => void;
   onDelete?: (educationId: string) => void;
   readOnly?: boolean;
+  registration?: boolean;
 }
 
-const EducationSection = ({ education, onChange, onDelete, readOnly = false }: EducationSectionProps) => {
+const EducationSection = ({ education, onChange, onDelete, readOnly = false, registration }: EducationSectionProps) => {
   const [showEducationDialog, setShowEducationDialog] = useState(false);
   const [currentEducation, setCurrentEducation] = useState<UserEducation>({
     educationId: '',
@@ -62,18 +64,20 @@ const EducationSection = ({ education, onChange, onDelete, readOnly = false }: E
   };
 
   const handleEducationChange = (field: keyof UserEducation, value: string) => {
-    // TODO Implement backend call here
     setCurrentEducation((prev) => ({ ...prev, [field]: value }));
   };
 
   const saveEducation = () => {
     if (educationEditMode) {
+      updateUserEducation(currentEducation.educationId, currentEducation);
       const updatedEducation = education.map((edu) =>
         edu.educationId === currentEducation.educationId ? currentEducation : edu,
       );
       onChange(updatedEducation);
     } else {
-      addUserEducation(currentEducation);
+      if (!registration) {
+        addUserEducation(currentEducation);
+      }
       onChange([...education, currentEducation]);
     }
     setShowEducationDialog(false);

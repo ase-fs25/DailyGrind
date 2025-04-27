@@ -1,14 +1,16 @@
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Card } from '@mui/material';
 
 import Header from '../common/Header';
-import { mockPosts } from '../../mockData/mockPosts';
-import '../../styles/components/screens/screen.css';
-import '../../styles/components/screens/feed.css';
-import { useEffect } from 'react';
-import { fetchAuthSession } from 'aws-amplify/auth';
-import { useNavigate } from 'react-router-dom';
 import userStore from '../../stores/userStore';
 import { loginUser } from '../../helpers/loginHelpers';
+import { getAuthToken } from '../../helpers/authHelper';
+
+import { mockPosts } from '../../mockData/mockPosts';
+
+import '../../styles/components/screens/screen.css';
+import '../../styles/components/screens/feed.css';
 
 const Feed = () => {
   const navigate = useNavigate();
@@ -17,8 +19,7 @@ const Feed = () => {
     if (userStore.getUser().userId === '') {
       (async () => {
         try {
-          const session = await fetchAuthSession();
-          const authToken = session.tokens?.accessToken.toString();
+          const authToken = await getAuthToken();
 
           const userInfo = await fetch('http://localhost:8080/users/me', {
             method: 'GET',

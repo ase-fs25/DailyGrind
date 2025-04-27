@@ -30,37 +30,6 @@ export async function registerUser(userData: {
       throw new Error(`Registration failed: ${createUserInfo.status}`);
     }
 
-    // Store User Jobs in backend
-    const createUserJobs = await fetch('http://localhost:8080/users/me/jobs', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${authToken}`,
-      },
-      body: JSON.stringify({
-        ...userData.jobs,
-      }),
-    });
-
-    if (!createUserJobs.ok) {
-      throw new Error(`Registration failed: ${createUserJobs.status}`);
-    }
-
-     // Store User Education in backend
-    const createUserEducation = await fetch('http://localhost:8080/users/me/education', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${authToken}`,
-      },
-      body: JSON.stringify({
-        ...userData.education,
-      }),
-    });
-    if (!createUserEducation.ok) {
-      throw new Error(`Registration failed: ${createUserEducation.status}`);
-    }
-
     return { success: true };
   } catch (error) {
     console.error('Registration error:', error);

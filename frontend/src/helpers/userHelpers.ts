@@ -45,7 +45,67 @@ export async function updateUser(userData: {
   }
 }
 
-export async  function addUserJob(job: UserJob) {
+export async function updateUserJob(jobId: string, jobData: UserJob) {
+  try {
+    const authToken = await getAuthToken();
+    const response = await fetch(`${API_URL}/users/me/jobs/${jobId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`,
+      },
+      body: JSON.stringify(jobData),
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to update job: ${response.status}`);
+    }
+    const updatedJob = await response.json();
+    if (updatedJob) {
+      const jobs = userStore.getJobs();
+      const updatedJobs = jobs.map((job) => (job.jobId === jobId ? updatedJob : job));
+      userStore.setJobs(updatedJobs);
+    }
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating job:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to update job',
+    };
+  }
+}
+
+export async function updateUserEducation(educationId: string, educationData: UserEducation) {
+  try {
+    const authToken = await getAuthToken();
+    const response = await fetch(`${API_URL}/users/me/education/${educationId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`,
+      },
+      body: JSON.stringify(educationData),
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to update education: ${response.status}`);
+    }
+    const updatedEducation = await response.json();
+    if (updatedEducation) {
+      const educations = userStore.getEducation();
+      const updatedEducations = educations.map((edu) => (edu.educationId === educationId ? updatedEducation : edu));
+      userStore.setEducation(updatedEducations);
+    }
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating education:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to update education',
+    };
+  }
+}
+
+export async function addUserJob(job: UserJob) {
   try {
     const authToken = await getAuthToken();
     const response = await fetch(`${API_URL}/users/me/jobs`, {
@@ -108,7 +168,7 @@ export async function deleteUserJob(jobId: string) {
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(`${API_URL}/me/jobs/${jobId}`, {
+    const response = await fetch(`${API_URL}/users/me/jobs/${jobId}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -133,7 +193,7 @@ export async function deleteUserEducation(educationId: string) {
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(`${API_URL}/me/education/${educationId}`, {
+    const response = await fetch(`${API_URL}/users/me/education/${educationId}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${authToken}`,
