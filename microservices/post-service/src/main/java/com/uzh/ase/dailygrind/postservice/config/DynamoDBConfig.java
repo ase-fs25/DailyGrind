@@ -2,6 +2,7 @@ package com.uzh.ase.dailygrind.postservice.config;
 
 
 import com.uzh.ase.dailygrind.postservice.post.repository.entity.CommentEntity;
+import com.uzh.ase.dailygrind.postservice.post.repository.entity.DailyPostEntity;
 import com.uzh.ase.dailygrind.postservice.post.repository.entity.PostEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -33,7 +34,7 @@ public class DynamoDBConfig {
     @Value("${dg.us.aws.secret-key}")
     private String amazonAWSSecretKey;
 
-    private static final String TABLE_NAME = "users";
+    private static final String TABLE_NAME = "posts";
 
     @Bean
     @Profile("!test")
@@ -73,7 +74,7 @@ public class DynamoDBConfig {
 
     @Bean
     public DynamoDbTable<DailyPostEntity> dailyPostTable(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
-        return dynamoDbEnhancedClient.table(TABLE_NAME, TableSchema.fromBean(PostEntity.class));
+        return dynamoDbEnhancedClient.table(TABLE_NAME, TableSchema.fromBean(DailyPostEntity.class));
     }
 
 }

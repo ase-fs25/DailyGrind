@@ -109,4 +109,14 @@ public class UserService {
             userRepository.updateUser(userEntity);
         }
     }
+    public List<UserInfoDto> searchUsersByName(String searchTerm, String requesterId) {
+        List<UserEntity> userEntities = userRepository.findAllUserEntities();
+        List<String> followingIds = userFollowerRepository.findAllFollowing(requesterId);
+    
+        return userEntities.stream()
+                .filter(user -> user.getFirstName() != null && user.getFirstName().toLowerCase().startsWith(searchTerm.toLowerCase()))
+                .map(user -> userMapper.toUserInfoDto(user, followingIds.contains(user.getId())))
+                .toList();
+    }
+    
 }

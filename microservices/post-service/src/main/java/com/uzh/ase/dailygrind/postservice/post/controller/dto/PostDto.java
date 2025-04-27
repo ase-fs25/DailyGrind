@@ -4,6 +4,8 @@ public record PostDto(
         String postId,
         String title,
         String content,
-        String timestamp
+        String timestamp,
+        Long likeCount,
+        Long commentCount
 ) {
 }

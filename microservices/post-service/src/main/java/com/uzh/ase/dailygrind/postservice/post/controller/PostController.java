@@ -49,8 +49,13 @@ public class PostController {
     }
 
     @PostMapping("/posts")
-    public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto, Principal principal) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(postService.createPost(postDto, principal.getName()));
+    public ResponseEntity<?> createPost(@RequestBody PostDto postDto, Principal principal) {
+        try {
+            postDto = postService.createPost(postDto, principal.getName());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You already have a daily post for today");
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(postDto);
     }
 
     @PutMapping("/posts/{postId}")
@@ -65,25 +70,30 @@ public class PostController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/posts/{postId}/like")
+    @PostMapping("/posts/{postId}/likes")
     public ResponseEntity<Void> likePost(@PathVariable String postId, Principal principal) {
         postService.likePost(postId, principal.getName());
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @DeleteMapping("/posts/{postId}/like")
+    @DeleteMapping("/posts/{postId}/likes")
     public ResponseEntity<Void> unlikePost(@PathVariable String postId, Principal principal) {
         postService.unlikePost(postId, principal.getName());
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/posts/{postId}/comment")
-    public ResponseEntity<Void> commentPost(@PathVariable String postId, @RequestBody CommentDto comment, Principal principal) {
-        postService.commentPost(postId, principal.getName(), comment);
-        return ResponseEntity.noContent().build();
+    @GetMapping("/posts/{postId}/comments")
+    public ResponseEntity<List<CommentDto>> getComments(@PathVariable String postId) {
+        return ResponseEntity.ok(postService.getComments(postId));
     }
 
-    @DeleteMapping("/posts/{postId}/comment/{commentId}")
+    @PostMapping("/posts/{postId}/comments")
+    public ResponseEntity<CommentDto> commentPost(@PathVariable String postId, @RequestBody CommentDto comment, Principal principal) {
+        CommentDto commentDto = postService.commentPost(postId, principal.getName(), comment);
+        return ResponseEntity.status(HttpStatus.CREATED).body(commentDto);
+    }
+
+    @DeleteMapping("/posts/{postId}/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable String postId, @PathVariable String commentId, Principal principal) {
         postService.deleteComment(postId, commentId, principal.getName());
         return ResponseEntity.noContent().build();

@@ -18,6 +18,7 @@ services:
       - SMTP_EMAIL=sender@example.com
       - LOCALSTACK_HOST=localstack
       - DISABLE_CORS_CHECKS=1
+      - DYNAMODB_REMOVE_EXPIRED_ITEMS=1
     ports:
       - "4566:4566"            # LocalStack Gateway
       - "4510-4559:4510-4559"  # External services port range

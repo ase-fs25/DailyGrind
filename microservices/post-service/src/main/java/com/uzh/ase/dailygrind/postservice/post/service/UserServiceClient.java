@@ -25,7 +25,7 @@ public class UserServiceClient {
         String token = ((JwtAuthenticationToken) authentication).getToken().getTokenValue();
 
         return webClient.get()
-                .uri("/me/followers/ids")
+                .uri("/users/me/followers/ids")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
                 .bodyToMono(String[].class);

@@ -1,6 +1,7 @@
 package com.uzh.ase.dailygrind.userservice.config;
 
 
+import com.uzh.ase.dailygrind.userservice.user.repository.entity.FriendRequestEntity;
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserEducationEntity;
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserEntity;
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserFollowerEntity;
@@ -80,5 +81,11 @@ public class DynamoDBConfig {
     public DynamoDbTable<UserFollowerEntity> userFollowerTable(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
         return dynamoDbEnhancedClient.table(TABLE_NAME, TableSchema.fromBean(UserFollowerEntity.class));
     }
+
+    @Bean
+public DynamoDbTable<FriendRequestEntity> friendRequestTable(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
+    return dynamoDbEnhancedClient.table(TABLE_NAME, TableSchema.fromBean(FriendRequestEntity.class));
+}
+
 
 }

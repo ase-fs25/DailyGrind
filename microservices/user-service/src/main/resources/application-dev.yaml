@@ -4,3 +4,7 @@ security:
 logging:
   level:
     org.springframework.security: DEBUG
+
+server:
+  ssl:
+    enabled: false
