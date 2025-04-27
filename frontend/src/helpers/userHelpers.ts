@@ -92,9 +92,7 @@ export async function updateUserEducation(educationId: string, educationData: Us
     const updatedEducation = await response.json();
     if (updatedEducation) {
       const educations = userStore.getEducation();
-      const updatedEducations = educations.map((edu) =>
-        edu.educationId === educationId ? updatedEducation : edu
-      );
+      const updatedEducations = educations.map((edu) => (edu.educationId === educationId ? updatedEducation : edu));
       userStore.setEducation(updatedEducations);
     }
     return { success: true };
@@ -107,7 +105,7 @@ export async function updateUserEducation(educationId: string, educationData: Us
   }
 }
 
-export async  function addUserJob(job: UserJob) {
+export async function addUserJob(job: UserJob) {
   try {
     const authToken = await getAuthToken();
     const response = await fetch(`${API_URL}/users/me/jobs`, {
