@@ -38,10 +38,12 @@ services:
   ms-user-service:
     build: ./microservices/user-service
     profiles: [ fe-dev, prod ]
-    #    ports:
-    #      - "8080:8080"
     container_name: ms-user-service
     hostname: ms-user-service
+    networks:
+      - localstack_network
+    #    ports:
+    #      - "8080:8080"
     depends_on:
       - localstack
       - terraform
@@ -58,10 +60,13 @@ services:
   ms-post-service:
     build: ./microservices/post-service
     profiles: [ fe-dev, prod ]
-    #    ports:
-    #      - "8081:8080"
+
     container_name: ms-post-service
     hostname: ms-post-service
+    networks:
+      - localstack_network
+    #    ports:
+    #      - "8081:8080"
     depends_on:
       - localstack
       - terraform
@@ -80,11 +85,13 @@ services:
     profiles: [ prod ]
     container_name: frontend
     hostname: frontend
+    networks:
+      - localstack_network
+    ports:
+      - "3000:3000"
     depends_on:
       - localstack
       - terraform
-    ports:
-      - "3000:3000"
     volumes:
       - ./frontend:/app/frontend
       - /app/frontend/node_modules  # Do not mount node_modules to avoid conflicts

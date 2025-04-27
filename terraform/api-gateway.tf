@@ -69,3 +69,12 @@ resource "aws_apigatewayv2_stage" "default" {
   name        = "$default"
   auto_deploy = true
 }
+
+output "api_gateway_base_url" {
+  value = format(
+    "Frontend: http://localhost:4566/_aws/execute-api/%s/$default/\nMS User: http://localhost:4566/_aws/execute-api/%s/$default/users/\nMS Post: http://localhost:4566/_aws/execute-api/%s/$default/posts/",
+    aws_apigatewayv2_api.http_api.id,
+    aws_apigatewayv2_api.http_api.id,
+    aws_apigatewayv2_api.http_api.id
+  )
+}
