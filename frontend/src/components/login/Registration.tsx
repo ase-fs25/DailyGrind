@@ -23,7 +23,6 @@ const Registration = () => {
   const [loading, setLoading] = useState(false);
 
   const handleRegister = async () => {
-    // TODO: Create input fields for job and education history
     if (!firstName || !lastName || !email || !location || !birthday) {
       setError('Please fill in all required fields');
       return;

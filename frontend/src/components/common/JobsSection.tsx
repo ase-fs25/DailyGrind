@@ -17,6 +17,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { UserJob } from '../../types/user';
+import { addUserJob } from '../../helpers/userHelpers';
 
 interface JobsSectionProps {
   jobs: UserJob[];
@@ -59,6 +60,7 @@ const JobsSection = ({ jobs, onChange, onDelete, readOnly = false }: JobsSection
   };
 
   const handleJobChange = (field: keyof UserJob, value: string) => {
+    // TODO Implement backend call here
     setCurrentJob((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -67,6 +69,7 @@ const JobsSection = ({ jobs, onChange, onDelete, readOnly = false }: JobsSection
       const updatedJobs = jobs.map((job) => (job.jobId === currentJob.jobId ? currentJob : job));
       onChange(updatedJobs);
     } else {
+      addUserJob(currentJob);
       onChange([...jobs, currentJob]);
     }
     setShowJobDialog(false);

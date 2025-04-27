@@ -16,7 +16,7 @@ export async function updateUser(userData: {
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(`${API_URL}/users`, {
+    const response = await fetch(`${API_URL}/users/me`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -28,7 +28,7 @@ export async function updateUser(userData: {
     });
 
     if (!response.ok) {
-      throw new Error(`Registration failed: ${response.status}`);
+      throw new Error(`Updating the user failed: ${response.status}`);
     }
 
     const updatedUser = await response.json();
@@ -38,10 +38,68 @@ export async function updateUser(userData: {
 
     return { success: true };
   } catch (error) {
-    console.error('Registration error:', error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Registration failed. Please try again.',
+      error: error instanceof Error ? error.message : 'Updating the user failed. Please try again.',
+    };
+  }
+}
+
+export async  function addUserJob(job: UserJob) {
+  try {
+    const authToken = await getAuthToken();
+    const response = await fetch(`${API_URL}/users/me/jobs`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`,
+      },
+      body: JSON.stringify(job),
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to add job: ${response.status}`);
+    }
+    const newJob = await response.json();
+    if (newJob) {
+      userStore.setJobs([...userStore.getJobs(), newJob]);
+    }
+    return { success: true };
+  } catch (error) {
+    console.error('Error adding job:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to add job',
+    };
+  }
+}
+
+export async function addUserEducation(education: UserEducation) {
+  try {
+    const authToken = await getAuthToken();
+    const response = await fetch(`${API_URL}/users/me/education`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`,
+      },
+      body: JSON.stringify(education),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to add education: ${response.status}`);
+    }
+
+    const newEducation = await response.json();
+    if (newEducation) {
+      userStore.setEducation([...userStore.getEducation(), newEducation]);
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error adding education:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to add education',
     };
   }
 }

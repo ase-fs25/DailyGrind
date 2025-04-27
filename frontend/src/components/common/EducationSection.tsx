@@ -1,6 +1,6 @@
 // TODO This should be avoided
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Box,
   Button,
@@ -17,6 +17,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { UserEducation } from '../../types/user';
+import { addUserEducation } from '../../helpers/userHelpers';
 
 interface EducationSectionProps {
   education: UserEducation[];
@@ -61,6 +62,7 @@ const EducationSection = ({ education, onChange, onDelete, readOnly = false }: E
   };
 
   const handleEducationChange = (field: keyof UserEducation, value: string) => {
+    // TODO Implement backend call here
     setCurrentEducation((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -71,6 +73,7 @@ const EducationSection = ({ education, onChange, onDelete, readOnly = false }: E
       );
       onChange(updatedEducation);
     } else {
+      addUserEducation(currentEducation);
       onChange([...education, currentEducation]);
     }
     setShowEducationDialog(false);

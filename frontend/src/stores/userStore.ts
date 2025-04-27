@@ -89,6 +89,10 @@ class UserStore {
     return this.user.jobs;
   }
 
+  setJobs(jobs: UserJob[]) {
+    this.user.jobs = jobs;
+  }
+
   addJob(job: UserJob) {
     this.user.jobs.push(job);
   }
@@ -107,6 +111,10 @@ class UserStore {
   /** Education Fields **/
   getEducation(): UserEducation[] {
     return this.user.education;
+  }
+
+  setEducation(educations: UserEducation[]) {
+    this.user.education = educations;
   }
 
   addEducation(education: UserEducation) {

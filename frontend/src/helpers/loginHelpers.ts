@@ -14,7 +14,8 @@ export async function registerUser(userData: {
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch('http://localhost:8080/users/me', {
+    // Create user Info
+    const createUserInfo = await fetch('http://localhost:8080/users/me', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -25,13 +26,39 @@ export async function registerUser(userData: {
       }),
     });
 
-    if (!response.ok) {
-      throw new Error(`Registration failed: ${response.status}`);
+    if (!createUserInfo.ok) {
+      throw new Error(`Registration failed: ${createUserInfo.status}`);
     }
 
-    const createdUser = await response.json();
-    if (createdUser) {
-      userStore.setUser(createdUser);
+    // Store User Jobs in backend
+    const createUserJobs = await fetch('http://localhost:8080/users/me/jobs', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`,
+      },
+      body: JSON.stringify({
+        ...userData.jobs,
+      }),
+    });
+
+    if (!createUserJobs.ok) {
+      throw new Error(`Registration failed: ${createUserJobs.status}`);
+    }
+
+     // Store User Education in backend
+    const createUserEducation = await fetch('http://localhost:8080/users/me/education', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`,
+      },
+      body: JSON.stringify({
+        ...userData.education,
+      }),
+    });
+    if (!createUserEducation.ok) {
+      throw new Error(`Registration failed: ${createUserEducation.status}`);
     }
 
     return { success: true };
@@ -41,5 +68,48 @@ export async function registerUser(userData: {
       success: false,
       error: error instanceof Error ? error.message : 'Registration failed. Please try again.',
     };
+  }
+}
+
+export async function loginUser(userInfoRaw: string, authToken: string) {
+  const userData = JSON.parse(userInfoRaw);
+
+  userStore.setUser({
+    userId: userData.userId,
+    email: userData.email,
+    firstName: userData.firstName,
+    lastName: userData.lastName,
+    birthday: userData.birthday,
+    location: userData.location,
+    jobs: userData.jobs || [],
+    education: userData.education || [],
+  });
+
+  const userJobInfo = await fetch('http://localhost:8080/users/me/jobs', {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  });
+
+  if (userJobInfo.ok) {
+    const userJobInfoRaw = await userJobInfo.text();
+    if (userJobInfoRaw) {
+      const userJobData = JSON.parse(userJobInfoRaw);
+      userStore.setJobs(userJobData);
+    }
+  }
+  const userEducationInfo = await fetch('http://localhost:8080/users/me/education', {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  });
+  if (userEducationInfo.ok) {
+    const userEducationInfoRaw = await userEducationInfo.text();
+    if (userEducationInfoRaw) {
+      const userEducationData = JSON.parse(userEducationInfoRaw);
+      userStore.setEducation(userEducationData);
+    }
   }
 }

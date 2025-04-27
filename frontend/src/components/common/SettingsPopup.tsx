@@ -54,8 +54,8 @@ const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
   const [user, setUser] = useState<User>(userStore.getUser());
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [jobs, setJobs] = useState<UserJob[]>([]);
-  const [education, setEducation] = useState<UserEducation[]>([]);
+  const [jobs, setJobs] = useState<UserJob[]>(userStore.getJobs());
+  const [education, setEducation] = useState<UserEducation[]>(userStore.getEducation());
 
   const handleUserChange = (field: keyof User, value: string) => {
     // TODO Propably not enought as it needs to be set in the backend and the store as well
@@ -103,10 +103,9 @@ const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
 
   useEffect(() => {
     if (open) {
-      const user = userStore.getUser();
-      setUser(user);
-      setJobs(user.jobs || []);
-      setEducation(user.education || []);
+      setUser(userStore.getUser());
+      setJobs(userStore.getJobs());
+      setEducation(userStore.getEducation());
     }
   }, [open]);
 
@@ -121,8 +120,6 @@ const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
     try {
       const updatedUser = {
         ...user,
-        jobs,
-        education,
       };
 
       userStore.setUser(updatedUser);
@@ -144,6 +141,7 @@ const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
     try {
       await signOut();
       userStore.deleteUser();
+      window.localStorage.clear();
       navigate('/');
     } catch (e) {
       console.error('Error signing out: ', e);
@@ -210,7 +208,6 @@ const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
                 margin="normal"
               />
             </Box>
-            {/*Since email in the userObject is not connected to the email cognito uses we can change it. However do we add some sort of connection between the two?*/}
             <Box className="settings-field">
               <TextField
                 label="Email"

@@ -8,46 +8,31 @@ import { useEffect } from 'react';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import { useNavigate } from 'react-router-dom';
 import userStore from '../../stores/userStore';
+import { loginUser } from '../../helpers/loginHelpers';
 
 const Feed = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Only fetch user information when not already in userStore
-    console.log(userStore);
     if (userStore.getUser().userId === '') {
       (async () => {
         try {
           const session = await fetchAuthSession();
           const authToken = session.tokens?.accessToken.toString();
-          console.log('auth token: ', authToken);
 
-          const res = await fetch('http://localhost:8080/users/me', {
+          const userInfo = await fetch('http://localhost:8080/users/me', {
             method: 'GET',
             headers: {
               Authorization: `Bearer ${authToken}`,
             },
           });
 
-          if (res.ok) {
-            const text = await res.text();
+          if (userInfo.ok && authToken) {
+            const userInfoRaw = await userInfo.text();
 
-            if (text) {
-              const userData = JSON.parse(text);
-              console.log('User exists:', userData);
-
-              userStore.setUser({
-                userId: userData.userId,
-                email: userData.email,
-                firstName: userData.firstName,
-                lastName: userData.lastName,
-                birthday: userData.birthday,
-                location: userData.location,
-                jobs: userData.jobs || [],
-                education: userData.education || [],
-              });
+            if (userInfoRaw) {
+              loginUser(userInfoRaw, authToken);
             } else {
-              console.log('User authenticated but not registered');
               navigate('/registration', { replace: true });
             }
           }
