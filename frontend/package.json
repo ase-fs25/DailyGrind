@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:docker": "vite --open=false --host=0.0.0.0",
     "build": "tsc && vite build",
     "test": "vitest",
     "preview": "vite preview",
@@ -15,6 +16,7 @@
     "clean": "rimraf dist .vite"
   },
   "dependencies": {
+    "@aws-amplify/core": "^6.11.3",
     "@aws-amplify/ui-react": "^6.9.5",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",

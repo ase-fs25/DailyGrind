@@ -24,5 +24,6 @@ export default defineConfig({
     open: true,
     // this sets a default port to 3000
     port: 3000,
+    allowedHosts: ['frontend'],
   },
 });
