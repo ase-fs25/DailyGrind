@@ -1,0 +1,10 @@
+security:
+  enabled: false
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+
+server:
+  ssl:
+    enabled: false

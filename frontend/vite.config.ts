@@ -5,7 +5,7 @@ import eslint from 'vite-plugin-eslint';
 
 export default defineConfig({
   // depending on your application, base can also be "/"
-  base: '',
+  base: '/',
   plugins: [react(), viteTsconfigPaths(), eslint()],
   build: {
     rollupOptions: {

@@ -1,19 +1,18 @@
-import React from 'react';
-import { Dialog, DialogTitle, DialogContent, IconButton, Avatar, Box, Typography } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, IconButton, Box, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { PostType } from '../../types/post';
-import { Profile } from '../../types/profile';
+import { Post } from '../../types/post';
+import { User } from '../../types/user';
 import '../../styles/components/common/friendPopup.css';
 
 interface FriendPopupProps {
   open: boolean;
   onClose: () => void;
-  profile: Profile | null;
-  posts: PostType[];
+  user: User | null;
+  posts: Post[];
 }
 
-const FriendPopup: React.FC<FriendPopupProps> = ({ open, onClose, profile, posts }) => {
-  if (!profile) return null;
+const FriendPopup = ({ open, onClose, user, posts }: FriendPopupProps) => {
+  if (!user) return null;
 
   return (
     <Dialog
@@ -28,7 +27,7 @@ const FriendPopup: React.FC<FriendPopupProps> = ({ open, onClose, profile, posts
       }}
     >
       <DialogTitle className="popup-header">
-        {profile.username}
+        {user.firstName + ' ' + user.lastName}
         <IconButton onClick={onClose} className="close-button">
           <CloseIcon />
         </IconButton>
@@ -36,18 +35,17 @@ const FriendPopup: React.FC<FriendPopupProps> = ({ open, onClose, profile, posts
 
       <DialogContent className="popup-content">
         <Box className="friend-profile-section">
-          <Avatar src={profile.profileInfo.profilePicture} alt={profile.username} className="profile-avatar-large" />
           <Typography variant="h6" className="profile-name">
-            {profile.username}
+            {user.firstName + ' ' + user.lastName}
           </Typography>
           <Typography variant="body1" className="profile-info">
-            Location: {profile.profileInfo.location}
+            Location: {user.location}
           </Typography>
           <Typography variant="body1" className="profile-info">
-            Education: {profile.profileInfo.education}
+            Education: TODO
           </Typography>
           <Typography variant="body1" className="profile-info">
-            Work Experience: {profile.profileInfo.workExperience}
+            Work Experience: TODO
           </Typography>
         </Box>
 
@@ -57,7 +55,7 @@ const FriendPopup: React.FC<FriendPopupProps> = ({ open, onClose, profile, posts
           </Typography>
           {posts.length > 0 ? (
             posts.map((post) => (
-              <Box key={post.post_id} className="post-item">
+              <Box key={post.postId} className="post-item">
                 <Typography variant="subtitle1" className="post-title">
                   {post.title}
                 </Typography>

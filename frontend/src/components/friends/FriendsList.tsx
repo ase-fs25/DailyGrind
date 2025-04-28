@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import { Box, Card, CardContent, Avatar, Typography } from '@mui/material';
+import { useState } from 'react';
+import { Box, Card, CardContent, Typography } from '@mui/material';
 import { mockProfiles } from '../../mockData/mockProfiles';
 import { mockPosts } from '../../mockData/mockPosts';
-import { Profile } from '../../types/profile';
-import { PostType } from '../../types/post';
+import { User } from '../../types/user';
+import { Post } from '../../types/post';
 import FriendPopup from '../common/FriendPopup';
 import '../../styles/components/friends/friendList.css';
 
 const FriendsList = () => {
-  const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
+  const [selectedProfile, setSelectedProfile] = useState<User | null>(null);
   const [open, setOpen] = useState(false);
 
-  const handleOpen = (profile: Profile) => {
-    setSelectedProfile(profile);
+  const handleOpen = (user: User) => {
+    setSelectedProfile(user);
     setOpen(true);
   };
 
@@ -21,24 +21,23 @@ const FriendsList = () => {
     setOpen(false);
   };
 
-  const userPosts: PostType[] = selectedProfile
-    ? mockPosts.filter((post) => post.user_id === String(selectedProfile.userId)).slice(0, 2)
+  const userPosts: Post[] = selectedProfile
+    ? mockPosts.filter((post) => post.postId === String(selectedProfile.userId)).slice(0, 2)
     : [];
 
   return (
     <Box className="friends-list-container">
-      {mockProfiles.map((profile) => (
-        <Card key={profile.userId} className="friend-card" onClick={() => handleOpen(profile)}>
-          <Avatar src={profile.profileInfo.profilePicture} className="friend-avatar" />
+      {mockProfiles.map((user) => (
+        <Card key={user.userId} className="friend-card" onClick={() => handleOpen(user)}>
           <CardContent className="friend-card-content">
             <Typography variant="h6" className="friend-username">
-              {profile.username}
+              {user.firstName + ' ' + user.lastName}
             </Typography>
           </CardContent>
         </Card>
       ))}
 
-      <FriendPopup open={open} onClose={handleClose} profile={selectedProfile} posts={userPosts} />
+      <FriendPopup open={open} onClose={handleClose} user={selectedProfile} posts={userPosts} />
     </Box>
   );
 };

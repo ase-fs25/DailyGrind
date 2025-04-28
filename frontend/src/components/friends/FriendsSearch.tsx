@@ -1,16 +1,42 @@
 import React, { useState } from 'react';
-import { Box, TextField, Button, Typography } from '@mui/material';
-import { mockProfiles } from '../../mockData/mockProfiles';
+import { Box, TextField, Button, Typography, CircularProgress } from '@mui/material';
+import { searchUsers, sendFriendRequest, UserProfile } from '../../helpers/friendsHelper';
 import '../../styles/components/friends/friendsSearch.css';
 
-const FriendsSearch: React.FC = () => {
+const FriendsSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [profiles, setProfiles] = useState<UserProfile[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  // TODO: In the future, replace the local filter logic with an API call to search for users.
-  // Filter profiles that match the search term (using local mock data for now)
-  const filteredProfiles = mockProfiles.filter((profile) =>
-    profile.username.toLowerCase().startsWith(searchTerm.toLowerCase()),
-  );
+  const handleSearchChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+
+    if (value.trim() === '') {
+      setProfiles([]);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const results = await searchUsers(value);
+      setProfiles(results);
+    } catch (error) {
+      console.error('Search error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSendFriendRequest = async (userId: string) => {
+    try {
+      await sendFriendRequest(userId);
+      alert('Friend request sent!');
+    } catch (error) {
+      console.error('Send friend request error:', error);
+      alert('Failed to send friend request.');
+    }
+  };
 
   return (
     <Box className="search-container">
@@ -19,29 +45,41 @@ const FriendsSearch: React.FC = () => {
         label="Search People"
         variant="outlined"
         value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        onChange={handleSearchChange}
         className="search-input"
       />
 
-      {/* Conditionally render search results only when there's input */}
-      {searchTerm.trim() !== '' && (
+      {/* Loading spinner */}
+      {loading && (
+        <Box display="flex" justifyContent="center" mt={2}>
+          <CircularProgress />
+        </Box>
+      )}
+
+      {/* Search results */}
+      {!loading && searchTerm.trim() !== '' && (
         <Box className="search-results">
-          {filteredProfiles.map((profile) => (
-            <Box key={profile.userId} className="search-result-item">
-              <Typography variant="subtitle1">{profile.username}</Typography>
-              <Button
-                variant="outlined"
-                color="secondary"
-                size="small"
-                onClick={() => {
-                  // TODO: Replace alert with an API call to send a friend request.
-                  alert('Friend request sent!');
-                }}
-              >
-                Add Friend
-              </Button>
-            </Box>
-          ))}
+          {profiles.length === 0 ? (
+            <Typography variant="subtitle2" align="center" color="textSecondary">
+              No users found.
+            </Typography>
+          ) : (
+            profiles.map((user) => (
+              <Box key={user.userId} className="search-result-item">
+                <Typography variant="subtitle1">
+                  {user.firstName} {user.lastName}
+                </Typography>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  size="small"
+                  onClick={() => handleSendFriendRequest(user.userId)}
+                >
+                  Add Friend
+                </Button>
+              </Box>
+            ))
+          )}
         </Box>
       )}
     </Box>
