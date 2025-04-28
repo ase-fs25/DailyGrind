@@ -1,0 +1,32 @@
+.registration-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f3e5f5;
+  overflow-y: hidden;
+}
+
+.registration-paper {
+  height: 90vh;
+  padding: 16px;
+  width: 30vw;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2vh;
+  background-color: #9c27b0;
+  color: white;
+  overflow-y: auto;
+}
+
+.registration-input {
+  background-color: white;
+  border-radius: 8px;
+}
+
+.error-text {
+  margin-top: 8px;
+  color: red;
+  font-size: 14px;
+  text-align: center;
+}

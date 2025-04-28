@@ -1,0 +1,39 @@
+.add-post-popup .MuiDialog-paper {
+  width: 50%;
+  max-width: 600px;
+  padding: 20px;
+  background-color: #f3e5f5;
+}
+
+.add-post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #9c27b0;
+  font-weight: bold;
+  margin-bottom: 0px;
+}
+
+.close-button {
+  color: #9c27b0 !important;
+}
+
+.add-post-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.post-title-field {
+  margin-top: 16px;
+}
+
+.post-text-field {
+  margin-top: 16px;
+}
+
+.add-post-actions {
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+}

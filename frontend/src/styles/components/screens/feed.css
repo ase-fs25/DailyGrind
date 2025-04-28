@@ -1,0 +1,71 @@
+.feed-content {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.feed-content::-webkit-scrollbar {
+  background-color: transparent;
+}
+
+.feed-content::-webkit-scrollbar-thumb {
+  background-color: rgb(156, 39, 176, 0.5);
+  border: 4px solid transparent;
+  border-radius: 9px;
+  background-clip: content-box;
+}
+
+.feed-title {
+  margin-bottom: 16px;
+}
+
+.feed-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.feed-item {
+  width: 100%;
+}
+
+.post-card {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  background-color: rgb(156, 39, 176, 0.1);
+  border-radius: 8px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.post-card-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.post-title {
+  font-weight: bold;
+}
+
+.post-timestamp {
+  font-size: 0.85rem;
+}
+
+.post-content {
+  text-align: left;
+  margin-top: 4px;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .feed-content {
+    padding: 10px;
+  }
+
+  .post-card {
+    padding: 12px;
+  }
+}

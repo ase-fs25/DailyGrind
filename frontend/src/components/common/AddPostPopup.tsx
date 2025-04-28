@@ -1,0 +1,104 @@
+// TODO This should be avoided
+/* eslint-disable no-unused-vars */
+import { useState } from 'react';
+import { Dialog, DialogTitle, DialogContent, Button, DialogActions, TextField } from '@mui/material';
+import { createPost } from '../../helpers/postHelper';
+import '../../styles/components/common/addPostPopup.css';
+import postStore from '../../stores/postsStore';
+
+interface AddPostPopupProps {
+  open: boolean;
+  onClose: () => void;
+}
+
+const AddPostPopup = ({ open, onClose }: AddPostPopupProps) => {
+  const [postTitle, setPostTitle] = useState('');
+  const [postContent, setPostContent] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const isFormValid = postTitle.trim().length > 0 && postContent.trim().length > 0;
+
+  const handleClose = () => {
+    setPostTitle('');
+    setPostContent('');
+    onClose();
+  };
+
+  const addPost = async () => {
+    if (!isFormValid) return;
+
+    try {
+      const newPost = await createPost(postTitle, postContent);
+
+      postStore.addPost(newPost);
+
+      setPostTitle('');
+      setPostContent('');
+      onClose();
+    } catch (error) {
+      console.error('Error creating post:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      className="add-post-popup"
+      fullWidth
+      maxWidth="md"
+      slotProps={{
+        backdrop: {
+          timeout: 600,
+          style: {
+            backgroundColor: 'rgba(255, 255, 255, 0.5)',
+            backdropFilter: 'blur(4px)',
+          },
+        },
+      }}
+    >
+      <DialogTitle className="add-post-header">Add your daily Post</DialogTitle>
+      <DialogContent className="add-post-content">
+        <TextField
+          label="Post Title"
+          variant="outlined"
+          fullWidth
+          value={postTitle}
+          onChange={(e) => setPostTitle(e.target.value)}
+          className="post-title-field"
+        />
+        <TextField
+          label="Post Content"
+          variant="outlined"
+          fullWidth
+          multiline
+          rows={4}
+          value={postContent}
+          onChange={(e) => setPostContent(e.target.value)}
+          className="post-text-field"
+        />
+      </DialogContent>
+      <DialogActions className="add-post-actions">
+        <Button onClick={handleClose} color="secondary">
+          Cancel
+        </Button>
+        <Button
+          onClick={addPost}
+          color="primary"
+          variant="contained"
+          disabled={!isFormValid || isSubmitting}
+          sx={{
+            backgroundColor: '#7b1fa2',
+            '&:hover': { backgroundColor: '#9c27b0' },
+          }}
+        >
+          {isSubmitting ? 'Creating...' : 'Add Post'}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
+export default AddPostPopup;

@@ -1,0 +1,80 @@
+package com.uzh.ase.dailygrind.postservice.config;
+
+
+import com.uzh.ase.dailygrind.postservice.post.repository.entity.CommentEntity;
+import com.uzh.ase.dailygrind.postservice.post.repository.entity.DailyPostEntity;
+import com.uzh.ase.dailygrind.postservice.post.repository.entity.PostEntity;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+
+import java.net.URI;
+
+@Configuration
+public class DynamoDBConfig {
+
+    @Value("${dg.us.aws.region}")
+    private String awsRegion;
+
+    @Value("${dg.us.aws.base-url}")
+    private String awsBaseUrl;
+
+    @Value("${dg.us.aws.access-key}")
+    private String amazonAWSAccessKey;
+
+    @Value("${dg.us.aws.secret-key}")
+    private String amazonAWSSecretKey;
+
+    private static final String TABLE_NAME = "posts";
+
+    @Bean
+    @Profile("!test")
+    public AwsCredentialsProvider awsCredentialsProvider() {
+        return StaticCredentialsProvider.create(
+                AwsBasicCredentials.create(amazonAWSAccessKey, amazonAWSSecretKey)
+        );
+    }
+
+    @Bean
+    @Profile("!test")
+    public DynamoDbClient dynamoDbClient(AwsCredentialsProvider credentialsProvider) {
+        return DynamoDbClient.builder()
+                .endpointOverride(URI.create(awsBaseUrl))
+                .credentialsProvider(credentialsProvider)
+                .region(Region.of(awsRegion))
+                .build();
+    }
+
+    @Bean
+    @Profile("!test")
+    DynamoDbEnhancedClient dynamoDbEnhancedClient(DynamoDbClient dynamoDbClient) {
+        return DynamoDbEnhancedClient.builder()
+                .dynamoDbClient(dynamoDbClient)
+                .build();
+    }
+
+    @Bean
+    public DynamoDbTable<PostEntity> postTable(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
+        return dynamoDbEnhancedClient.table(TABLE_NAME, TableSchema.fromBean(PostEntity.class));
+    }
+
+    @Bean
+    public DynamoDbTable<CommentEntity> commentTable(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
+        return dynamoDbEnhancedClient.table(TABLE_NAME, TableSchema.fromBean(CommentEntity.class));
+    }
+
+    @Bean
+    public DynamoDbTable<DailyPostEntity> dailyPostTable(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
+        return dynamoDbEnhancedClient.table(TABLE_NAME, TableSchema.fromBean(DailyPostEntity.class));
+    }
+
+}

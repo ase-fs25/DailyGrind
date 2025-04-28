@@ -5,56 +5,58 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-      time: "22:00"
-    open-pull-requests-limit: 10
+      time: "08:00"
     assignees:
       - "leo-wag"
     reviewers:
-      - "polatmete"
+      - "leo-wag"
+    target-branch: "develop"
     allow:
       - dependency-type: "all"  # Ensure all updates are considered
 
   # 🔹 Automatically apply the same config for all `ms-*` backend services
   - package-ecosystem: "maven"
-    directory: "/ms-user"
+    directory: "/microservices/user-service"
     schedule:
       interval: "weekly"
-      time: "22:00"
+      time: "08:00"
     assignees:
       - "leo-wag"
     reviewers:
-      - "polatmete"
+      - "leo-wag"
+    target-branch: "develop"
 
   - package-ecosystem: "maven"
-    directory: "/ms-post"
+    directory: "/microservices/post-service"
     schedule:
       interval: "weekly"
-      time: "22:00"
+      time: "08:00"
     assignees:
       - "leo-wag"
     reviewers:
-      - "polatmete"
+      - "leo-wag"
+    target-branch: "develop"
 
   # 🔹 Frontend Dependencies
   - package-ecosystem: "npm"
-    directory: "/ms-frontend"
+    directory: "/frontend"
     schedule:
       interval: "weekly"
-      time: "22:00"
-    open-pull-requests-limit: 10
+      time: "08:00"
     assignees:
       - "jnsgbl"
     reviewers:
-      - "polatmete"
+      - "jnsgbl"
+    target-branch: "develop"
 
   # 🔹 GitHub Actions Dependencies
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
-      time: "22:00"
-    open-pull-requests-limit: 10
+      time: "08:00"
     assignees:
       - "polatmete"
     reviewers:
       - "polatmete"
+    target-branch: "develop"

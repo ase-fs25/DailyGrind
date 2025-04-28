@@ -1,0 +1,56 @@
+.header-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  background-color: #9c27b0 !important;
+  color: white;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.logo {
+  display: flex;
+  font-size: 20px;
+  font-weight: bold;
+  width: 33%;
+  justify-content: flex-start;
+}
+
+.header-tabs {
+  display: flex;
+  justify-content: center;
+  width: 33%;
+}
+
+.header-tab {
+  color: white !important;
+}
+
+.header-tabs .MuiTabs-indicator {
+  background-color: #f3e5f5 !important;
+}
+
+.button-row {
+  display: flex;
+  gap: 35%;
+  width: 33%;
+  justify-content: flex-end;
+}
+
+.add-post-button .MuiButton-startIcon {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-button {
+  color: white !important;
+}
