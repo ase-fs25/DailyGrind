@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Card } from '@mui/material';
+import { useEffect, useRef } from 'react';
 
 import Header from '../common/Header';
 import userStore from '../../stores/userStore';

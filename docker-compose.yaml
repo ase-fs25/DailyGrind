@@ -13,7 +13,7 @@ services:
     environment:
       - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
       - AWS_DEFAULT_REGION=us-east-1
-      - SERVICES=iam, sts, cognito-idp, dynamodb, s3, ses, lambda, cloudcontrol, apigateway
+      - SERVICES=iam, sts, cognito-idp, dynamodb, s3 ses, lambda, cloudcontrol, events, apigateway
       - SMTP_HOST=mailhog:1025
       - SMTP_EMAIL=sender@example.com
       - LOCALSTACK_HOST=localstack
@@ -80,6 +80,21 @@ services:
       - SERVER_PORT=8080
     volumes:
       - ./microservices/post-microservice:/app/microservices/post-microservice
+
+  ms-push-notification:
+    build: ./microservices/push-notification-service
+    profiles: [fe-dev, prod]
+    ports:
+      - "8082:8080"
+    depends_on:
+      - localstack
+    environment:
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_S3_ENDPOINT=http://localstack:4566
+      - AWS_SQS_ENDPOINT=http://localstack:4566
+      - SERVER_PORT=8080
 
   frontend:
     build:
