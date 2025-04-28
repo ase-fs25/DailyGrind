@@ -1,0 +1,16 @@
+# Dockerfile.dev for local development
+FROM node
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+
+EXPOSE 3000
+
+# Important for hot reload inside Docker
+ENV CHOKIDAR_USEPOLLING=true
+
+CMD ["npm", "run", "dev"]
