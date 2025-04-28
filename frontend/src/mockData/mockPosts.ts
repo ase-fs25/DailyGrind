@@ -2,7 +2,6 @@ import { Post } from '../types/post';
 
 export const mockPosts: Post[] = [
   {
-    user_id: '1',
     postId: '1',
     title: 'First post',
     content:
@@ -10,7 +9,6 @@ export const mockPosts: Post[] = [
     timestamp: '2021-01-01T12:00:00',
   },
   {
-    user_id: '2',
     postId: '2',
     title: 'Second post',
     content:
@@ -18,7 +16,6 @@ export const mockPosts: Post[] = [
     timestamp: '2021-01-02T12:00:00',
   },
   {
-    user_id: '3',
     postId: '3',
     title: 'Third post',
     content:
@@ -26,7 +23,6 @@ export const mockPosts: Post[] = [
     timestamp: '2021-01-03T12:00:00',
   },
   {
-    user_id: '4',
     postId: '4',
     title: 'Fourth post',
     content:
@@ -34,7 +30,6 @@ export const mockPosts: Post[] = [
     timestamp: '2021-01-04T12:00:00',
   },
   {
-    user_id: '5',
     postId: '5',
     title: 'Fifth post',
     content:
@@ -42,7 +37,6 @@ export const mockPosts: Post[] = [
     timestamp: '2021-01-05T12:00:00',
   },
   {
-    user_id: '6',
     postId: '6',
     title: 'Sixth post',
     content:
@@ -50,7 +44,6 @@ export const mockPosts: Post[] = [
     timestamp: '2021-01-06T12:00:00',
   },
   {
-    user_id: '7',
     postId: '7',
     title: 'Seventh post',
     content:
@@ -58,7 +51,6 @@ export const mockPosts: Post[] = [
     timestamp: '2021-01-07T12:00:00',
   },
   {
-    user_id: '8',
     postId: '8',
     title: 'Eighth post',
     content:
