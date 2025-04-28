@@ -32,15 +32,10 @@ resource "aws_s3_bucket_policy" "frontend_bucket_policy" {
     Statement = [
       {
         Effect    = "Allow"
-        Principal = "*"
+        Principal = "localhost:4566"
         Action = ["s3:GetObject"]
         Resource = ["${aws_s3_bucket.frontend_bucket.arn}/*"]
       }
     ]
   })
-}
-
-output "frontend_url" {
-  # value = aws_s3_bucket_website_configuration.frontend_website.website_endpoint
-  value = "http://localhost:4566/dailygrind/index.html"
 }
