@@ -84,7 +84,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile.dev
-    profiles: [ prod ]
+    profiles: [ fe-dev, prod ]
     container_name: frontend
     hostname: frontend
     networks:
@@ -130,6 +130,7 @@ services:
     build:
       context: ./frontend
       dockerfile: deploy.Dockerfile
+    profiles: [ prod ]
     networks:
       - localstack_network
     depends_on:
