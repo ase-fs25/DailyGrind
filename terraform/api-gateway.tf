@@ -31,7 +31,7 @@ resource "aws_apigatewayv2_integration" "ms_post_integration" {
 resource "aws_apigatewayv2_integration" "frontend_integration" {
   api_id             = aws_apigatewayv2_api.http_api.id
   integration_type   = "HTTP_PROXY"
-  integration_uri    = "http://frontend:3000"
+  integration_uri    = "http://localhost:4566/dailygrind/index.html"
   integration_method = "ANY"
 }
 
