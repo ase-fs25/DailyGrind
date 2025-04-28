@@ -13,4 +13,4 @@ EXPOSE 3000
 # Important for hot reload inside Docker
 ENV CHOKIDAR_USEPOLLING=true
 
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "dev:docker"]
