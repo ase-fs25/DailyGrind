@@ -1,94 +1,151 @@
-import React, { useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, TextField, IconButton, Button, Box, Avatar } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  TextField,
+  IconButton,
+  Button,
+  Box,
+  Typography,
+  Tabs,
+  Tab,
+} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import CheckIcon from '@mui/icons-material/Check';
-import ClearIcon from '@mui/icons-material/Clear';
 import { useNavigate } from 'react-router-dom';
-
+import { signOut } from 'aws-amplify/auth';
 import '../../styles/components/common/settingsPopup.css';
-import profileStore from '../../stores/profileStore';
-import { Profile, ProfileInfo } from '../../types/profile';
+import userStore from '../../stores/userStore';
+import { User, UserJob, UserEducation } from '../../types/user';
+import JobsSection from './JobsSection';
+import EducationSection from './EducationSection';
+import { updateUser, deleteUserJob, deleteUserEducation } from '../../helpers/userHelpers';
 
 interface SettingsPopupProps {
   open: boolean;
   onClose: () => void;
 }
 
-const SettingsPopup: React.FC<SettingsPopupProps> = ({ open, onClose }) => {
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`settings-tabpanel-${index}`}
+      aria-labelledby={`settings-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box>{children}</Box>}
+    </div>
+  );
+}
+
+const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
   const navigate = useNavigate();
+  const [tabValue, setTabValue] = useState(0);
+  const [user, setUser] = useState<User>(userStore.getUser());
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [jobs, setJobs] = useState<UserJob[]>(userStore.getJobs());
+  const [education, setEducation] = useState<UserEducation[]>(userStore.getEducation());
 
-  const [profile, setProfile] = useState<Profile>(profileStore.getProfile());
+  const handleUserChange = (field: keyof User, value: string) => {
+    // TODO Propably not enought as it needs to be set in the backend and the store as well
+    setUser((prev) => ({ ...prev, [field]: value }));
+  };
 
-  const [editingField, setEditingField] = useState<keyof Profile | keyof ProfileInfo | null>(null);
-  const [tempValue, setTempValue] = useState<string>('');
+  const handleDeleteJob = async (jobId: string) => {
+    try {
+      const result = await deleteUserJob(jobId);
+      if (result.success) {
+        setJobs(jobs.filter((job) => job.jobId !== jobId));
+        setStatusMessage('Job deleted successfully');
+      } else {
+        setStatusMessage('Failed to delete job');
+      }
 
-  const handleProfilePictureChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      const fileReader = new FileReader();
-      fileReader.onload = (e) => {
-        if (e.target && typeof e.target.result === 'string') {
-          setProfile((prev) => ({
-            ...prev,
-            profilePicture: e.target?.result as string,
-          }));
-          console.log('Profile picture changed');
-        }
+      setTimeout(() => {
+        setStatusMessage(null);
+      }, 2000);
+    } catch (error) {
+      console.error('Error deleting job:', error);
+      setStatusMessage('Error deleting job');
+    }
+  };
+
+  const handleDeleteEducation = async (educationId: string) => {
+    try {
+      const result = await deleteUserEducation(educationId);
+
+      if (result.success) {
+        setEducation(education.filter((edu) => edu.educationId !== educationId));
+        setStatusMessage('Education entry deleted successfully');
+      } else {
+        setStatusMessage('Failed to delete education entry');
+      }
+
+      setTimeout(() => {
+        setStatusMessage(null);
+      }, 2000);
+    } catch (error) {
+      console.error('Error deleting education:', error);
+      setStatusMessage('Error deleting education entry');
+    }
+  };
+
+  useEffect(() => {
+    if (open) {
+      setUser(userStore.getUser());
+      setJobs(userStore.getJobs());
+      setEducation(userStore.getEducation());
+    }
+  }, [open]);
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+  };
+
+  const handleSaveProfile = async () => {
+    setLoading(true);
+    setStatusMessage(null);
+
+    try {
+      const updatedUser = {
+        ...user,
       };
-      fileReader.readAsDataURL(event.target.files[0]);
+
+      userStore.setUser(updatedUser);
+      await updateUser(updatedUser);
+
+      setStatusMessage('Profile updated successfully');
+      setTimeout(() => {
+        setStatusMessage(null);
+      }, 2000);
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      setStatusMessage('Failed to update profile. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const startEditing = (field: keyof Profile | keyof ProfileInfo) => {
-    setEditingField(field);
-    if (field === 'username') {
-      setTempValue(profile[field]);
-    } else {
-      setTempValue(profile.profileInfo[field as keyof ProfileInfo]);
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      userStore.deleteUser();
+      window.localStorage.clear();
+      navigate('/');
+    } catch (e) {
+      console.error('Error signing out: ', e);
     }
-  };
-
-  const handleCancel = () => {
-    setEditingField(null);
-    setTempValue('');
-  };
-
-  const handleConfirm = () => {
-    // TODO In this function we would also need to call the API to update the user's profile
-    if (!editingField) return;
-
-    setProfile((prev) => {
-      if (!prev) return prev;
-
-      return editingField === 'username'
-        ? { ...prev, username: tempValue }
-        : {
-            ...prev,
-            profileInfo: {
-              ...prev.profileInfo,
-              [editingField]: tempValue,
-            },
-          };
-    });
-
-    // TODO Find a better solution for this. Might even change when the API is implemented
-    if (editingField === 'username') {
-      profileStore.setUsername(tempValue);
-    } else if (
-      editingField === 'profilePicture' ||
-      editingField === 'location' ||
-      editingField === 'education' ||
-      editingField === 'workExperience'
-    ) {
-      profileStore.updateProfileInfoField(editingField, tempValue);
-    }
-
-    setEditingField(null);
-    setTempValue('');
-  };
-
-  const handleLogout = () => {
-    profileStore.deleteProfile();
-    navigate('/');
   };
 
   return (
@@ -98,6 +155,7 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ open, onClose }) => {
       className="settings-popup"
       fullWidth
       maxWidth="md"
+      sx={{ '& .MuiDialog-paper': { height: '80vh', display: 'flex', flexDirection: 'column' } }}
       slotProps={{
         backdrop: {
           timeout: 600,
@@ -114,70 +172,128 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ open, onClose }) => {
           <CloseIcon />
         </IconButton>
       </DialogTitle>
-      <DialogContent className="settings-content">
-        <Box className="profile-section">
-          <Button component="label" variant="outlined" className="profile-upload-button">
-            <Avatar src={profile.profileInfo.profilePicture} className="profile-avatar" style={{ cursor: 'pointer' }} />
-            <input type="file" hidden accept="image/png" onChange={handleProfilePictureChange} />
+
+      <DialogContent dividers sx={{ p: 0, flexGrow: 1, overflowY: 'auto' }}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Tabs value={tabValue} onChange={handleTabChange} aria-label="settings tabs">
+            <Tab label="Personal Info" id="settings-tab-0" />
+            <Tab label="Work Experience" id="settings-tab-1" />
+            <Tab label="Education" id="settings-tab-2" />
+            <Tab label="Account" id="settings-tab-3" />
+          </Tabs>
+        </Box>
+
+        {/* Personal Info Tab */}
+        <TabPanel value={tabValue} index={0}>
+          <Box sx={{ p: 2 }}>
+            <Box className="settings-field">
+              <TextField
+                label="First Name"
+                variant="outlined"
+                fullWidth
+                className="full-input"
+                value={user.firstName}
+                onChange={(e) => handleUserChange('firstName', e.target.value)}
+                margin="normal"
+              />
+            </Box>
+            <Box className="settings-field">
+              <TextField
+                label="Last Name"
+                variant="outlined"
+                fullWidth
+                className="full-input"
+                value={user.lastName}
+                onChange={(e) => handleUserChange('lastName', e.target.value)}
+                margin="normal"
+              />
+            </Box>
+            <Box className="settings-field">
+              <TextField
+                label="Email"
+                variant="outlined"
+                fullWidth
+                className="full-input"
+                value={user.email}
+                onChange={(e) => handleUserChange('email', e.target.value)}
+                margin="normal"
+              />
+            </Box>
+            <Box className="settings-field">
+              <TextField
+                label="Birthday"
+                variant="outlined"
+                fullWidth
+                className="full-input"
+                value={user.birthday}
+                onChange={(e) => handleUserChange('birthday', e.target.value)}
+                margin="normal"
+              />
+            </Box>
+            <Box className="settings-field">
+              <TextField
+                label="Location"
+                variant="outlined"
+                fullWidth
+                className="full-input"
+                value={user.location}
+                onChange={(e) => handleUserChange('location', e.target.value)}
+                margin="normal"
+              />
+            </Box>
+          </Box>
+        </TabPanel>
+
+        {/* Work Experience Tab */}
+        <TabPanel value={tabValue} index={1}>
+          <Box sx={{ p: 2 }}>
+            <JobsSection jobs={jobs} onChange={setJobs} onDelete={handleDeleteJob} readOnly={false} />
+          </Box>
+        </TabPanel>
+
+        {/* Education Tab */}
+        <TabPanel value={tabValue} index={2}>
+          <Box sx={{ p: 2 }}>
+            <EducationSection
+              education={education}
+              onChange={setEducation}
+              onDelete={handleDeleteEducation}
+              readOnly={false}
+            />
+          </Box>
+        </TabPanel>
+
+        {/* Account Tab */}
+        <TabPanel value={tabValue} index={3}>
+          <Box sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              Account Settings
+            </Typography>
+            <Button variant="contained" color="error" onClick={handleLogout} sx={{ mt: 2 }}>
+              Log Out
+            </Button>
+          </Box>
+        </TabPanel>
+
+        {statusMessage && (
+          <Box sx={{ p: 2, textAlign: 'center' }}>
+            <Typography color={statusMessage.includes('success') ? 'success.main' : 'error.main'}>
+              {statusMessage}
+            </Typography>
+          </Box>
+        )}
+      </DialogContent>
+
+      {tabValue !== 3 && (
+        <Box sx={{ p: 2, display: 'flex', justifyContent: 'flex-end' }}>
+          <Button onClick={onClose} sx={{ mr: 1 }}>
+            Cancel
+          </Button>
+          <Button variant="contained" onClick={handleSaveProfile} disabled={loading}>
+            {loading ? 'Saving...' : 'Save Changes'}
           </Button>
         </Box>
-        <Box className="settings-field">
-          <Box className="input-container">
-            <TextField
-              label={'Username'}
-              variant="outlined"
-              fullWidth
-              className={editingField === 'username' ? 'narrow-input' : 'full-input'}
-              value={editingField === 'username' ? tempValue : profile.username}
-              onChange={(e) => setTempValue(e.target.value)}
-              onFocus={() => startEditing('username')}
-            />
-            {editingField === 'username' && tempValue !== 'username' && (
-              <Box className="edit-buttons">
-                <IconButton onClick={handleCancel} className="cancel-button">
-                  <ClearIcon />
-                </IconButton>
-                <IconButton onClick={handleConfirm} className="confirm-button">
-                  <CheckIcon />
-                </IconButton>
-              </Box>
-            )}
-          </Box>
-        </Box>
-        {Object.entries(profile.profileInfo).map(
-          ([key, value]) =>
-            key !== 'profilePicture' && (
-              <Box key={key} className="settings-field">
-                <Box className="input-container">
-                  <TextField
-                    label={key.charAt(0).toUpperCase() + key.slice(1)}
-                    variant="outlined"
-                    fullWidth
-                    className={editingField === key ? 'narrow-input' : 'full-input'}
-                    value={editingField === key ? tempValue : value}
-                    onChange={(e) => setTempValue(e.target.value)}
-                    onFocus={() => startEditing(key as keyof Profile)}
-                  />
-                  {editingField === key &&
-                    key in profile.profileInfo &&
-                    tempValue !== profile.profileInfo[key as keyof ProfileInfo] && (
-                      <Box className="edit-buttons">
-                        <IconButton onClick={handleCancel} className="cancel-button">
-                          <ClearIcon />
-                        </IconButton>
-                        <IconButton onClick={handleConfirm} className="confirm-button">
-                          <CheckIcon />
-                        </IconButton>
-                      </Box>
-                    )}
-                </Box>
-              </Box>
-            ),
-        )}
-        <Button variant="contained" color="secondary" fullWidth onClick={handleLogout} className="logout-button">
-          Logout
-        </Button>
-      </DialogContent>
+      )}
     </Dialog>
   );
 };

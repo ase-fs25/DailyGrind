@@ -1,40 +1,51 @@
-import React, { useState } from 'react';
+// TODO This should be avoided
+/* eslint-disable no-unused-vars */
+import { useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, Button, DialogActions, TextField } from '@mui/material';
-
+import { createPost } from '../../helpers/postHelper';
 import '../../styles/components/common/addPostPopup.css';
-import { mockPersonalPosts } from '../../mockData/mockPersonalPosts';
+import postStore from '../../stores/postsStore';
 
 interface AddPostPopupProps {
   open: boolean;
   onClose: () => void;
 }
 
-const AddPostPopup: React.FC<AddPostPopupProps> = ({ open, onClose }) => {
+const AddPostPopup = ({ open, onClose }: AddPostPopupProps) => {
   const [postTitle, setPostTitle] = useState('');
   const [postContent, setPostContent] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isFormValid = postTitle.trim().length > 0 && postContent.trim().length > 0;
 
-  const addPost = () => {
-    // TODO Here we should add the post to the backend
-    if (!isFormValid) return;
-
-    mockPersonalPosts.push({
-      post_id: Math.random().toString(36).substr(2, 9),
-      user_id: '1',
-      title: postTitle,
-      content: postContent,
-      timestamp: new Date().toISOString(),
-    });
-
+  const handleClose = () => {
     setPostTitle('');
     setPostContent('');
     onClose();
   };
+
+  const addPost = async () => {
+    if (!isFormValid) return;
+
+    try {
+      const newPost = await createPost(postTitle, postContent);
+
+      postStore.addPost(newPost);
+
+      setPostTitle('');
+      setPostContent('');
+      onClose();
+    } catch (error) {
+      console.error('Error creating post:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={handleClose}
       className="add-post-popup"
       fullWidth
       maxWidth="md"
@@ -70,20 +81,20 @@ const AddPostPopup: React.FC<AddPostPopupProps> = ({ open, onClose }) => {
         />
       </DialogContent>
       <DialogActions className="add-post-actions">
-        <Button onClick={onClose} color="secondary">
+        <Button onClick={handleClose} color="secondary">
           Cancel
         </Button>
         <Button
           onClick={addPost}
           color="primary"
           variant="contained"
-          disabled={!isFormValid}
+          disabled={!isFormValid || isSubmitting}
           sx={{
             backgroundColor: '#7b1fa2',
             '&:hover': { backgroundColor: '#9c27b0' },
           }}
         >
-          Add Post
+          {isSubmitting ? 'Creating...' : 'Add Post'}
         </Button>
       </DialogActions>
     </Dialog>

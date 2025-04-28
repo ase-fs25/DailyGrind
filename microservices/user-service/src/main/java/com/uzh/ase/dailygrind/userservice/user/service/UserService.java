@@ -1,11 +1,11 @@
 package com.uzh.ase.dailygrind.userservice.user.service;
 
-import com.uzh.ase.dailygrind.userservice.user.repository.UserCrudRepository;
-import com.uzh.ase.dailygrind.userservice.user.repository.UserPagingSortingRepository;
-import com.uzh.ase.dailygrind.userservice.user.repository.entity.User;
+import com.uzh.ase.dailygrind.userservice.user.controller.dto.*;
+import com.uzh.ase.dailygrind.userservice.user.mapper.UserMapper;
+import com.uzh.ase.dailygrind.userservice.user.repository.UserFollowerRepository;
+import com.uzh.ase.dailygrind.userservice.user.repository.UserRepository;
+import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,24 +14,109 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserCrudRepository userCrudRepository;
+    private final UserRepository userRepository;
 
-    private final UserPagingSortingRepository userPagingSortingRepository;
+    private final UserJobService userJobService;
+    private final UserEducationService userEducationService;
+    private final UserFollowerRepository userFollowerRepository;
 
-    public List<User> getAllUser() {
-        return userCrudRepository.findAll();
+    private final UserMapper userMapper;
+
+    public List<UserInfoDto> getAllUserInfos(String requesterId) {
+        List<UserEntity> userEntities = userRepository.findAllUserEntities();
+        List<String> followingIds = userFollowerRepository.findAllFollowing(requesterId);
+
+        return userEntities.stream()
+                .map(userEntity -> userMapper.toUserInfoDto(userEntity, followingIds.contains(requesterId)))
+                .toList();
     }
 
-    public User createUser(User user) {
-        return userCrudRepository.save(user);
+    public UserInfoDto getUserInfo(String followingId, String requesterId) {
+        UserEntity userEntity = userRepository.findUserById(followingId);
+        if (userEntity == null) {
+            return null;
+        }
+        boolean isFollowed = userFollowerRepository.isFollowed(followingId, requesterId);
+        return userMapper.toUserInfoDto(userEntity, isFollowed);
     }
 
-    public Page<User> getUsersPage(Pageable pageable) {
-        return userPagingSortingRepository.findAll(pageable);
+    public UserDetailsDto getUserDetailsById(String userId, String requesterId) {
+        UserEntity userEntity = userRepository.findUserById(userId);
+        if (userEntity == null) {
+            return null;
+        }
+        List<String> followingIds = userRepository.findAllFollowing(requesterId);
+        boolean isFollowing = followingIds.contains(userId);
+        UserInfoDto userInfoDto = userMapper.toUserInfoDto(userEntity, isFollowing);
+        List<UserJobDto> userJobDtos = userJobService.getJobsForUser(userId);
+        List<UserEducationDto> userEducationDtos = userEducationService.getEducationForUser(userId);
+
+        return new UserDetailsDto(userInfoDto, userJobDtos, userEducationDtos);
     }
 
-    public User getUserById(String id) {
-        return userPagingSortingRepository.findById(id);
+    public UserInfoDto getUserInfoById(String userId, String requesterId) {
+        UserEntity userEntity = userRepository.findUserById(userId);
+        if (userEntity == null) {
+            return null;
+        }
+        boolean isFollowing = false;
+        if (!userId.equals(requesterId)) {
+            isFollowing = userFollowerRepository.isFollowed(userId, requesterId);
+        }
+        return userMapper.toUserInfoDto(userEntity, isFollowing);
     }
 
+    public UserInfoDto createUser(UserCreateDto createUserDto, String userId) {
+        UserEntity userEntity = userMapper.toUserEntity(createUserDto, userId);
+        userRepository.saveUser(userEntity);
+        return userMapper.toUserInfoDto(userEntity, false);
+    }
+
+    public UserInfoDto updateUser(UserCreateDto updateUserDto, String name) {
+        UserEntity userEntity = userMapper.toUserEntity(updateUserDto, name);
+        userRepository.updateUser(userEntity);
+        return userMapper.toUserInfoDto(userEntity, false);
+    }
+
+    public void increaseFollowerCount(String userId) {
+        UserEntity userEntity = userRepository.findUserById(userId);
+        if (userEntity != null) {
+            userEntity.setNumFollowers(userEntity.getNumFollowers() + 1);
+            userRepository.updateUser(userEntity);
+        }
+    }
+
+    public void increaseFollowingCount(String userId) {
+        UserEntity userEntity = userRepository.findUserById(userId);
+        if (userEntity != null) {
+            userEntity.setNumFollowing(userEntity.getNumFollowing() + 1);
+            userRepository.updateUser(userEntity);
+        }
+    }
+
+    public void decreaseFollowerCount(String userId) {
+        UserEntity userEntity = userRepository.findUserById(userId);
+        if (userEntity != null) {
+            userEntity.setNumFollowers(userEntity.getNumFollowers() - 1);
+            userRepository.updateUser(userEntity);
+        }
+    }
+
+    public void decreaseFollowingCount(String userId) {
+        UserEntity userEntity = userRepository.findUserById(userId);
+        if (userEntity != null) {
+            userEntity.setNumFollowing(userEntity.getNumFollowing() - 1);
+            userRepository.updateUser(userEntity);
+        }
+    }
+    public List<UserInfoDto> searchUsersByName(String searchTerm, String requesterId) {
+        List<UserEntity> userEntities = userRepository.findAllUserEntities();
+        List<String> followingIds = userFollowerRepository.findAllFollowing(requesterId);
+    
+        return userEntities.stream()
+                .filter(user -> user.getFirstName() != null && user.getFirstName().toLowerCase().startsWith(searchTerm.toLowerCase()))
+                .map(user -> userMapper.toUserInfoDto(user, followingIds.contains(user.getId())))
+                .toList();
+    }
+    
 }
