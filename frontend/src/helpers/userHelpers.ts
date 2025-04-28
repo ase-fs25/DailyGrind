@@ -45,7 +45,7 @@ export async function updateUser(userData: {
   }
 }
 
-export async  function addUserJob(job: UserJob) {
+export async function addUserJob(job: UserJob) {
   try {
     const authToken = await getAuthToken();
     const response = await fetch(`${API_URL}/users/me/jobs`, {

@@ -31,19 +31,18 @@ export async function searchUsers(name: string): Promise<UserProfile[]> {
   }
 }
 
-
 export async function sendFriendRequest(targetUserId: string): Promise<void> {
   const API_URL_2 = 'http://localhost:8080/users'; // fine
 
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(`${API_URL_2}/requests?targetUserId=${encodeURIComponent(targetUserId)}`, { 
+    const response = await fetch(`${API_URL_2}/requests?targetUserId=${encodeURIComponent(targetUserId)}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${authToken}`,
-      }
+      },
     });
 
     if (!response.ok) {
@@ -90,6 +89,3 @@ export async function declineFriendRequest(requestId: string) {
     throw new Error('Failed to decline friend request.');
   }
 }
-
-
-

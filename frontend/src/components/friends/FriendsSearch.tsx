@@ -9,25 +9,24 @@ const FriendsSearch = () => {
   const [profiles, setProfiles] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(false);
 
-
   const handleSearchChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchTerm(value);
-  
+
     if (value.trim() === '') {
       setProfiles([]);
       return;
     }
-  
+
     try {
       setLoading(true);
       const results = await searchUsers(value);
-  
+
       // 👇 Filter out the current user
       const currentUserId = userStore.getUser().userId;
       console.log(userStore.getUser().firstName);
-      const filteredResults = results.filter(user => user.userId !== currentUserId);
-  
+      const filteredResults = results.filter((user) => user.userId !== currentUserId);
+
       setProfiles(filteredResults);
     } catch (error) {
       console.error('Search error:', error);
@@ -35,7 +34,6 @@ const FriendsSearch = () => {
       setLoading(false);
     }
   };
-  
 
   const handleSendFriendRequest = async (userId: string) => {
     try {

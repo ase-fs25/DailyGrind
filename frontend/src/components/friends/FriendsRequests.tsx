@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, Button } from '@mui/material';
-import { fetchIncomingRequests, acceptFriendRequest, declineFriendRequest } from '../../helpers/friendsHelper'; 
+import { fetchIncomingRequests, acceptFriendRequest, declineFriendRequest } from '../../helpers/friendsHelper';
 import '../../styles/components/friends/friendRequests.css';
 
 interface FriendRequest {
