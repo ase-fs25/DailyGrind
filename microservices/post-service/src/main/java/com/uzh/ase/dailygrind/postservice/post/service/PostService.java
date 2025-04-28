@@ -64,6 +64,7 @@ public class PostService {
 
     public void deletePost(String postId, String userId) {
         postRepository.deletePostById(postId, userId);
+        dailyPostRepository.deleteDailyPostById(postId, userId);
     }
 
     public void likePost(String postId, String userId) {

@@ -38,4 +38,12 @@ public class DailyPostRepository {
             .findFirst()
             .orElse(null);
     }
+
+    public void deleteDailyPostById(String postId, String userId) {
+        Key key = Key.builder()
+                .partitionValue(DailyPostEntity.generatePK(userId))
+                .sortValue(DailyPostEntity.generateSK(postId))
+                .build();
+        dailyPostTable.deleteItem(key);
+    }
 }
