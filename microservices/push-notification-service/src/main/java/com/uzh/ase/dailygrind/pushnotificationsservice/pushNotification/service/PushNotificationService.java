@@ -33,7 +33,6 @@ public class PushNotificationService {
         return pushSubscriptionRepository.save(subscription);
     }
 
-//    send with push-notification-lambda
 public void sendNotification(String message) {
     List<PushSubscription> subscriptions = pushSubscriptionRepository.findAll();
     if(subscriptions == null || subscriptions.isEmpty()) {
