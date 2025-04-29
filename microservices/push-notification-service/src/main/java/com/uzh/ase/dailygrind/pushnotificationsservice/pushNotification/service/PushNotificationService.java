@@ -26,9 +26,9 @@ public class PushNotificationService {
 
     public PushSubscription saveSubscription(SubscriptionDto pushSubscription, String userId) {
         PushSubscription subscription = PushSubscription.builder()
-                .pushSubscription(pushSubscription)
-                .userId(userId)
-                .build();
+            .userId(userId)
+            .subscription(pushSubscription)
+            .build();
 
         return pushSubscriptionRepository.save(subscription);
     }
@@ -45,7 +45,7 @@ public void sendNotification(String message) {
         try {
             System.out.println("Processing subscription ID: " + subscription.getSubscriptionId());
 
-            SubscriptionDto subscriptionDto = subscription.getPushSubscription();
+            SubscriptionDto subscriptionDto = subscription.getSubscription();
             if(subscriptionDto == null || subscriptionDto.endpoint() == null || subscriptionDto.keys() == null) {
                 System.out.println("Warning: invalid subscription for user: " + subscription.getUserId());
                 continue;

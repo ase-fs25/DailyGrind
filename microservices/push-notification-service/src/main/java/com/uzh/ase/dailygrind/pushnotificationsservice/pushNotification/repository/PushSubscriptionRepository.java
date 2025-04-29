@@ -1,13 +1,26 @@
 package com.uzh.ase.dailygrind.pushnotificationsservice.pushNotification.repository;
 
 import com.uzh.ase.dailygrind.pushnotificationsservice.pushNotification.repository.entity.PushSubscription;
-import lombok.NonNull;
-import org.socialsignin.spring.data.dynamodb.repository.DynamoDBCrudRepository;
-import org.socialsignin.spring.data.dynamodb.repository.EnableScan;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 
 import java.util.List;
 
-@EnableScan
-public interface PushSubscriptionRepository extends DynamoDBCrudRepository<PushSubscription, String>{
-    @NonNull List<PushSubscription> findAll();
+@Repository
+@RequiredArgsConstructor
+public class PushSubscriptionRepository {
+
+    private final DynamoDbTable<PushSubscription> pushSubscriptionTable;
+
+
+    public PushSubscription save(PushSubscription subscription) {
+        pushSubscriptionTable.putItem(subscription);
+        return subscription;
+    }
+
+
+    public List<PushSubscription> findAll() {
+        return pushSubscriptionTable.scan().items().stream().toList();
+    }
 }

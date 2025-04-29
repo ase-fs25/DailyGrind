@@ -1,4 +1,4 @@
-package com.uzh.ase.dailygrind.postservice.config;
+package com.uzh.ase.dailygrind.pushnotificationsservice.config;
 
 
 import com.uzh.ase.dailygrind.pushnotificationsservice.pushNotification.repository.entity.PushSubscription;
@@ -9,6 +9,11 @@ import org.springframework.context.annotation.Profile;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 
 import java.net.URI;
@@ -28,7 +33,7 @@ public class DynamoDBConfig {
     @Value("${dg.us.aws.secret-key}")
     private String amazonAWSSecretKey;
 
-    private static final String TABLE_NAME = "posts";
+    private static final String TABLE_NAME = "push-subscriptions";
 
     @Bean
     @Profile("!test")
@@ -57,7 +62,7 @@ public class DynamoDBConfig {
     }
 
     @Bean
-    public DynamoDbTable<PushSubscription> postTable(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
+    public DynamoDbTable<PushSubscription> pushSubscriptionDynamoDbTable(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
         return dynamoDbEnhancedClient.table(TABLE_NAME, TableSchema.fromBean(PushSubscription.class));
     }
 
