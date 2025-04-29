@@ -1,4 +1,0 @@
-VITE_USER_POOL_CLIENT_ID=wua9d7vt2hvjymsmee5zo1f46u
-VITE_USER_POOL_ID=us-east-1_ab4f041432464fa59b2f9f4b4d59f6bb
-VITE_USER_POOL_ENDPOINT=http://localhost.localstack.cloud:4566/_aws/cognito-idp
-VITE_DOMAIN=http://localhost.localstack.cloud:4566/_aws/cognito-idp/login.
