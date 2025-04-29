@@ -41,6 +41,7 @@ public void sendNotification(String message) {
         throw new RuntimeException("No subscriptions found");
     }
 
+    // TODO: Remove this shit!
     System.out.println("Found " + subscriptions.size() + " subscriptions");
 
     for(PushSubscription subscription : subscriptions) {
@@ -78,6 +79,7 @@ public void sendNotification(String message) {
 
     private void invokeNotificationLambda(String payload) {
         try {
+            // TODO: dont hardcode!!!!!
             String endpoint = "http://localhost.localstack.cloud:4566";
             String region = "us-east-1";
             String functionName = "pushNotificationLambda";
@@ -95,6 +97,7 @@ public void sendNotification(String message) {
             InvokeResponse response = lambdaClient.invoke(request);
             int statusCode = response.statusCode();
             String lambdaRespone = new String(response.payload().asByteArray());
+            // TODO: use slfj logs and no souts
             System.out.println("Lambda response: " + lambdaRespone);
 
             if (statusCode >= 200 && statusCode < 300) {
