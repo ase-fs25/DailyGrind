@@ -18,20 +18,20 @@ resource "aws_dynamodb_table" "push_subscriptions" {
 
   # Global Secondary Index for subscription_id
   global_secondary_index {
-    name               = "subscription-id-index"
-    hash_key           = "subscription_id"
-    projection_type    = "ALL"
-    read_capacity      = 5
-    write_capacity     = 5
+    name            = "subscription-id-index"
+    hash_key        = "subscription_id"
+    projection_type = "ALL"
+    read_capacity   = 5
+    write_capacity  = 5
   }
 
   # Global Secondary Index for user_id
   global_secondary_index {
-    name               = "user-id-index"
-    hash_key           = "user_id"
-    projection_type    = "ALL"
-    read_capacity      = 5
-    write_capacity     = 5
+    name            = "user-id-index"
+    hash_key        = "user_id"
+    projection_type = "ALL"
+    read_capacity   = 5
+    write_capacity  = 5
   }
 
   tags = {
