@@ -1,23 +1,19 @@
-package com.uzh.ase.dailygrind.pushnotificationsservice.config;
+package com.uzh.ase.dailygrind.postservice.config;
 
 
-import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
-import com.uzh.ase.dailygrind.pushnotificationsservice.pushNotification.repository.PushSubscriptionRepository;
-import org.socialsignin.spring.data.dynamodb.repository.config.EnableDynamoDBRepositories;
+import com.uzh.ase.dailygrind.pushnotificationsservice.pushNotification.repository.entity.PushSubscription;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+
+
+import java.net.URI;
 
 @Configuration
-@EnableDynamoDBRepositories(basePackageClasses = {PushSubscriptionRepository.class})
 public class DynamoDBConfig {
 
     @Value("${dg.us.aws.region}")
@@ -32,29 +28,38 @@ public class DynamoDBConfig {
     @Value("${dg.us.aws.secret-key}")
     private String amazonAWSSecretKey;
 
-    private AWSCredentialsProvider awsDynamoDBCredentials() {
-        return new AWSStaticCredentialsProvider(
-                new BasicAWSCredentials(amazonAWSAccessKey, amazonAWSSecretKey));
-    }
-
-    @Primary
-    @Bean
-    public DynamoDBMapperConfig dynamoDBMapperConfig() {
-        return DynamoDBMapperConfig.DEFAULT;
-    }
+    private static final String TABLE_NAME = "posts";
 
     @Bean
-    @Primary
-    public DynamoDBMapper dynamoDBMapper(AmazonDynamoDB amazonDynamoDB,
-                                         DynamoDBMapperConfig config) {
-        return new DynamoDBMapper(amazonDynamoDB, config);
+    @Profile("!test")
+    public AwsCredentialsProvider awsCredentialsProvider() {
+        return StaticCredentialsProvider.create(
+            AwsBasicCredentials.create(amazonAWSAccessKey, amazonAWSSecretKey)
+        );
     }
 
     @Bean
-    public AmazonDynamoDB amazonDynamoDB() {
-
-        return AmazonDynamoDBClientBuilder.standard()
-                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(awsBaseUrl, awsRegion))
-                .withCredentials(awsDynamoDBCredentials()).build();
+    @Profile("!test")
+    public DynamoDbClient dynamoDbClient(AwsCredentialsProvider credentialsProvider) {
+        return DynamoDbClient.builder()
+            .endpointOverride(URI.create(awsBaseUrl))
+            .credentialsProvider(credentialsProvider)
+            .region(Region.of(awsRegion))
+            .build();
     }
+
+    @Bean
+    @Profile("!test")
+    DynamoDbEnhancedClient dynamoDbEnhancedClient(DynamoDbClient dynamoDbClient) {
+        return DynamoDbEnhancedClient.builder()
+            .dynamoDbClient(dynamoDbClient)
+            .build();
+    }
+
+    @Bean
+    public DynamoDbTable<PushSubscription> postTable(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
+        return dynamoDbEnhancedClient.table(TABLE_NAME, TableSchema.fromBean(PushSubscription.class));
+    }
+
+
 }
