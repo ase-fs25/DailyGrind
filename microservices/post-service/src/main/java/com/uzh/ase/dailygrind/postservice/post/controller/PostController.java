@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.prefs.Preferences;
 
 @RestController
 @RequestMapping
@@ -135,6 +136,42 @@ public class PostController {
     @DeleteMapping("/posts/{postId}/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable String postId, @PathVariable String commentId, Principal principal) {
         postService.deleteComment(postId, commentId, principal.getName());
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Getting all of my pinned posts")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved pinned posts")
+    @GetMapping("/users/me/pinned-posts")
+    public ResponseEntity<List<PostDto>> getMyPinnedPosts(Principal principal) {
+        List<PostDto> pinnedPosts = postService.getPinnedPostsByUserId(principal.getName());
+        return ResponseEntity.ok(pinnedPosts);
+    }
+
+    @Operation(summary = "Getting all pinned posts for user")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved pinned posts")
+    @GetMapping("/users/{userId}/pinned-posts")
+    public ResponseEntity<List<PostDto>> getPinnedPostsByUserId(String userId) {
+        List<PostDto> pinnedPosts = postService.getPinnedPostsByUserId(userId);
+        return ResponseEntity.ok(pinnedPosts);
+    }
+
+    @Operation(summary = "Adding new pinned post")
+
+    @PostMapping("/users/me/pinned-posts/{postId}")
+    public ResponseEntity<?> pinPost(@PathVariable String postId, Principal principal) {
+        try {
+            PostDto postDto = postService.pinPost(postId, principal.getName());
+            return ResponseEntity.ok(postDto);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @Operation
+
+    @DeleteMapping("/users/me/pinned-posts/{postId}")
+    public ResponseEntity<PostDto> unpinPost(@PathVariable String postId, Principal principal) {
+        postService.unpinPost(postId, principal.getName());
         return ResponseEntity.noContent().build();
     }
 
