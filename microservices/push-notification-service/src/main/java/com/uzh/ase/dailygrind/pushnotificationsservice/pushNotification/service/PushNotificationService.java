@@ -5,6 +5,8 @@ import com.uzh.ase.dailygrind.pushnotificationsservice.pushNotification.controll
 import com.uzh.ase.dailygrind.pushnotificationsservice.pushNotification.repository.PushSubscriptionRepository;
 import com.uzh.ase.dailygrind.pushnotificationsservice.pushNotification.repository.entity.PushSubscription;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import software.amazon.awssdk.core.SdkBytes;
@@ -18,9 +20,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PushNotificationService {
+    @Value("${dg.us.aws.base-url}")
+    private String awsBaseUrl;
+
+    @Value("${dg.us.aws.region}")
+    private String awsRegion;
+
+    @Value("${dg.lambda.function-name}")
+    private String lambdaFunctionName;
+
     private final PushSubscriptionRepository pushSubscriptionRepository;
     private final ObjectMapper objectMapper;
 
@@ -41,20 +53,17 @@ public void sendNotification(String message) {
         throw new RuntimeException("No subscriptions found");
     }
 
-    // TODO: Remove this shit!
-    System.out.println("Found " + subscriptions.size() + " subscriptions");
-
     for(PushSubscription subscription : subscriptions) {
         try {
-            System.out.println("Processing subscription ID: " + subscription.getSubscriptionId());
+            log.info("Processing subscription ID: {}", subscription.getSubscriptionId());
 
             SubscriptionDto subscriptionDto = new SubscriptionDto(
                 subscription.getEndpoint(),
                 subscription.getExpirationTime(),
                 subscription.getKeys()
             );
-            if(subscriptionDto == null || subscriptionDto.endpoint() == null || subscriptionDto.keys() == null) {
-                System.out.println("Warning: invalid subscription for user: " + subscription.getUserId());
+            if(subscriptionDto.endpoint() == null || subscriptionDto.keys() == null) {
+                log.warn("Warning: invalid subscription for user: {}",subscription.getUserId());
                 continue;
             }
 
@@ -71,18 +80,16 @@ public void sendNotification(String message) {
             invokeNotificationLambda(jsonPayload);
 
         } catch (Exception e) {
-            System.out.println("Error sending notification: " + e.getMessage());
-            e.printStackTrace();
+            log.error("Error sending notification for user: {}",subscription.getUserId(), e);
             }
         }
     }
 
     private void invokeNotificationLambda(String payload) {
         try {
-            // TODO: dont hardcode!!!!!
-            String endpoint = "http://localhost.localstack.cloud:4566";
-            String region = "us-east-1";
-            String functionName = "pushNotificationLambda";
+            String endpoint = awsBaseUrl;
+            String region = awsRegion;
+            String functionName = lambdaFunctionName;
 
             LambdaClient lambdaClient = LambdaClient.builder()
                     .endpointOverride(URI.create(endpoint))
@@ -96,24 +103,20 @@ public void sendNotification(String message) {
 
             InvokeResponse response = lambdaClient.invoke(request);
             int statusCode = response.statusCode();
-            String lambdaRespone = new String(response.payload().asByteArray());
-            // TODO: use slfj logs and no souts
-            System.out.println("Lambda response: " + lambdaRespone);
+            String lambdaResponse = new String(response.payload().asByteArray());
+
+            log.info("Lambda response: {}", lambdaResponse);
 
             if (statusCode >= 200 && statusCode < 300) {
-                System.out.println("Push notification Lambda invoked successfully");
+                log.info("Push notification Lambda invoked successfully");
             } else {
-                System.out.println("Failed to invoke Lambda, status: " + statusCode);
+                log.warn("Failed to invoke Lambda, status: {}", statusCode);
                 if (response.functionError() != null) {
-                    System.out.println("Error: " + response.functionError());
-                }
-                if (response.payload() != null) {
-                    System.out.println("Response: " + response.payload().asUtf8String());
+                    log.warn("Lambda error: {}",response.functionError());
                 }
             }
         } catch (Exception e) {
-            System.out.println("Exception invoking Lambda: " + e.getMessage());
-            e.printStackTrace();
+            log.error("Exception invoking Lambda: {}", e.getMessage());
         }
     }
 }

@@ -24,14 +24,6 @@ public class pushNotificationController {
 
     }
 
-    /*
-    @PostMapping("/unsubscribe")
-    public ResponseEntity<Void> deleteSubscription(@RequestBody PushSubscription pushSubscription) {
-        pushNotificationService.deleteSubscription(pushSubscription);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    }
-     */
-
     @PostMapping("/send")
     public ResponseEntity<Void> sendNotification(@RequestBody String message) {
         pushNotificationService.sendNotification(message);

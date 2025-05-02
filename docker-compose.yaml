@@ -13,7 +13,7 @@ services:
     environment:
       - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
       - AWS_DEFAULT_REGION=us-east-1
-      - SERVICES=iam, sts, cognito-idp, dynamodb, s3 ses, lambda, cloudcontrol, events, apigateway
+      - SERVICES=iam, sts, cognito-idp, dynamodb, s3, ses, lambda, cloudcontrol, events, apigateway
       - SMTP_HOST=mailhog:1025
       - SMTP_EMAIL=sender@example.com
       - LOCALSTACK_HOST=localstack
@@ -81,13 +81,16 @@ services:
     volumes:
       - ./microservices/post-microservice:/app/microservices/post-microservice
 
-  ms-push-notification:
+  ms-push-notification-service:
     build: ./microservices/push-notification-service
     profiles: [fe-dev, prod]
-    ports:
-      - "8082:8080"
+    networks:
+      - localstack_network
+#    ports:
+#      - "8082:8080"
     depends_on:
       - localstack
+      - terraform
     environment:
       - AWS_REGION=us-east-1
       - AWS_ACCESS_KEY_ID=test

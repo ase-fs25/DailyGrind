@@ -8,11 +8,14 @@ dg:
       port: ${LOCALSTACK_PORT:4566}
       access-key: ${AWS_DYNAMODB_ACCESS_KEY_ID:test}
       secret-key: ${AWS_DYNAMODB_SECRET_ACCESS_KEY:test}
-      base-url: http://localhost.localstack.cloud:${dg.us.aws.port}
+      base-url: http://localhost:${dg.us.aws.port}
       cognito:
-        user-pool-id: ${AWS_COGNITO_USER_POOL_ID:us-east-1_70f01bd5342d453f92142d0ff3efef32}
-        issuer-uri: http://localhost.localstack.cloud:${dg.us.aws.port}/${dg.us.aws.cognito.user-pool-id}
-        jwk-set-uri: http://localhost.localstack.cloud:${dg.us.aws.port}/${dg.us.aws.cognito.user-pool-id}/.well-known/jwks.json
+        user-pool-id: ${AWS_COGNITO_USER_POOL_ID:us-east-1_56ede68b525a4df28aaca9e9bf9f1a6b}
+        issuer-uri: http://localstack:${dg.us.aws.port}/${dg.us.aws.cognito.user-pool-id}
+        jwk-set-uri: http://localhost:${dg.us.aws.port}/${dg.us.aws.cognito.user-pool-id}/.well-known/jwks.json
+
+  lambda:
+    function-name: ${LAMBDA_FUNCTION_NAME:pushNotificationLambda}
 
 spring:
   application:
@@ -26,6 +29,3 @@ spring:
 server:
   port: ${PORT:8082}
 
-logging:
-  level:
-    org.springframework.security: TRACE

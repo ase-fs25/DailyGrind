@@ -1,3 +1,4 @@
+/* global navigator */
 import { mockVapidKeys } from '../mockData/mockVapidKeys';
 import { fetchAuthSession } from 'aws-amplify/auth';
 
