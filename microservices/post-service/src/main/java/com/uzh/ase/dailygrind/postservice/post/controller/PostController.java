@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.prefs.Preferences;
 
 @RestController
 @RequestMapping
@@ -150,7 +149,7 @@ public class PostController {
     @Operation(summary = "Getting all pinned posts for user")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved pinned posts")
     @GetMapping("/users/{userId}/pinned-posts")
-    public ResponseEntity<List<PostDto>> getPinnedPostsByUserId(String userId) {
+    public ResponseEntity<List<PostDto>> getPinnedPostsByUserId(@PathVariable String userId) {
         List<PostDto> pinnedPosts = postService.getPinnedPostsByUserId(userId);
         return ResponseEntity.ok(pinnedPosts);
     }
