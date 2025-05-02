@@ -8,6 +8,12 @@ export interface UserProfile {
   lastName: string;
   // add other fields if needed (email, location, etc.)
 }
+export interface FriendRequest {
+  requestId: string; // the SK from DynamoDB
+  senderId: string;
+  firstName: string;
+  lastName: string;
+}
 
 export async function searchUsers(name: string): Promise<UserProfile[]> {
   try {
@@ -63,7 +69,8 @@ export async function fetchIncomingRequests() {
   if (!response.ok) {
     throw new Error('Failed to fetch incoming friend requests.');
   }
-  return response.json(); // returns a list of users
+  return response.json() as Promise<FriendRequest[]>; // returns list of FriendRequest
+  // returns a list of users
 }
 
 export async function acceptFriendRequest(requestId: string) {
@@ -88,4 +95,18 @@ export async function declineFriendRequest(requestId: string) {
   if (!response.ok) {
     throw new Error('Failed to decline friend request.');
   }
+}
+export async function fetchFriends(): Promise<UserProfile[]> {
+  const API_URL_2 = 'http://localhost:8080/users';
+  const authToken = await getAuthToken();
+
+  const response = await fetch(`${API_URL_2}/friends`, {
+    headers: { Authorization: `Bearer ${authToken}` },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch friends.');
+  }
+
+  return response.json(); // This should return an array of UserProfile objects
 }

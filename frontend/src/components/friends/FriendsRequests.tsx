@@ -4,7 +4,8 @@ import { fetchIncomingRequests, acceptFriendRequest, declineFriendRequest } from
 import '../../styles/components/friends/friendRequests.css';
 
 interface FriendRequest {
-  userId: string;
+  requestId: string; // SK
+  senderId: string;
   firstName: string;
   lastName: string;
 }
@@ -25,20 +26,20 @@ const FriendsRequests = () => {
     loadRequests();
   }, []);
 
-  const handleAccept = async (userId: string) => {
+  const handleAccept = async (requestId: string) => {
     try {
-      await acceptFriendRequest(userId);
-      setRequests((prev) => prev.filter((req) => req.userId !== userId));
+      await acceptFriendRequest(requestId);
+      setRequests((prev) => prev.filter((req) => req.requestId !== requestId));
       alert('Friend request accepted!');
     } catch (error) {
       console.error('Failed to accept friend request:', error);
     }
   };
 
-  const handleDecline = async (userId: string) => {
+  const handleDecline = async (requestId: string) => {
     try {
-      await declineFriendRequest(userId);
-      setRequests((prev) => prev.filter((req) => req.userId !== userId));
+      await declineFriendRequest(requestId);
+      setRequests((prev) => prev.filter((req) => req.requestId !== requestId));
       alert('Friend request declined.');
     } catch (error) {
       console.error('Failed to decline friend request:', error);
@@ -52,15 +53,15 @@ const FriendsRequests = () => {
       </Typography>
       <Box className="requests-list">
         {requests.map((request) => (
-          <Box key={request.userId} className="request-item">
+          <Box key={request.requestId} className="request-item">
             <Typography variant="subtitle1" className="request-username">
               {request.firstName} {request.lastName}
             </Typography>
             <Box className="request-buttons">
-              <Button variant="outlined" color="success" size="small" onClick={() => handleAccept(request.userId)}>
+              <Button variant="outlined" color="success" size="small" onClick={() => handleAccept(request.requestId)}>
                 Accept
               </Button>
-              <Button variant="outlined" color="error" size="small" onClick={() => handleDecline(request.userId)}>
+              <Button variant="outlined" color="error" size="small" onClick={() => handleDecline(request.requestId)}>
                 Decline
               </Button>
             </Box>

@@ -24,7 +24,6 @@ const FriendsSearch = () => {
 
       // 👇 Filter out the current user
       const currentUserId = userStore.getUser().userId;
-      console.log(userStore.getUser().firstName);
       const filteredResults = results.filter((user) => user.userId !== currentUserId);
 
       setProfiles(filteredResults);
