@@ -4,15 +4,18 @@ import com.uzh.ase.dailygrind.postservice.post.controller.dto.CommentDto;
 import com.uzh.ase.dailygrind.postservice.post.controller.dto.PostDto;
 import com.uzh.ase.dailygrind.postservice.post.mapper.PostMapper;
 import com.uzh.ase.dailygrind.postservice.post.repository.DailyPostRepository;
+import com.uzh.ase.dailygrind.postservice.post.repository.PinnedPostRepository;
 import com.uzh.ase.dailygrind.postservice.post.repository.PostRepository;
 import com.uzh.ase.dailygrind.postservice.post.repository.entity.CommentEntity;
 import com.uzh.ase.dailygrind.postservice.post.repository.entity.DailyPostEntity;
+import com.uzh.ase.dailygrind.postservice.post.repository.entity.PinnedPostEntity;
 import com.uzh.ase.dailygrind.postservice.post.repository.entity.PostEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +26,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final DailyPostRepository dailyPostRepository;
+    private final PinnedPostRepository pinnedPostRepository;
     private final UserServiceClient userServiceClient;
     private final PostMapper postMapper;
 
@@ -107,5 +111,26 @@ public class PostService {
         return commentEntities.stream()
             .map(postMapper::toCommentDto)
             .toList();
+    }
+
+    public List<PostDto> getPinnedPostsByUserId(String userId) {
+        List<String> pinnedPostEntities = pinnedPostRepository.findPinnedPostIdsForUser(userId);
+        return pinnedPostEntities.stream()
+            .map(postRepository::findPostById)
+            .map(postMapper::toPostDto)
+            .toList();
+    }
+
+    public PostDto pinPost(String postId, String userId) {
+        PostEntity postEntity = postRepository.findPostById(postId);
+        if (postEntity == null) throw new NoSuchElementException("Post with id " + postId + " does not exist");
+        PinnedPostEntity pinnedPostEntity = new PinnedPostEntity(userId, postEntity.getPostId());
+        pinnedPostRepository.savePinnedPost(pinnedPostEntity);
+        return postMapper.toPostDto(postEntity);
+    }
+
+    public void unpinPost(String postId, String userId) {
+        PinnedPostEntity pinnedPostEntity = new  PinnedPostEntity(userId, postId);
+        pinnedPostRepository.deleteDailyPostById(pinnedPostEntity);
     }
 }
