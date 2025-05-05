@@ -1,10 +1,11 @@
 // TODO This should be avoided
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import { createPost } from '../../helpers/postHelper';
 import '../../styles/components/common/addPostPopup.css';
 import postStore from '../../stores/postsStore';
+import { inspireMeData } from '../../constants/inspireMe';
 
 interface AddPostPopupProps {
   open: boolean;
@@ -15,8 +16,16 @@ const AddPostPopup = ({ open, onClose }: AddPostPopupProps) => {
   const [postTitle, setPostTitle] = useState('');
   const [postContent, setPostContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [placeholder, setPlaceholder] = useState('');
 
   const isFormValid = postTitle.trim().length > 0 && postContent.trim().length > 0;
+
+  useEffect(() => {
+    if (open) {
+      const random = inspireMeData[Math.floor(Math.random() * inspireMeData.length)];
+      setPlaceholder(random);
+    }
+  }, [open]);
 
   const handleClose = () => {
     setPostTitle('');
@@ -62,7 +71,7 @@ const AddPostPopup = ({ open, onClose }: AddPostPopupProps) => {
       <DialogTitle className="add-post-header">Add your daily Post</DialogTitle>
       <DialogContent className="add-post-content">
         <TextField
-          label="Post Title"
+          label="Add Title"
           variant="outlined"
           fullWidth
           value={postTitle}
@@ -70,7 +79,7 @@ const AddPostPopup = ({ open, onClose }: AddPostPopupProps) => {
           className="post-title-field"
         />
         <TextField
-          label="Post Content"
+          label={placeholder}
           variant="outlined"
           fullWidth
           multiline
