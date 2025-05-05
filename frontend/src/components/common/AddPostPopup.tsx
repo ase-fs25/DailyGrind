@@ -1,7 +1,7 @@
 // TODO This should be avoided
-/* eslint-disable no-unused-vars */
+
 import { useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, Button, DialogActions, TextField } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import { createPost } from '../../helpers/postHelper';
 import '../../styles/components/common/addPostPopup.css';
 import postStore from '../../stores/postsStore';

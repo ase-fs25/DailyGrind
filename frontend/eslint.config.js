@@ -23,7 +23,8 @@ export default [
         clearTimeout: 'readonly',
         setInterval: 'readonly',
         clearInterval: 'readonly',
-        fetch: 'false',
+        fetch: 'readonly',
+        navigator: 'readonly',
       },
     },
     plugins: {
