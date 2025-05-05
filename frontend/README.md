@@ -21,7 +21,8 @@ VITE_USER_POOL_ENDPOINT=
 VITE_DOMAIN=
 
 Get the first two from your terraform container (should be printed to console after start).
-The third one is either http://localhost:4566/_aws/cognito-idp or http://localhost.localstack.cloud:4566/_aws/cognito-idp and the fourth one is either http://localhost:4566/_aws/cognito-idp/login or http://localhost.localstack.cloud:4566/_aws/cognito-idp/login.
+The third one is either `http://localhost:4566/_aws/cognito-idp` or `http://localhost.localstack.cloud:4566/_aws/cognito-idp` and the fourth one is
+either `http://localhost:4566/_aws/cognito-idp/login` or `http://localhost.localstack.cloud:4566/_aws/cognito-idp/login`.
 
 Try out the third and fourth one. We haven't figured out why it is different for some machines.
 

@@ -36,7 +36,7 @@ jobs:
 
       - name: Run ESLint (Linting)
         working-directory: frontend
-        run: npm run lint
+        run: npm run lint:check
 
       - name: Run Prettier (Code Formatting Check)
         working-directory: frontend
@@ -46,10 +46,10 @@ jobs:
         working-directory: frontend
         run: npm run type-check
 
-# TODO: Uncomment the following lines after writing tests
-#      - name: Run tests
-#        working-directory: frontend
-#        run: npm test
+      # TODO: Uncomment the following lines after writing tests
+      #      - name: Run tests
+      #        working-directory: frontend
+      #        run: npm test
 
       - name: Run security audit on dependencies
         working-directory: frontend
