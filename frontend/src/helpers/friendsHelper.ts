@@ -41,7 +41,6 @@ export async function searchUsers(name: string): Promise<UserProfile[]> {
   }
 }
 
-
 // --- Send Friend Request ---
 export async function sendFriendRequest(targetUserId: string): Promise<void> {
   try {
@@ -126,7 +125,7 @@ export async function declineFriendRequest(requestId: string): Promise<void> {
 export async function checkExistingFriendRequest(targetUserId: string): Promise<boolean> {
   try {
     const friends = await fetchFriends();
-    return friends.some(friend => friend.userId === targetUserId);
+    return friends.some((friend) => friend.userId === targetUserId);
   } catch (err) {
     console.error('Failed to check existing friend request:', err);
     return false;
@@ -146,4 +145,3 @@ export async function removeFriend(friendId: string): Promise<void> {
     throw new Error('Failed to remove friend.');
   }
 }
-

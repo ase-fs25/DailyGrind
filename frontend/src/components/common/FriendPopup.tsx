@@ -1,11 +1,4 @@
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  IconButton,
-  Box,
-  Typography,
-} from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, IconButton, Box, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { Post } from '../../types/post';
 import { UserProfile } from '../../helpers/friendsHelper';
@@ -17,10 +10,9 @@ interface FriendPopupProps {
   onClose: () => void;
   user: UserProfile | null;
   posts: Post[];
-  
 }
 
-const FriendPopup = ({ open, onClose, user, posts}: FriendPopupProps) => {
+const FriendPopup = ({ open, onClose, user, posts }: FriendPopupProps) => {
   if (!user) return null;
 
   const handleRemoveFriend = async () => {

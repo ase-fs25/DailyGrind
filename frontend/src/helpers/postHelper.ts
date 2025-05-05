@@ -146,5 +146,3 @@ export async function getPostsByUserId(userId: string): Promise<Post[]> {
     return [];
   }
 }
-
-
