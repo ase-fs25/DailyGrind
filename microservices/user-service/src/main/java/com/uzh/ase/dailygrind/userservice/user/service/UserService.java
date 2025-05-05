@@ -112,11 +112,19 @@ public class UserService {
     public List<UserInfoDto> searchUsersByName(String searchTerm, String requesterId) {
         List<UserEntity> userEntities = userRepository.findAllUserEntities();
         List<String> followingIds = userFollowerRepository.findAllFollowing(requesterId);
-    
+
         return userEntities.stream()
                 .filter(user -> user.getFirstName() != null && user.getFirstName().toLowerCase().startsWith(searchTerm.toLowerCase()))
                 .map(user -> userMapper.toUserInfoDto(user, followingIds.contains(user.getId())))
                 .toList();
     }
-    
+
+    public void deleteUser(String userId) {
+        UserEntity userEntity = userRepository.findUserById(userId);
+        if (userEntity != null) {
+            userRepository.deleteUser(userEntity);
+            userJobService.deleteJobsForUser(userId);
+            userEducationService.deleteEducationForUser(userId);
+        }
+    }
 }

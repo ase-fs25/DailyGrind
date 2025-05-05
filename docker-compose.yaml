@@ -13,7 +13,7 @@ services:
     environment:
       - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
       - AWS_DEFAULT_REGION=us-east-1
-      - SERVICES=iam, sts, cognito-idp, dynamodb, s3, ses, lambda, cloudcontrol, apigateway, events
+      - SERVICES=iam, sts, cognito-idp, dynamodb, s3, ses, lambda, cloudcontrol, apigateway, events, sns, sqs
       - SMTP_HOST=mailhog:1025
       - SMTP_EMAIL=sender@example.com
       - LOCALSTACK_HOST=localstack

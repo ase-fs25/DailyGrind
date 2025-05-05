@@ -52,4 +52,7 @@ public class UserRepository {
                 .toList();
     }
 
+    public void deleteUser(UserEntity userEntity) {
+        userTable.deleteItem(userEntity);
+    }
 }

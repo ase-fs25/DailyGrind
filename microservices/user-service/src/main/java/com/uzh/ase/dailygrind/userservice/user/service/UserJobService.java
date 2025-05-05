@@ -39,4 +39,11 @@ public class UserJobService {
     public void deleteUserJob(String jobId, String requestingUserId) {
         userJobRepository.deleteUserJob(requestingUserId, jobId);
     }
+
+    public void deleteJobsForUser(String userId) {
+        List<UserJobEntity> userJobEntities = userJobRepository.findAllUserJobs(userId);
+        for (UserJobEntity userJobEntity : userJobEntities) {
+            userJobRepository.deleteUserJob(userId, userJobEntity.getSk());
+        }
+    }
 }
