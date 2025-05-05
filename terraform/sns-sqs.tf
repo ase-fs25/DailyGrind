@@ -37,3 +37,8 @@ resource "aws_sqs_queue_policy" "example_queue_policy" {
     }]
   })
 }
+
+output "user_events_topic_arn" {
+  description = "SNS topic ARN for user events"
+  value       = aws_sns_topic.user_events_topic.arn
+}

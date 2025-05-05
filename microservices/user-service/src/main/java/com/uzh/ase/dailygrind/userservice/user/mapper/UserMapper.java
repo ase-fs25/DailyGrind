@@ -3,6 +3,7 @@ package com.uzh.ase.dailygrind.userservice.user.mapper;
 import com.uzh.ase.dailygrind.userservice.user.controller.dto.UserCreateDto;
 import com.uzh.ase.dailygrind.userservice.user.controller.dto.UserInfoDto;
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserEntity;
+import com.uzh.ase.dailygrind.userservice.user.sns.events.UserDataEvent;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -39,5 +40,17 @@ public interface UserMapper {
     UserInfoDto toUserInfoDto(UserEntity user, boolean isFollowed);
 
 
+    /**
+     * Maps a UserEntity to a UserDataEvent.
+     *
+     * @param userEntity the UserEntity to map
+     * @return the mapped UserDataEvent
+     */
+    @Mapping(target = "userId", expression = "java(userEntity.getId())")
+    @Mapping(target = "email", source = "userEntity.email")
+    @Mapping(target = "firstName", source = "userEntity.firstName")
+    @Mapping(target = "lastName", source = "userEntity.lastName")
+    @Mapping(target = "profilePictureUrl", source = "userEntity.profilePictureUrl")
+    UserDataEvent toUserDataEvent(UserEntity userEntity);
 
 }
