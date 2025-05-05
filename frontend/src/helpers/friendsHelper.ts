@@ -132,3 +132,18 @@ export async function checkExistingFriendRequest(targetUserId: string): Promise<
     return false;
   }
 }
+export async function removeFriend(friendId: string): Promise<void> {
+  const authToken = await getAuthToken();
+
+  const response = await fetch(`http://localhost:8080/users/friends/${friendId}/remove`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to remove friend.');
+  }
+}
+

@@ -1,18 +1,37 @@
-import { Dialog, DialogTitle, DialogContent, IconButton, Box, Typography } from '@mui/material';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  IconButton,
+  Box,
+  Typography,
+} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { Post } from '../../types/post';
-import { User } from '../../types/user';
+import { UserProfile } from '../../helpers/friendsHelper';
+import { removeFriend } from '../../helpers/friendsHelper';
 import '../../styles/components/common/friendPopup.css';
 
 interface FriendPopupProps {
   open: boolean;
   onClose: () => void;
-  user: User | null;
+  user: UserProfile | null;
   posts: Post[];
+  
 }
 
-const FriendPopup = ({ open, onClose, user, posts }: FriendPopupProps) => {
+const FriendPopup = ({ open, onClose, user, posts}: FriendPopupProps) => {
   if (!user) return null;
+
+  const handleRemoveFriend = async () => {
+    try {
+      await removeFriend(user.userId);
+      onClose(); // close the popup
+    } catch (error) {
+      console.error('Failed to remove friend:', error);
+      alert('Failed to remove friend. Please try again.');
+    }
+  };
 
   return (
     <Dialog
@@ -36,10 +55,10 @@ const FriendPopup = ({ open, onClose, user, posts }: FriendPopupProps) => {
       <DialogContent className="popup-content">
         <Box className="friend-profile-section">
           <Typography variant="h6" className="profile-name">
-            {user.firstName + ' ' + user.lastName}
+            {user.firstName} {user.lastName}
           </Typography>
           <Typography variant="body1" className="profile-info">
-            Location: {user.location}
+            Location: {user.location || 'N/A'}
           </Typography>
           <Typography variant="body1" className="profile-info">
             Education: TODO
@@ -69,6 +88,12 @@ const FriendPopup = ({ open, onClose, user, posts }: FriendPopupProps) => {
               No posts available.
             </Typography>
           )}
+        </Box>
+
+        <Box className="remove-friend-wrapper">
+          <button className="remove-friend-button" onClick={handleRemoveFriend}>
+            Remove Friend
+          </button>
         </Box>
       </DialogContent>
     </Dialog>

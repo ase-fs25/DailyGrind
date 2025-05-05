@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Card, CardContent, Typography } from '@mui/material';
 import { Post } from '../../types/post';
-import { User } from '../../types/user';
 import FriendPopup from '../common/FriendPopup';
-import { fetchFriends, UserProfile } from '../../helpers/friendsHelper';
+import { fetchFriends, removeFriend, UserProfile } from '../../helpers/friendsHelper';
+import { getPostsByUserId } from '../../helpers/postHelper';
 import '../../styles/components/friends/friendList.css';
 
 const FriendsList = () => {
   const [friends, setFriends] = useState<UserProfile[]>([]);
-  const [selectedProfile, setSelectedProfile] = useState<User | null>(null);
+  const [selectedProfile, setSelectedProfile] = useState<UserProfile | null>(null);
+  const [userPosts, setUserPosts] = useState<Post[]>([]);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -24,17 +25,36 @@ const FriendsList = () => {
     loadFriends();
   }, []);
 
-  const handleOpen = (user: User) => {
+  const handleOpen = async (user: UserProfile) => {
     setSelectedProfile(user);
     setOpen(true);
+
+    try {
+      const posts = await getPostsByUserId(user.userId);
+      setUserPosts(posts);
+    } catch (error) {
+      console.error(`Failed to load posts for user ${user.userId}:`, error);
+      setUserPosts([]);
+    }
   };
 
   const handleClose = () => {
     setSelectedProfile(null);
+    setUserPosts([]);
     setOpen(false);
   };
 
-  const userPosts: Post[] = []; // TODO: implement if needed
+  const handleRemoveFriend = async (userId: string) => {
+    try {
+      await removeFriend(userId);
+      alert('Friend removed successfully!');
+      setFriends((prev) => prev.filter((friend) => friend.userId !== userId));
+      handleClose();
+    } catch (error) {
+      console.error('Error removing friend:', error);
+      alert('Failed to remove friend.');
+    }
+  };
 
   return (
     <Box className="friends-list-container">
@@ -48,7 +68,13 @@ const FriendsList = () => {
         </Card>
       ))}
 
-      <FriendPopup open={open} onClose={handleClose} user={selectedProfile} posts={userPosts} />
+      <FriendPopup
+        open={open}
+        onClose={handleClose}
+        user={selectedProfile}
+        posts={userPosts}
+        onRemoveFriend={handleRemoveFriend}
+      />
     </Box>
   );
 };

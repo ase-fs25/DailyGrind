@@ -100,9 +100,31 @@ public class UserFriendRepository {
     }
 
     public void removeFriend(String userId, String friendId) {
-        // Custom logic: you could delete accepted request, or mark as REMOVED
-        throw new UnsupportedOperationException("Remove friend logic needs defining!");
+        // Remove userId's accepted friendship with friendId
+        QueryConditional queryUser = QueryConditional.keyEqualTo(
+            Key.builder().partitionValue("FRIEND_REQUEST#" + userId).build()
+        );
+    
+        friendRequestTable.query(r -> r.queryConditional(queryUser))
+            .items()
+            .stream()
+            .filter(item -> "ACCEPTED".equals(item.getStatus()) && friendId.equals(item.getSenderId()))
+            .forEach(item -> friendRequestTable.deleteItem(item));
+    
+        // Remove friendId's accepted friendship with userId
+        QueryConditional queryFriend = QueryConditional.keyEqualTo(
+            Key.builder().partitionValue("FRIEND_REQUEST#" + friendId).build()
+        );
+    
+        friendRequestTable.query(r -> r.queryConditional(queryFriend))
+            .items()
+            .stream()
+            .filter(item -> "ACCEPTED".equals(item.getStatus()) && userId.equals(item.getSenderId()))
+            .forEach(item -> friendRequestTable.deleteItem(item));
     }
+    
+    
+    
     public void addFriendship(String userIdA, String userIdB) {
         FriendRequestEntity aToB = FriendRequestEntity.builder()
                 .pk("FRIEND_REQUEST#" + userIdA)

@@ -126,3 +126,25 @@ export function validPostingTime(currentTime: moment.Moment): boolean {
   const { startTime, endTime } = getPostingTimeRange(currentTime);
   return currentTime.isBetween(startTime, endTime, null, '[]');
 }
+export async function getPostsByUserId(userId: string): Promise<Post[]> {
+  try {
+    const authToken = await getAuthToken();
+
+    const response = await fetch(`http://localhost:8081/users/${userId}/posts`, {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch posts for user ${userId}: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error(`Error fetching posts for user ${userId}:`, error);
+    return [];
+  }
+}
+
+
