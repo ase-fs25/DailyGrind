@@ -3,6 +3,7 @@ package com.uzh.ase.dailygrind.postservice.config;
 
 import com.uzh.ase.dailygrind.postservice.post.repository.entity.CommentEntity;
 import com.uzh.ase.dailygrind.postservice.post.repository.entity.DailyPostEntity;
+import com.uzh.ase.dailygrind.postservice.post.repository.entity.PinnedPostEntity;
 import com.uzh.ase.dailygrind.postservice.post.repository.entity.PostEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -75,6 +76,11 @@ public class DynamoDBConfig {
     @Bean
     public DynamoDbTable<DailyPostEntity> dailyPostTable(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
         return dynamoDbEnhancedClient.table(TABLE_NAME, TableSchema.fromBean(DailyPostEntity.class));
+    }
+
+    @Bean
+    public DynamoDbTable<PinnedPostEntity> pinnedPostTable(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
+        return dynamoDbEnhancedClient.table(TABLE_NAME, TableSchema.fromBean(PinnedPostEntity.class));
     }
 
 }
