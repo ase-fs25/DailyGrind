@@ -14,7 +14,7 @@ on:
       - "hotfix/*"
       - main
   schedule:
-    - cron: '0 22 * * 0'  # Every Sunday at 10:00 PM UTC
+    - cron: '0 8 * * 1'  # Every Monday at 8:00 PM UTC
 
 jobs:
   discover-microservices:
