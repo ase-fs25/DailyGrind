@@ -2,6 +2,8 @@ package com.uzh.ase.dailygrind.userservice.user.service;
 
 import com.uzh.ase.dailygrind.userservice.user.controller.dto.UserInfoDto;
 import com.uzh.ase.dailygrind.userservice.user.repository.UserFriendRepository;
+import com.uzh.ase.dailygrind.userservice.user.repository.entity.FriendRequestEntity;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,12 +19,30 @@ public class UserFriendService {
     // --- Friend Request actions ---
 
     public void sendFriendRequest(String senderId, String receiverId) {
+        if (userFriendRepository.existsPendingRequest(senderId, receiverId)) {
+            throw new RuntimeException("Friend request already sent.");
+        }
         userFriendRepository.createFriendRequest(senderId, receiverId);
     }
+    
 
-    public void acceptFriendRequest(String requestId, String receiverId) {
-        userFriendRepository.acceptFriendRequest(requestId, receiverId);
+  public void acceptFriendRequest(String requestId, String receiverId) {
+    // Step 1: mark the original request as accepted
+    userFriendRepository.acceptFriendRequest(requestId, receiverId);
+
+    // Step 2: fetch senderId from the accepted request
+    // We do this by reloading the request entity
+    FriendRequestEntity request = userFriendRepository.getRequestById(requestId, receiverId);
+    if (request == null || !"ACCEPTED".equals(request.getStatus())) {
+        throw new RuntimeException("Friend request not found or not accepted.");
     }
+
+    String senderId = request.getSenderId();
+
+    // Step 3: add reciprocal friendship entries
+    userFriendRepository.addFriendship(receiverId, senderId);
+}
+
 
     public void declineFriendRequest(String requestId, String receiverId) {
         userFriendRepository.declineFriendRequest(requestId, receiverId);
@@ -42,11 +62,16 @@ public class UserFriendService {
     }
 
     public List<UserInfoDto> getIncomingFriendRequests(String userId) {
-        List<String> incomingIds = userFriendRepository.findIncomingRequests(userId);
-        return incomingIds.stream()
-                .map(id -> userService.getUserInfo(id, userId))
-                .toList();
+        List<FriendRequestEntity> requests = userFriendRepository.findIncomingRequests(userId);
+        return requests.stream()
+            .map(req -> {
+                UserInfoDto sender = userService.getUserInfo(req.getSenderId(), userId);
+                sender.setRequestId(req.getSk()); // you'll need to support this field in the DTO
+                return sender;
+            })
+            .toList();
     }
+    
 
     public List<UserInfoDto> getOutgoingFriendRequests(String userId) {
         List<String> outgoingIds = userFriendRepository.findOutgoingRequests(userId);

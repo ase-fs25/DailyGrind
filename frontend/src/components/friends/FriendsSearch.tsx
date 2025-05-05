@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Box, TextField, Button, Typography, CircularProgress } from '@mui/material';
 import { searchUsers, sendFriendRequest, UserProfile } from '../../helpers/friendsHelper';
 import '../../styles/components/friends/friendsSearch.css';
+import userStore from '../../stores/userStore';
 
 const FriendsSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -20,7 +21,12 @@ const FriendsSearch = () => {
     try {
       setLoading(true);
       const results = await searchUsers(value);
-      setProfiles(results);
+
+      // 👇 Filter out the current user
+      const currentUserId = userStore.getUser().userId;
+      const filteredResults = results.filter((user) => user.userId !== currentUserId);
+
+      setProfiles(filteredResults);
     } catch (error) {
       console.error('Search error:', error);
     } finally {

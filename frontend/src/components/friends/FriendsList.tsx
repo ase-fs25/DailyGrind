@@ -1,15 +1,28 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Card, CardContent, Typography } from '@mui/material';
-import { mockProfiles } from '../../mockData/mockProfiles';
-import { mockPosts } from '../../mockData/mockPosts';
-import { User } from '../../types/user';
 import { Post } from '../../types/post';
+import { User } from '../../types/user';
 import FriendPopup from '../common/FriendPopup';
+import { fetchFriends, UserProfile } from '../../helpers/friendsHelper';
 import '../../styles/components/friends/friendList.css';
 
 const FriendsList = () => {
+  const [friends, setFriends] = useState<UserProfile[]>([]);
   const [selectedProfile, setSelectedProfile] = useState<User | null>(null);
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const loadFriends = async () => {
+      try {
+        const data = await fetchFriends();
+        setFriends(data);
+      } catch (error) {
+        console.error('Failed to fetch friends:', error);
+      }
+    };
+
+    loadFriends();
+  }, []);
 
   const handleOpen = (user: User) => {
     setSelectedProfile(user);
@@ -21,17 +34,15 @@ const FriendsList = () => {
     setOpen(false);
   };
 
-  const userPosts: Post[] = selectedProfile
-    ? mockPosts.filter((post) => post.postId === String(selectedProfile.userId)).slice(0, 2)
-    : [];
+  const userPosts: Post[] = []; // TODO: implement if needed
 
   return (
     <Box className="friends-list-container">
-      {mockProfiles.map((user) => (
+      {friends.map((user) => (
         <Card key={user.userId} className="friend-card" onClick={() => handleOpen(user)}>
           <CardContent className="friend-card-content">
             <Typography variant="h6" className="friend-username">
-              {user.firstName + ' ' + user.lastName}
+              {user.firstName} {user.lastName}
             </Typography>
           </CardContent>
         </Card>

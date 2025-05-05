@@ -63,18 +63,19 @@ public class UserFriendRepository {
     }
 
     // --- List incoming friend requests ---
-    public List<String> findIncomingRequests(String receiverId) {
+    public List<FriendRequestEntity> findIncomingRequests(String receiverId) {
         QueryConditional query = QueryConditional.keyEqualTo(
                 Key.builder().partitionValue("FRIEND_REQUEST#" + receiverId).build()
         );
-
+    
         return friendRequestTable.query(r -> r.queryConditional(query))
                 .items()
                 .stream()
                 .filter(item -> "PENDING".equals(item.getStatus()))
-                .map(FriendRequestEntity::getSenderId)
-                .toList();
+                .distinct()
+                .toList();  // return full request entity instead of just senderId
     }
+    
 
     // --- List outgoing friend requests ---
     public List<String> findOutgoingRequests(String senderId) {
@@ -94,6 +95,7 @@ public class UserFriendRepository {
                 .stream()
                 .filter(item -> "ACCEPTED".equals(item.getStatus()))
                 .map(FriendRequestEntity::getSenderId)
+                .distinct()
                 .toList();
     }
 
@@ -101,4 +103,48 @@ public class UserFriendRepository {
         // Custom logic: you could delete accepted request, or mark as REMOVED
         throw new UnsupportedOperationException("Remove friend logic needs defining!");
     }
+    public void addFriendship(String userIdA, String userIdB) {
+        FriendRequestEntity aToB = FriendRequestEntity.builder()
+                .pk("FRIEND_REQUEST#" + userIdA)
+                .sk(UUID.randomUUID().toString())
+                .senderId(userIdB)
+                .receiverId(userIdA)
+                .status("ACCEPTED")
+                .build();
+    
+        FriendRequestEntity bToA = FriendRequestEntity.builder()
+                .pk("FRIEND_REQUEST#" + userIdB)
+                .sk(UUID.randomUUID().toString())
+                .senderId(userIdA)
+                .receiverId(userIdB)
+                .status("ACCEPTED")
+                .build();
+    
+        friendRequestTable.putItem(aToB);
+        friendRequestTable.putItem(bToA);
+    }
+    public FriendRequestEntity getRequestById(String requestId, String receiverId) {
+        return friendRequestTable.getItem(
+            Key.builder()
+                .partitionValue("FRIEND_REQUEST#" + receiverId)
+                .sortValue(requestId)
+                .build()
+        );
+    }
+
+    public boolean existsPendingRequest(String senderId, String receiverId) {
+        QueryConditional query = QueryConditional.keyEqualTo(
+            Key.builder().partitionValue("FRIEND_REQUEST#" + receiverId).build()
+        );
+    
+        return friendRequestTable.query(r -> r.queryConditional(query))
+                .items()
+                .stream()
+                .anyMatch(item ->
+                    "PENDING".equals(item.getStatus()) && senderId.equals(item.getSenderId())
+                );
+    }
+    
+    
+    
 }
