@@ -58,7 +58,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
-            <version>3.3.4</version>
+            <version>3.4.5</version>
         </dependency>
 
         <!--        Swagger doku-->
