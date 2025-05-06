@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Card, CardContent, Typography } from '@mui/material';
 import { Post } from '../../types/post';
 import FriendPopup from '../common/FriendPopup';
-import { fetchFriends, removeFriend, UserProfile } from '../../helpers/friendsHelper';
+import { fetchFriends, UserProfile } from '../../helpers/friendsHelper';
 import { getPostsByUserId } from '../../helpers/postHelper';
 import '../../styles/components/friends/friendList.css';
 
@@ -44,18 +44,6 @@ const FriendsList = () => {
     setOpen(false);
   };
 
-  const handleRemoveFriend = async (userId: string) => {
-    try {
-      await removeFriend(userId);
-      alert('Friend removed successfully!');
-      setFriends((prev) => prev.filter((friend) => friend.userId !== userId));
-      handleClose();
-    } catch (error) {
-      console.error('Error removing friend:', error);
-      alert('Failed to remove friend.');
-    }
-  };
-
   return (
     <Box className="friends-list-container">
       {friends.map((user) => (
@@ -68,13 +56,7 @@ const FriendsList = () => {
         </Card>
       ))}
 
-      <FriendPopup
-        open={open}
-        onClose={handleClose}
-        user={selectedProfile}
-        posts={userPosts}
-        onRemoveFriend={handleRemoveFriend}
-      />
+      <FriendPopup open={open} onClose={handleClose} user={selectedProfile} posts={userPosts} />
     </Box>
   );
 };
