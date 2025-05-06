@@ -54,17 +54,37 @@ class UserMapperTest {
                 .numFollowing(5)
                 .build();
         boolean isFollowing = true;
-
+    
         // when
         UserInfoDto userInfoDto = userMapper.toUserInfoDto(userEntity, isFollowing);
-
+    
         // then
         assertThat(userInfoDto)
                 .isNotNull()
-                .extracting(UserInfoDto::userId, UserInfoDto::email, UserInfoDto::firstName, UserInfoDto::lastName, UserInfoDto::birthday, UserInfoDto::location, UserInfoDto::profilePictureUrl, UserInfoDto::numFollowers, UserInfoDto::numFollowing, UserInfoDto::isFollowed)
+                .extracting(
+                        UserInfoDto::getUserId,
+                        UserInfoDto::getEmail,
+                        UserInfoDto::getFirstName,
+                        UserInfoDto::getLastName,
+                        UserInfoDto::getBirthday,
+                        UserInfoDto::getLocation,
+                        UserInfoDto::getProfilePictureUrl,
+                        UserInfoDto::getNumFollowers,
+                        UserInfoDto::getNumFollowing,
+                        UserInfoDto::isFollowed
+                )
                 .containsExactly(
-                        "12345", userEntity.getEmail(), userEntity.getFirstName(), userEntity.getLastName(), userEntity.getBirthday(), userEntity.getLocation(), userEntity.getProfilePictureUrl(), userEntity.getNumFollowers(), userEntity.getNumFollowing(), isFollowing
+                        "12345",
+                        userEntity.getEmail(),
+                        userEntity.getFirstName(),
+                        userEntity.getLastName(),
+                        userEntity.getBirthday(),
+                        userEntity.getLocation(),
+                        userEntity.getProfilePictureUrl(),
+                        userEntity.getNumFollowers(),
+                        userEntity.getNumFollowing(),
+                        isFollowing
                 );
-
     }
+    
 }

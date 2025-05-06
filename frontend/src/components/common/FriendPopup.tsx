@@ -12,13 +12,14 @@ interface FriendPopupProps {
   posts: Post[];
 }
 
+
 const FriendPopup = ({ open, onClose, user, posts }: FriendPopupProps) => {
   if (!user) return null;
 
   const handleRemoveFriend = async () => {
     try {
       await removeFriend(user.userId);
-      onClose(); // close the popup
+      onClose(); 
     } catch (error) {
       console.error('Failed to remove friend:', error);
       alert('Failed to remove friend. Please try again.');
