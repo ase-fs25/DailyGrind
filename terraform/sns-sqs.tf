@@ -3,7 +3,7 @@ resource "aws_sns_topic" "user_events_topic" {
 }
 
 resource "aws_sqs_queue" "user_events_queue" {
-  name = "example-user-consumer-queue"
+  name = "user-events-consumer-queue"
 }
 
 resource "aws_sns_topic_subscription" "user_events_subscription" {
@@ -19,7 +19,7 @@ resource "aws_sns_topic_subscription" "user_events_subscription" {
   raw_message_delivery   = true
 }
 
-resource "aws_sqs_queue_policy" "example_queue_policy" {
+resource "aws_sqs_queue_policy" "user_events_queue_policy" {
   queue_url = aws_sqs_queue.user_events_queue.id
 
   policy = jsonencode({
@@ -41,4 +41,9 @@ resource "aws_sqs_queue_policy" "example_queue_policy" {
 output "user_events_topic_arn" {
   description = "SNS topic ARN for user events"
   value       = aws_sns_topic.user_events_topic.arn
+}
+
+output "user_events_queue_url" {
+  description = "SQS queue URL for user events"
+  value = aws_sqs_queue.user_events_queue.id
 }

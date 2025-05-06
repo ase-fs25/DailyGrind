@@ -13,6 +13,8 @@ dg:
         user-pool-id: ${AWS_COGNITO_USER_POOL_ID:us-east-1_70f01bd5342d453f92142d0ff3efef32}
         issuer-uri: http://localstack:${dg.us.aws.port}/${dg.us.aws.cognito.user-pool-id}
         jwk-set-uri: http://localhost:${dg.us.aws.port}/${dg.us.aws.cognito.user-pool-id}/.well-known/jwks.json
+      sqs:
+        queue-url: ${AWS_SQS_QUEUE_URL:${dg.us.aws.base-url}/000000000000/user-events-consumer-queue}
 
 spring:
   application:

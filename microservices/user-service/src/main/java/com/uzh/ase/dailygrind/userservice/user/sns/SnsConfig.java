@@ -1,4 +1,4 @@
-package com.uzh.ase.dailygrind.userservice.config;
+package com.uzh.ase.dailygrind.userservice.user.sns;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +19,7 @@ public class SnsConfig {
     private String awsBaseUrl;
 
     @Bean
-    public SnsClient snsClient(AwsCredentialsProvider credentialsProvider, AwsCredentialsProvider awsCredentialsProvider) {
+    public SnsClient snsClient(AwsCredentialsProvider awsCredentialsProvider) {
         return SnsClient.builder()
             .endpointOverride(URI.create(awsBaseUrl))
             .credentialsProvider(awsCredentialsProvider)
