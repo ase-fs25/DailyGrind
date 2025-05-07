@@ -2,7 +2,7 @@ package com.uzh.ase.dailygrind.userservice.user.service;
 
 import com.uzh.ase.dailygrind.userservice.user.controller.dto.*;
 import com.uzh.ase.dailygrind.userservice.user.mapper.UserMapper;
-import com.uzh.ase.dailygrind.userservice.user.repository.UserFollowerRepository;
+import com.uzh.ase.dailygrind.userservice.user.repository.UserFriendRepository;
 import com.uzh.ase.dailygrind.userservice.user.repository.UserRepository;
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
@@ -18,13 +18,13 @@ public class UserService {
 
     private final UserJobService userJobService;
     private final UserEducationService userEducationService;
-    private final UserFollowerRepository userFollowerRepository;
+    private final UserFriendRepository UserFriendRepository;
 
     private final UserMapper userMapper;
 
     public List<UserInfoDto> getAllUserInfos(String requesterId) {
         List<UserEntity> userEntities = userRepository.findAllUserEntities();
-        List<String> followingIds = userFollowerRepository.findAllFollowing(requesterId);
+        List<String> followingIds = UserFriendRepository.findAllFriends(requesterId);
 
         return userEntities.stream()
                 .map(userEntity -> userMapper.toUserInfoDto(userEntity, followingIds.contains(requesterId)))
@@ -36,8 +36,8 @@ public class UserService {
         if (userEntity == null) {
             return null;
         }
-        boolean isFollowed = userFollowerRepository.isFollowed(followingId, requesterId);
-        return userMapper.toUserInfoDto(userEntity, isFollowed);
+        boolean isFriend = UserFriendRepository.isFriend(followingId, requesterId);
+        return userMapper.toUserInfoDto(userEntity, isFriend);
     }
 
     public UserDetailsDto getUserDetailsById(String userId, String requesterId) {
@@ -61,7 +61,7 @@ public class UserService {
         }
         boolean isFollowing = false;
         if (!userId.equals(requesterId)) {
-            isFollowing = userFollowerRepository.isFollowed(userId, requesterId);
+            isFollowing = UserFriendRepository.isFriend(userId, requesterId);
         }
         return userMapper.toUserInfoDto(userEntity, isFollowing);
     }
@@ -78,42 +78,12 @@ public class UserService {
         return userMapper.toUserInfoDto(userEntity, false);
     }
 
-    public void increaseFollowerCount(String userId) {
-        UserEntity userEntity = userRepository.findUserById(userId);
-        if (userEntity != null) {
-            userEntity.setNumFollowers(userEntity.getNumFollowers() + 1);
-            userRepository.updateUser(userEntity);
-        }
-    }
 
-    public void increaseFollowingCount(String userId) {
-        UserEntity userEntity = userRepository.findUserById(userId);
-        if (userEntity != null) {
-            userEntity.setNumFollowing(userEntity.getNumFollowing() + 1);
-            userRepository.updateUser(userEntity);
-        }
-    }
-
-    public void decreaseFollowerCount(String userId) {
-        UserEntity userEntity = userRepository.findUserById(userId);
-        if (userEntity != null) {
-            userEntity.setNumFollowers(userEntity.getNumFollowers() - 1);
-            userRepository.updateUser(userEntity);
-        }
-    }
-
-    public void decreaseFollowingCount(String userId) {
-        UserEntity userEntity = userRepository.findUserById(userId);
-        if (userEntity != null) {
-            userEntity.setNumFollowing(userEntity.getNumFollowing() - 1);
-            userRepository.updateUser(userEntity);
-        }
-    }
     public List<UserInfoDto> searchUsersByName(String name, String requesterId) {
         return userRepository.findAllUserEntities().stream()
             .filter(user -> user.getFirstName().toLowerCase().startsWith(name.toLowerCase())
                          || user.getLastName().toLowerCase().startsWith(name.toLowerCase()))
-            .map(user -> userMapper.toUserInfoDto(user, requesterId.equals(user.getPk()) ? false : true)) // or however you handle isFollowed
+            .map(user -> userMapper.toUserInfoDto(user, requesterId.equals(user.getPk()) ? false : true)) // or however you handle isFriend
             .toList();
     }
     

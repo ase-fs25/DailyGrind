@@ -5,7 +5,10 @@ import com.uzh.ase.dailygrind.userservice.user.repository.UserFriendRepository;
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.FriendRequestEntity;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -14,16 +17,15 @@ import java.util.List;
 public class UserFriendService {
 
     private final UserFriendRepository userFriendRepository;
-    private final UserService userService; // Assuming you have this for fetching UserInfo
-
+    private final UserService userService; 
     // --- Friend Request actions ---
 
-    public void sendFriendRequest(String senderId, String receiverId) {
-        if (userFriendRepository.existsPendingRequest(senderId, receiverId)) {
-            throw new RuntimeException("Friend request already sent.");
-        }
-        userFriendRepository.createFriendRequest(senderId, receiverId);
+public void sendFriendRequest(String senderId, String receiverId) {
+    if (userFriendRepository.existsPendingRequest(senderId, receiverId)) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Friend request already sent.");
     }
+    userFriendRepository.createFriendRequest(senderId, receiverId);
+}
     
 
   public void acceptFriendRequest(String requestId, String receiverId) {
@@ -60,17 +62,28 @@ public class UserFriendService {
                 .map(id -> userService.getUserInfo(id, userId))
                 .toList();
     }
-
     public List<UserInfoDto> getIncomingFriendRequests(String userId) {
         List<FriendRequestEntity> requests = userFriendRepository.findIncomingRequests(userId);
+    
         return requests.stream()
             .map(req -> {
                 UserInfoDto sender = userService.getUserInfo(req.getSenderId(), userId);
-                sender.setRequestId(req.getSk()); // you'll need to support this field in the DTO
-                return sender;
+                return new UserInfoDto(
+                    sender.userId(),
+                    sender.email(),
+                    sender.firstName(),
+                    sender.lastName(),
+                    sender.birthday(),
+                    sender.location(),
+                    sender.numberOfFriends(),
+                    sender.profilePictureUrl(),
+                    sender.isFriend(),
+                    req.getSk() 
+                );
             })
             .toList();
     }
+    
     
 
     public List<UserInfoDto> getOutgoingFriendRequests(String userId) {

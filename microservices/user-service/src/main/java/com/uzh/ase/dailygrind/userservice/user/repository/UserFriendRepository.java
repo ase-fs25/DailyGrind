@@ -16,6 +16,26 @@ public class UserFriendRepository {
 
     private final DynamoDbTable<FriendRequestEntity> friendRequestTable;
 
+    public boolean isFriend(String userId, String otherUserId) {
+        List<String> userFriends = findFriends(userId);
+        return userFriends.contains(otherUserId);
+    }
+    public List<String> findAllFriends(String userId) {
+        QueryConditional query = QueryConditional.keyEqualTo(
+            Key.builder().partitionValue("FRIEND_REQUEST#" + userId).build()
+        );
+    
+        return friendRequestTable.query(r -> r.queryConditional(query))
+                .items()
+                .stream()
+                .filter(item -> "ACCEPTED".equals(item.getStatus()))
+                .map(FriendRequestEntity::getReceiverId)
+                .distinct()
+                .toList();
+    }
+    
+    
+
     // --- Create friend request ---
     public void createFriendRequest(String senderId, String receiverId) {
         FriendRequestEntity request = FriendRequestEntity.builder()
@@ -73,14 +93,13 @@ public class UserFriendRepository {
                 .stream()
                 .filter(item -> "PENDING".equals(item.getStatus()))
                 .distinct()
-                .toList();  // return full request entity instead of just senderId
+                .toList();  
     }
     
 
     // --- List outgoing friend requests ---
     public List<String> findOutgoingRequests(String senderId) {
-        // We would need a GSI (Global Secondary Index) here if you want efficient querying
-        // For now assume simple scan if needed or alternative design
+       
         throw new UnsupportedOperationException("Outgoing requests require GSI or custom design");
     }
 
@@ -100,7 +119,7 @@ public class UserFriendRepository {
     }
 
     public void removeFriend(String userId, String friendId) {
-        // Remove userId's accepted friendship with friendId
+        
         QueryConditional queryUser = QueryConditional.keyEqualTo(
             Key.builder().partitionValue("FRIEND_REQUEST#" + userId).build()
         );
@@ -111,7 +130,6 @@ public class UserFriendRepository {
             .filter(item -> "ACCEPTED".equals(item.getStatus()) && friendId.equals(item.getSenderId()))
             .forEach(item -> friendRequestTable.deleteItem(item));
     
-        // Remove friendId's accepted friendship with userId
         QueryConditional queryFriend = QueryConditional.keyEqualTo(
             Key.builder().partitionValue("FRIEND_REQUEST#" + friendId).build()
         );
