@@ -11,7 +11,6 @@ export interface UserProfile {
   requestId?: string; // used for accepting/declining
   hasPendingRequest?: boolean;
   isAlreadyFriend?: boolean;
-
 }
 
 export interface FriendRequest {
@@ -109,7 +108,6 @@ export async function fetchOutgoingRequests(): Promise<UserProfile[]> {
 
   return response.json();
 }
-
 
 // --- Accept Friend Request ---
 export async function acceptFriendRequest(requestId: string): Promise<void> {

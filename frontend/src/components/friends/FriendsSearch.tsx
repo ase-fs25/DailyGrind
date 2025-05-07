@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, TextField, Button, Typography, CircularProgress } from '@mui/material';
-import {
-  searchUsers,
-  sendFriendRequest,
-  fetchFriends,
-  UserProfile,
-} from '../../helpers/friendsHelper';
+import { searchUsers, sendFriendRequest, fetchFriends, UserProfile } from '../../helpers/friendsHelper';
 import '../../styles/components/friends/friendsSearch.css';
 import userStore from '../../stores/userStore';
 
@@ -64,11 +59,7 @@ const FriendsSearch = () => {
   const handleSendFriendRequest = async (userId: string) => {
     try {
       await sendFriendRequest(userId);
-      setProfiles((prev) =>
-        prev.map((user) =>
-          user.userId === userId ? { ...user, hasPendingRequest: true } : user
-        )
-      );
+      setProfiles((prev) => prev.map((user) => (user.userId === userId ? { ...user, hasPendingRequest: true } : user)));
     } catch (error) {
       console.error('Send friend request error:', error);
     }
@@ -112,8 +103,8 @@ const FriendsSearch = () => {
                   {user.isAlreadyFriend
                     ? 'Already a Friend'
                     : user.hasPendingRequest
-                    ? 'Friend Request Sent'
-                    : 'Add Friend'}
+                      ? 'Friend Request Sent'
+                      : 'Add Friend'}
                 </Button>
               </Box>
             ))
