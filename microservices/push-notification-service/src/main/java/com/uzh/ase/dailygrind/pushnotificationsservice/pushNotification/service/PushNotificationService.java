@@ -43,7 +43,8 @@ public class PushNotificationService {
             .expirationTime(pushSubscription.expirationTime())
             .keys(pushSubscription.keys())
             .build();
-
+        
+        subscription.generateId();
         return pushSubscriptionRepository.save(subscription);
     }
 

@@ -6,6 +6,7 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
 
 import java.util.Map;
+import java.util.UUID;
 
 @DynamoDbBean
 @Getter
@@ -16,7 +17,7 @@ import java.util.Map;
 public class PushSubscription {
 
 
-    @Getter(onMethod_ = {@DynamoDbPartitionKey, @DynamoDbAttribute("subscriptionId")})
+    @Getter(onMethod_ = {@DynamoDbPartitionKey, @DynamoDbAttribute("subscription_id")})
     private String subscriptionId;
 
     private String userId;
@@ -26,5 +27,11 @@ public class PushSubscription {
     Long expirationTime;
 
     Map<String, String> keys;
+
+    public void generateId() {
+        if(this.subscriptionId == null){
+            this.subscriptionId = UUID.randomUUID().toString();
+        }
+    }
 
 }
