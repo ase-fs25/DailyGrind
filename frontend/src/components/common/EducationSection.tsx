@@ -19,6 +19,7 @@ import EditIcon from '@mui/icons-material/Edit';
 
 import { UserEducation } from '../../types/user';
 import { addUserEducation, updateUserEducation } from '../../helpers/userHelpers';
+import '../../styles/components/common/educationSection.css';
 
 interface EducationSectionProps {
   education: UserEducation[];
@@ -107,32 +108,34 @@ const EducationSection = ({ education, onChange, onDelete, readOnly = false, reg
           No education history added yet.
         </Typography>
       ) : (
-        education.map((edu) => (
-          <Paper key={edu.educationId} elevation={1} sx={{ p: 2, mb: 2, position: 'relative' }}>
-            {!readOnly && (
-              <Box sx={{ position: 'absolute', top: 5, right: 5 }}>
-                <IconButton size="small" onClick={() => openEditEducationDialog(edu)} sx={{ mr: 1 }}>
-                  <EditIcon fontSize="small" />
-                </IconButton>
-                <IconButton size="small" onClick={() => deleteEducation(edu.educationId)}>
-                  <DeleteIcon fontSize="small" />
-                </IconButton>
-              </Box>
-            )}
-            <Typography variant="subtitle1">
-              {edu.degree} in {edu.fieldOfStudy}
-            </Typography>
-            <Typography variant="body2">
-              {edu.institution}, {edu.educationLocation}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {edu.educationStartDate} - {edu.educationEndDate || 'Present'}
-            </Typography>
-            <Typography variant="body2" sx={{ mt: 1 }}>
-              {edu.educationDescription}
-            </Typography>
-          </Paper>
-        ))
+        <div className="jobs-list">
+          {education.map((edu) => (
+            <Paper key={edu.educationId} elevation={1} sx={{ p: 2, mb: 2, position: 'relative' }}>
+              {!readOnly && (
+                <Box sx={{ position: 'absolute', top: 5, right: 5 }}>
+                  <IconButton size="small" onClick={() => openEditEducationDialog(edu)} sx={{ mr: 1 }}>
+                    <EditIcon fontSize="small" />
+                  </IconButton>
+                  <IconButton size="small" onClick={() => deleteEducation(edu.educationId)}>
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </Box>
+              )}
+              <Typography variant="subtitle1">
+                {edu.degree} in {edu.fieldOfStudy}
+              </Typography>
+              <Typography variant="body2">
+                {edu.institution}, {edu.educationLocation}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {edu.educationStartDate} - {edu.educationEndDate || 'Present'}
+              </Typography>
+              <Typography variant="body2" sx={{ mt: 1 }}>
+                {edu.educationDescription}
+              </Typography>
+            </Paper>
+          ))}
+        </div>
       )}
 
       {/* Education Dialog */}

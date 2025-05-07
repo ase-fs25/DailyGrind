@@ -19,6 +19,7 @@ import EditIcon from '@mui/icons-material/Edit';
 
 import { UserJob } from '../../types/user';
 import { addUserJob, updateUserJob } from '../../helpers/userHelpers';
+import '../../styles/components/common/jobSection.css';
 
 interface JobsSectionProps {
   jobs: UserJob[];
@@ -89,7 +90,14 @@ const JobsSection = ({ jobs, onChange, onDelete, readOnly = false, registration 
 
   return (
     <Box sx={{ mb: 3 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 2,
+        }}
+      >
         <Typography variant="h6">Work Experience</Typography>
         {!readOnly && (
           <Button startIcon={<AddIcon />} variant="outlined" onClick={openNewJobDialog}>
@@ -103,30 +111,32 @@ const JobsSection = ({ jobs, onChange, onDelete, readOnly = false, registration 
           No work experience added yet.
         </Typography>
       ) : (
-        jobs.map((job) => (
-          <Paper key={job.jobId} elevation={1} sx={{ p: 2, mb: 2, position: 'relative' }}>
-            {!readOnly && (
-              <Box sx={{ position: 'absolute', top: 5, right: 5 }}>
-                <IconButton size="small" onClick={() => openEditJobDialog(job)} sx={{ mr: 1 }}>
-                  <EditIcon fontSize="small" />
-                </IconButton>
-                <IconButton size="small" onClick={() => deleteJob(job.jobId)}>
-                  <DeleteIcon fontSize="small" />
-                </IconButton>
-              </Box>
-            )}
-            <Typography variant="subtitle1">{job.jobTitle}</Typography>
-            <Typography variant="body2">
-              {job.companyName}, {job.location}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {job.startDate} - {job.endDate || 'Present'}
-            </Typography>
-            <Typography variant="body2" sx={{ mt: 1 }}>
-              {job.description}
-            </Typography>
-          </Paper>
-        ))
+        <div className="jobs-list">
+          {jobs.map((job) => (
+            <Paper key={job.jobId} elevation={1} sx={{ p: 2, position: 'relative' }}>
+              {!readOnly && (
+                <Box sx={{ position: 'absolute', top: 5, right: 5 }}>
+                  <IconButton size="small" onClick={() => openEditJobDialog(job)} sx={{ mr: 1 }}>
+                    <EditIcon fontSize="small" />
+                  </IconButton>
+                  <IconButton size="small" onClick={() => deleteJob(job.jobId)}>
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </Box>
+              )}
+              <Typography variant="subtitle1">{job.jobTitle}</Typography>
+              <Typography variant="body2">
+                {job.companyName}, {job.location}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {job.startDate} - {job.endDate || 'Present'}
+              </Typography>
+              <Typography variant="body2" sx={{ mt: 1 }}>
+                {job.description}
+              </Typography>
+            </Paper>
+          ))}
+        </div>
       )}
 
       {/* Job Dialog */}

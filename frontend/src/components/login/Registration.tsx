@@ -110,10 +110,10 @@ const Registration = () => {
           margin="normal"
         />
 
-        <Divider sx={{ my: 3 }} />
+        <Divider sx={{ margin: '8px 0' }} />
         <JobsSection jobs={jobs} onChange={setJobs} registration />
 
-        <Divider sx={{ my: 3 }} />
+        <Divider sx={{ my: 1 }} />
         <EducationSection education={education} onChange={setEducation} registration />
 
         {error && (
@@ -122,7 +122,7 @@ const Registration = () => {
           </Typography>
         )}
 
-        <Box mt={3}>
+        <Box mt={1}>
           <Button
             variant="contained"
             color="primary"

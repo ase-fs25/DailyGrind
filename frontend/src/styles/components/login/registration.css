@@ -8,7 +8,8 @@
 }
 
 .registration-paper {
-  height: 90vh;
+  height: auto;
+  max-height: 85vh;
   padding: 16px;
   width: 30vw;
   display: flex;
@@ -16,7 +17,6 @@
   gap: 0.2vh;
   background-color: #9c27b0;
   color: white;
-  overflow-y: auto;
 }
 
 .registration-input {
