@@ -6,10 +6,12 @@ export interface UserProfile {
   userId: string;
   firstName: string;
   lastName: string;
-  // Optional fields you can add:
   email?: string;
   location?: string;
   requestId?: string; // used for accepting/declining
+  hasPendingRequest?: boolean;
+  isAlreadyFriend?: boolean;
+
 }
 
 export interface FriendRequest {
@@ -92,6 +94,22 @@ export async function fetchIncomingRequests(): Promise<FriendRequest[]> {
 
   return response.json();
 }
+export async function fetchOutgoingRequests(): Promise<UserProfile[]> {
+  const authToken = await getAuthToken();
+
+  const response = await fetch(`http://localhost:8080/users/requests/outgoing`, {
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch outgoing friend requests.');
+  }
+
+  return response.json();
+}
+
 
 // --- Accept Friend Request ---
 export async function acceptFriendRequest(requestId: string): Promise<void> {
