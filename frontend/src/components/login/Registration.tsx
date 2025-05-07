@@ -48,9 +48,11 @@ const Registration = () => {
     if (result.success) {
       navigate('/feed', { replace: true });
     } else {
-      setError(result.error || 'Registration failed. Please try again.');
+      setError(result.error ?? 'Registration failed. Please try again.');
     }
   };
+
+  const isFormValid = firstName && lastName && email && location && birthday;
 
   return (
     <Box className="registration-container">
@@ -127,7 +129,7 @@ const Registration = () => {
             variant="contained"
             color="primary"
             fullWidth
-            disabled={loading || !firstName || !lastName || !email || !location || !birthday}
+            disabled={loading || !isFormValid}
             onClick={handleRegister}
           >
             {loading ? 'Registering...' : 'Complete Registration'}

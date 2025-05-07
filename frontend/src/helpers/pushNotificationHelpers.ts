@@ -3,20 +3,16 @@ import { mockVapidKeys } from '../mockData/mockVapidKeys';
 import { fetchAuthSession } from 'aws-amplify/auth';
 
 export const requestNotificationPermission = async (): Promise<string> => {
-  return new Promise(function (resolve, reject) {
-    const permissionResult = Notification.requestPermission(function (result) {
-      return resolve(result);
-    });
-
-    if (permissionResult) {
-      permissionResult.then(resolve, reject);
-    }
-  }).then(function (permissionResult) {
+  try {
+    const permissionResult = await Notification.requestPermission();
     if (permissionResult !== 'granted') {
       throw new Error("We weren't granted permission.");
     }
     return permissionResult;
-  });
+  } catch (error) {
+    console.error('Permission request error:', error);
+    throw error;
+  }
 };
 
 export const subscribeUserToPush = async () => {
