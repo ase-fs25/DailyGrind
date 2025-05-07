@@ -21,7 +21,6 @@ const FriendPopup = ({ open, onClose, user, posts }: FriendPopupProps) => {
       onClose(); // close the popup
     } catch (error) {
       console.error('Failed to remove friend:', error);
-      alert('Failed to remove friend. Please try again.');
     }
   };
 

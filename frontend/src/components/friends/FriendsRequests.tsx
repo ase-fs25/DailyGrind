@@ -30,7 +30,6 @@ const FriendsRequests = () => {
     try {
       await acceptFriendRequest(requestId);
       setRequests((prev) => prev.filter((req) => req.requestId !== requestId));
-      alert('Friend request accepted!');
     } catch (error) {
       console.error('Failed to accept friend request:', error);
     }
@@ -40,7 +39,6 @@ const FriendsRequests = () => {
     try {
       await declineFriendRequest(requestId);
       setRequests((prev) => prev.filter((req) => req.requestId !== requestId));
-      alert('Friend request declined.');
     } catch (error) {
       console.error('Failed to decline friend request:', error);
     }

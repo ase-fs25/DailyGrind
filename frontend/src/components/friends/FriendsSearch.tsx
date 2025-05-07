@@ -37,10 +37,8 @@ const FriendsSearch = () => {
   const handleSendFriendRequest = async (userId: string) => {
     try {
       await sendFriendRequest(userId);
-      alert('Friend request sent!');
     } catch (error) {
       console.error('Send friend request error:', error);
-      alert('Failed to send friend request.');
     }
   };
 
