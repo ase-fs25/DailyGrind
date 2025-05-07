@@ -14,7 +14,7 @@ import java.security.Principal;
 @RestController
 @RequestMapping("/push-notifications")
 @RequiredArgsConstructor
-public class pushNotificationController {
+public class PushNotificationController {
 
     private final PushNotificationService pushNotificationService;
 
