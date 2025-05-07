@@ -45,7 +45,6 @@ export const subscribeUserToPush = async () => {
   }
 };
 
-/* TODO: Implement the Endpoint in the backend*/
 export const saveSubscription = async (subscription: PushSubscription): Promise<boolean> => {
   try {
     let authToken = null;

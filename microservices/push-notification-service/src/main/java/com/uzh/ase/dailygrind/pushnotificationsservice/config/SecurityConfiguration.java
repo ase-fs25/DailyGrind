@@ -23,7 +23,7 @@ public class SecurityConfiguration {
                     .exceptionHandling(c -> c.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.FORBIDDEN)))
                     .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .authorizeHttpRequests(r -> r
-                            .requestMatchers("/push-notifications/**").permitAll()
+                            .requestMatchers("/push-notifications/**").authenticated()
                             .anyRequest().authenticated())
                     .oauth2ResourceServer(s -> s.jwt(Customizer.withDefaults()));
 

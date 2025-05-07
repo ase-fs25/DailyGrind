@@ -39,7 +39,6 @@ const Feed = () => {
           return null;
         })
         .then(() => {
-          console.log("Push Subscription successful: ");
         })
         .catch((error) => console.error('Service worker or notification error:', error));
     }
