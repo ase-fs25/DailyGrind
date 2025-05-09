@@ -3,3 +3,8 @@ variable "bucket_name" {
   type        = string
   default     = "dailygrind"
 }
+
+variable "cognito_client_secret" {
+  type        = string
+  description = "Cognito client secret"
+}

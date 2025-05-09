@@ -28,6 +28,12 @@ module "apigateway" {
   depends_on = [module.lambda, module.cognito]
 }
 
+module "secrets" {
+  source                = "./modules/secrets"
+  cognito_client_secret = var.cognito_client_secret
+}
+
+
 module "ecs" {
   source             = "./modules/ecs"
   subnet_ids         = module.network.subnet_ids

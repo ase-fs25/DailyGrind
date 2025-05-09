@@ -13,16 +13,16 @@ services:
     environment:
       - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
       - AWS_DEFAULT_REGION=us-east-1
-      - SERVICES=iam, sts, cognito-idp, dynamodb, s3, ecs, ec2, ses, lambda, cloudcontrol, apigateway, events
+      - SERVICES=secretsmanager, iam, sts, cognito-idp, dynamodb, s3, ecs, ec2, ses, lambda, cloudcontrol, apigateway, events
       - SMTP_HOST=mailhog:1025
       - SMTP_EMAIL=sender@example.com
       - LOCALSTACK_HOST=localstack
       - DISABLE_CORS_CHECKS=1
       - DYNAMODB_REMOVE_EXPIRED_ITEMS=1
-    #    ports:
-    #      - "4566:4566"            # LocalStack Gateway
-    #          - "4510-4559:4510-4559"  # External services port range
-    #          - "8443:443"             # HTTPS Gateway
+    ports:
+      - "4566:4566"            # LocalStack Gateway
+      - "4510-4559:4510-4559"  # External services port range
+      - "8443:443"             # HTTPS Gateway
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "./localstack-data:/var/lib/localstack"
@@ -41,6 +41,7 @@ services:
       - ./terraform:/terraform
       - ./lambda-functions:/lambda-functions
       - ./microservices:/microservices
+      - ./frontend:/frontend
     environment:
       - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
       - AWS_DEFAULT_REGION=us-east-1

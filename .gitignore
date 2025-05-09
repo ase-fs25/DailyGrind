@@ -10,6 +10,8 @@ localstack-data/
 /terraform/terraform.tfstate.backup
 /terraform/modules/ecs/*
 !/terraform/modules/ecs/variables.tf
+terraform.tfvars
+/terraform/tf_outputs.json
 
 # Ignore lambda zip files
 /lambda-functions/*.zip

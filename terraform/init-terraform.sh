@@ -11,3 +11,5 @@ tflocal init
 tflocal apply -auto-approve
 
 terraform output client_secret
+
+/bin/sh /terraform/extract_secrets.sh
