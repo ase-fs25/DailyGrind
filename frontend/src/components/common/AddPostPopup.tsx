@@ -6,6 +6,7 @@ import { createPost } from '../../helpers/postHelper';
 import '../../styles/components/common/addPostPopup.css';
 import postStore from '../../stores/postsStore';
 import { inspireMeData } from '../../constants/inspireMe';
+import { randomInt } from 'crypto';
 
 interface AddPostPopupProps {
   open: boolean;
@@ -22,8 +23,8 @@ const AddPostPopup = ({ open, onClose }: AddPostPopupProps) => {
 
   useEffect(() => {
     if (open) {
-      const random = inspireMeData[Math.floor(Math.random() * inspireMeData.length)];
-      setPlaceholder(random);
+      const idx = randomInt(0, inspireMeData.length);
+      setPlaceholder(inspireMeData[idx]);
     }
   }, [open]);
 
