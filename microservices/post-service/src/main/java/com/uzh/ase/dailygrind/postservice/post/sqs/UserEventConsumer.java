@@ -1,7 +1,13 @@
 package com.uzh.ase.dailygrind.postservice.post.sqs;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.uzh.ase.dailygrind.postservice.post.service.UserService;
+import com.uzh.ase.dailygrind.postservice.post.sqs.events.FriendshipEvent;
+import com.uzh.ase.dailygrind.postservice.post.sqs.events.UserDataEvent;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.sqs.SqsClient;
@@ -14,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserEventConsumer {
 
@@ -21,6 +28,10 @@ public class UserEventConsumer {
     private String queueUrl;
 
     private final SqsClient sqsClient;
+
+    private final ObjectMapper objectMapper;
+
+    private final UserService userService;
 
     @PostConstruct
     public void startPolling() {
@@ -72,17 +83,57 @@ public class UserEventConsumer {
                 handleFriendshipDeleted(payload);
                 break;
             default:
-                System.out.println("Unknown eventType: " + eventType);
+                log.error("Unknown event type: {}", eventType);
         }
     }
 
-    // Define these methods accordingly
     private void handleUserCreated(String payload) {
-        /* parse and create */
-        System.out.println("User created: " + payload);
+        log.info("Received USER_CREATED event with payload: {}", payload);
+        try {
+            UserDataEvent event = objectMapper.readValue(payload, UserDataEvent.class);
+            userService.addNewUser(event);
+        } catch (JsonProcessingException e) {
+            log.error("Failed to parse UserDataEvent", e);
+        }
     }
-    private void handleUserUpdated(String payload) { /* parse and update */ }
-    private void handleUserDeleted(String payload) { /* parse and delete */ }
-    private void handleFriendshipCreated(String payload) { /* logic */ }
-    private void handleFriendshipDeleted(String payload) { /* logic */ }
+
+    private void handleUserUpdated(String payload) {
+        log.info("Received USER_UPDATED event with payload: {}", payload);
+        try {
+            UserDataEvent event = objectMapper.readValue(payload, UserDataEvent.class);
+            userService.updateUser(event);
+        } catch (JsonProcessingException e) {
+            log.error("Failed to parse UserDataEvent", e);
+        }
+    }
+
+    private void handleUserDeleted(String payload) {
+        log.info("Received USER_DELETED event with payload: {}", payload);
+        try {
+            UserDataEvent event = objectMapper.readValue(payload, UserDataEvent.class);
+            userService.deleteUser(event.userId());
+        } catch (JsonProcessingException e) {
+            log.error("Failed to parse UserDataEvent", e);
+        }
+    }
+
+    private void handleFriendshipCreated(String payload) {
+        log.info("Received FRIENDSHIP_CREATED event with payload: {}", payload);
+        try {
+            FriendshipEvent event = objectMapper.readValue(payload, FriendshipEvent.class);
+            userService.addFriend(event);
+        } catch (JsonProcessingException e) {
+            log.error("Failed to parse UserDataEvent", e);
+        }
+    }
+
+    private void handleFriendshipDeleted(String payload) {
+        log.info("Received FRIENDSHIP_DELETED event with payload: {}", payload);
+        try {
+            FriendshipEvent event = objectMapper.readValue(payload, FriendshipEvent.class);
+            userService.removeFriend(event);
+        } catch (JsonProcessingException e) {
+            log.error("Failed to parse UserDataEvent", e);
+        }
+    }
 }

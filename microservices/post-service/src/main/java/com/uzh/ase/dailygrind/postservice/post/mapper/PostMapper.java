@@ -4,6 +4,7 @@ import com.uzh.ase.dailygrind.postservice.post.controller.dto.CommentDto;
 import com.uzh.ase.dailygrind.postservice.post.controller.dto.PostDto;
 import com.uzh.ase.dailygrind.postservice.post.repository.entity.CommentEntity;
 import com.uzh.ase.dailygrind.postservice.post.repository.entity.DailyPostEntity;
+import com.uzh.ase.dailygrind.postservice.post.repository.entity.LikeEntity;
 import com.uzh.ase.dailygrind.postservice.post.repository.entity.PostEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -28,6 +29,10 @@ public interface PostMapper {
     @Mapping(target = "commentContent", source = "commentDto.content")
     @Mapping(target = "commentTimestamp", source = "commentDto.timestamp")
     CommentEntity toCommentEntity(String userId, String postId, CommentDto commentDto);
+
+    @Mapping(target = "pk", expression = "java(LikeEntity.generatePK(postId))")
+    @Mapping(target = "sk", expression = "java(LikeEntity.generateSK(userId))")
+    LikeEntity toLikeEntity(String postId, String userId);
 
     @Mapping(target = "postId", expression = "java(postEntity.getPostId())")
     @Mapping(target = "title", source = "postEntity.postTitle")

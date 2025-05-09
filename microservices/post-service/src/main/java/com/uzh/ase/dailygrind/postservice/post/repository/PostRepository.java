@@ -1,6 +1,7 @@
 package com.uzh.ase.dailygrind.postservice.post.repository;
 
 import com.uzh.ase.dailygrind.postservice.post.repository.entity.CommentEntity;
+import com.uzh.ase.dailygrind.postservice.post.repository.entity.LikeEntity;
 import com.uzh.ase.dailygrind.postservice.post.repository.entity.PostEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -17,6 +18,8 @@ public class PostRepository {
     private final DynamoDbTable<PostEntity> postTable;
 
     private final DynamoDbTable<CommentEntity> commentTable;
+
+    private final DynamoDbTable<LikeEntity> likeTable;
 
     public void savePost(PostEntity post) {
         postTable.putItem(post);
@@ -47,26 +50,18 @@ public class PostRepository {
         deleteLikesForPost(postId);
     }
 
-    public void likePost(String postId, String userId) {
-        PostEntity postEntity = PostEntity.builder()
-                .pk(PostEntity.POSTFIX + "#" + postId + "LIKELIST")
-                .sk(PostEntity.PREFIX + "#" + userId)
-                .build();
-        postTable.putItem(postEntity);
+    public void likePost(LikeEntity likeEntity) {
+        likeTable.putItem(likeEntity);
 
-        PostEntity postToLike = findPostById(postId);
+        PostEntity postToLike = findPostById(likeEntity.getPostId());
         postToLike.setLikeCount(postToLike.getLikeCount() + 1);
         postTable.putItem(postToLike);
     }
 
-    public void unlikePost(String postId, String userId) {
-        PostEntity postEntity = PostEntity.builder()
-                .pk(PostEntity.POSTFIX + "#" + postId + "LIKELIST")
-                .sk(PostEntity.PREFIX + "#" + userId)
-                .build();
-        postTable.deleteItem(postEntity);
+    public void unlikePost(LikeEntity likeEntity) {
+        likeTable.deleteItem(likeEntity);
 
-        PostEntity postToUnlike = findPostById(postId);
+        PostEntity postToUnlike = findPostById(likeEntity.getPostId());
         postToUnlike.setLikeCount(postToUnlike.getLikeCount() - 1);
         postTable.putItem(postToUnlike);
     }
@@ -137,5 +132,34 @@ public class PostRepository {
                         .build());
 
         return commentTable.query(queryConditional).items().stream().toList();
+    }
+
+    public void deleteAllPosts(String userId) {
+        List<PostEntity> posts = findAllPostsForUser(userId);
+        for (PostEntity post : posts) {
+            deletePostById(post.getPostId(), userId);
+        }
+    }
+
+    public void deleteAllComments(String userId) {
+        List<CommentEntity> comments = commentTable.scan().items().stream()
+                .filter(item -> item.getPk().endsWith(userId))
+                .toList();
+        for (CommentEntity comment : comments) {
+            deleteComment(comment.getPostId(), comment.getCommentId(), userId);
+        }
+    }
+
+    public void deleteAllLikes(String userId) {
+        List<PostEntity> likes = postTable.scan().items().stream()
+                .filter(item -> item.getPk().endsWith(userId))
+                .toList();
+        for (PostEntity like : likes) {
+            LikeEntity likeEntity = LikeEntity.builder()
+                    .pk(LikeEntity.generatePK(like.getPostId()))
+                    .sk(LikeEntity.generateSK(userId))
+                    .build();
+            unlikePost(likeEntity);
+        }
     }
 }

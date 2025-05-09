@@ -6,21 +6,17 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-
 @DynamoDbBean
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class PinnedPostEntity {
+public class UserEntity {
 
-    public static final String PK_PREFIX = "USER";
-    public static final String PK_SUFFIX = "PINNED";
-    public static final String SK_PREFIX = "POST";
+    public static String PREFIX = "USER";
+
+    public static String POSTFIX = "info";
 
     @Getter(onMethod_ =  {@DynamoDbPartitionKey, @DynamoDbAttribute("PK")})
     private String pk;
@@ -28,21 +24,21 @@ public class PinnedPostEntity {
     @Getter(onMethod_ =  {@DynamoDbSortKey, @DynamoDbAttribute("SK")})
     private String sk;
 
-    public PinnedPostEntity(String userId, String postId) {
-        this.pk = generatePK(userId);
-        this.sk = generateSK(postId);
-    }
+    private String email;
+    private String firstName;
+    private String lastName;
+    private String profilePictureUrl;
 
     public static String generatePK(String userId) {
-        return PK_PREFIX + "#" + userId + "#" + PK_SUFFIX;
+        return PREFIX + "#" + userId + "#" + POSTFIX;
     }
 
-    public static String generateSK(String postId) {
-        return SK_PREFIX + "#" + postId;
+    public static String generateSK(String userId) {
+        return POSTFIX + "#" + userId;
     }
 
-    public String getId() {
-        return sk.split("#")[1];
+    public String getUserId() {
+        return pk.split("#")[1];
     }
 
 }

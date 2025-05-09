@@ -6,10 +6,7 @@ import com.uzh.ase.dailygrind.postservice.post.mapper.PostMapper;
 import com.uzh.ase.dailygrind.postservice.post.repository.DailyPostRepository;
 import com.uzh.ase.dailygrind.postservice.post.repository.PinnedPostRepository;
 import com.uzh.ase.dailygrind.postservice.post.repository.PostRepository;
-import com.uzh.ase.dailygrind.postservice.post.repository.entity.CommentEntity;
-import com.uzh.ase.dailygrind.postservice.post.repository.entity.DailyPostEntity;
-import com.uzh.ase.dailygrind.postservice.post.repository.entity.PinnedPostEntity;
-import com.uzh.ase.dailygrind.postservice.post.repository.entity.PostEntity;
+import com.uzh.ase.dailygrind.postservice.post.repository.entity.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -72,11 +69,13 @@ public class PostService {
     }
 
     public void likePost(String postId, String userId) {
-        postRepository.likePost(postId, userId);
+        LikeEntity likeEntity = postMapper.toLikeEntity(postId, userId);
+        postRepository.likePost(likeEntity);
     }
 
     public void unlikePost(String postId, String userId) {
-        postRepository.unlikePost(postId, userId);
+        LikeEntity likeEntity = postMapper.toLikeEntity(postId, userId);
+        postRepository.unlikePost(likeEntity);
     }
 
     public CommentDto commentPost(String postId, String userId, CommentDto comment) {

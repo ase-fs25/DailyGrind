@@ -1,10 +1,7 @@
 package com.uzh.ase.dailygrind.postservice.config;
 
 
-import com.uzh.ase.dailygrind.postservice.post.repository.entity.CommentEntity;
-import com.uzh.ase.dailygrind.postservice.post.repository.entity.DailyPostEntity;
-import com.uzh.ase.dailygrind.postservice.post.repository.entity.PinnedPostEntity;
-import com.uzh.ase.dailygrind.postservice.post.repository.entity.PostEntity;
+import com.uzh.ase.dailygrind.postservice.post.repository.entity.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -58,6 +55,11 @@ public class DynamoDBConfig {
     }
 
     @Bean
+    public DynamoDbTable<LikeEntity> likeTable(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
+        return dynamoDbEnhancedClient.table(TABLE_NAME, TableSchema.fromBean(LikeEntity.class));
+    }
+
+    @Bean
     public DynamoDbTable<DailyPostEntity> dailyPostTable(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
         return dynamoDbEnhancedClient.table(TABLE_NAME, TableSchema.fromBean(DailyPostEntity.class));
     }
@@ -65,6 +67,16 @@ public class DynamoDBConfig {
     @Bean
     public DynamoDbTable<PinnedPostEntity> pinnedPostTable(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
         return dynamoDbEnhancedClient.table(TABLE_NAME, TableSchema.fromBean(PinnedPostEntity.class));
+    }
+
+    @Bean
+    public DynamoDbTable<UserEntity> userTable(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
+        return dynamoDbEnhancedClient.table(TABLE_NAME, TableSchema.fromBean(UserEntity.class));
+    }
+
+    @Bean
+    public DynamoDbTable<FriendEntity> friendTable(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
+        return dynamoDbEnhancedClient.table(TABLE_NAME, TableSchema.fromBean(FriendEntity.class));
     }
 
 }

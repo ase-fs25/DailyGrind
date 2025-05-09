@@ -1,5 +1,6 @@
 package com.uzh.ase.dailygrind.userservice.user.sns;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uzh.ase.dailygrind.userservice.user.sns.events.EventType;
 import com.uzh.ase.dailygrind.userservice.user.sns.events.UserDataEvent;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,8 @@ public class UserEventPublisher {
 
     private final SnsClient snsClient;
 
+    private final ObjectMapper objectMapper;
+
     public void publishUserEvent(EventType eventType, UserDataEvent userDataEvent) {
         Map<String, MessageAttributeValue> messageAttributes = Map.of(
             "eventType", MessageAttributeValue.builder()
@@ -27,11 +30,16 @@ public class UserEventPublisher {
                 .build()
         );
 
-        snsClient.publish(publishRequest -> publishRequest
-            .topicArn(topicArn)
-            .message(userDataEvent.toString())
-            .messageAttributes(messageAttributes)
-        );
+        try {
+            String json = objectMapper.writeValueAsString(userDataEvent);
+            snsClient.publish(publishRequest -> publishRequest
+                .topicArn(topicArn)
+                .message(json)
+                .messageAttributes(messageAttributes)
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to convert UserDataEvent to JSON", e);
+        }
     }
 
 }
