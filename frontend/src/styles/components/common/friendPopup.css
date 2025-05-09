@@ -4,117 +4,102 @@
 }
 
 .popup-dialog-paper {
-  max-height: 80vh;
+  max-height: 90vh;
   display: flex;
   flex-direction: column;
-  background-color: #f8eaff;
+  background-color: white;
   border-radius: 12px;
 }
 
 .popup-header {
-  position: relative;
-  font-size: 1.5rem;
-  font-weight: 600;
-  padding: 16px 24px;
-  border-bottom: 1px solid #ddd;
-  background-color: #f3e5f5;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: #9c27b0;
+  background-color: #9c27b0;
+  color: white;
+  padding: 16px 24px;
+  position: relative;
+}
+
+.popup-title {
+  margin: 0 auto;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.remove-btn {
+  background-color: #f44336 !important;
+  color: white !important;
+  font-weight: bold;
+  text-transform: none;
 }
 
 .close-button {
-  position: absolute;
-  top: 12px;
-  right: 16px;
-  color: #9c27b0;
+  color: white !important;
 }
 
 .popup-content {
   padding: 24px;
   overflow-y: auto;
-  flex-grow: 1;
-  background-color: #f8eaff;
+  background-color: white;
 }
 
-.friend-profile-section {
+.popup-body {
+  display: flex;
+  gap: 32px;
+  flex-wrap: nowrap;
+}
+
+.left-column {
+  flex: 2;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
-  margin-bottom: 24px;
 }
 
-.profile-avatar-large {
-  width: 100px;
-  height: 100px;
-  margin-bottom: 12px;
-  border: 2px solid #9c27b0;
+.right-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-.profile-name {
-  margin-bottom: 6px;
-  font-weight: bold;
+.location {
+  margin-bottom: 16px;
 }
 
-.profile-info {
-  margin: 2px 0;
-  color: #444;
+.section-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
 }
 
-.posts-section {
-  margin-top: 16px;
+.scrollable-sections {
+  display: flex;
+  gap: 16px;
+}
+
+.education-scroll,
+.work-scroll {
+  flex: 1;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.section-box {
+  background-color: #d1aaff;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  font-family: monospace;
 }
 
 .posts-heading {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #333;
   margin-bottom: 12px;
 }
 
-.post-item {
-  background-color: #ffffff;
+.post-box {
+  margin-top: 16px;
   padding: 16px;
   border-radius: 8px;
-  margin-bottom: 12px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.post-title {
-  font-weight: bold;
-  margin-bottom: 6px;
-  font-size: 1.1rem;
-  color: #5e005e;
-}
-
-.post-content {
-  font-size: 0.95rem;
-  line-height: 1.5;
-  color: #444;
-}
-
-.no-posts {
-  font-size: 0.95rem;
-  color: #777;
-}
-.remove-friend-wrapper {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 20px;
-}
-
-.remove-friend-button {
-  background-color: #f44336;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.remove-friend-button:hover {
-  background-color: #d32f2f;
+  background-color: #f0e6f6;
 }
