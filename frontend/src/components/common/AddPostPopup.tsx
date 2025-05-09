@@ -6,7 +6,6 @@ import { createPost } from '../../helpers/postHelper';
 import '../../styles/components/common/addPostPopup.css';
 import postStore from '../../stores/postsStore';
 import { inspireMeData } from '../../constants/inspireMe';
-import { randomInt } from 'crypto';
 
 interface AddPostPopupProps {
   open: boolean;
@@ -23,8 +22,8 @@ const AddPostPopup = ({ open, onClose }: AddPostPopupProps) => {
 
   useEffect(() => {
     if (open) {
-      const idx = randomInt(0, inspireMeData.length);
-      setPlaceholder(inspireMeData[idx]);
+      const random = inspireMeData[Math.floor(Math.random() * inspireMeData.length)];
+      setPlaceholder(random);
     }
   }, [open]);
 
@@ -69,7 +68,7 @@ const AddPostPopup = ({ open, onClose }: AddPostPopupProps) => {
         },
       }}
     >
-      <DialogTitle className="add-post-header">Add your daily Post</DialogTitle>
+      <DialogTitle className="add-post-header">What do you want to post today?</DialogTitle>
       <DialogContent className="add-post-content">
         <TextField
           label="Add Title"
@@ -77,17 +76,17 @@ const AddPostPopup = ({ open, onClose }: AddPostPopupProps) => {
           fullWidth
           value={postTitle}
           onChange={(e) => setPostTitle(e.target.value)}
-          className="post-title-field"
+          sx={{marginTop: '8px'}}
         />
         <TextField
-          label={placeholder}
+          label="Add Content"
+          placeholder={placeholder}
           variant="outlined"
           fullWidth
           multiline
           rows={4}
           value={postContent}
           onChange={(e) => setPostContent(e.target.value)}
-          className="post-text-field"
         />
       </DialogContent>
       <DialogActions className="add-post-actions">
