@@ -94,4 +94,13 @@ public class UserService {
             .toList();
     }
 
+    public void deleteUser(String userId) {
+        UserEntity userEntity = userRepository.findUserById(userId);
+        if (userEntity != null) {
+            userRepository.deleteUser(userEntity);
+            userJobService.deleteJobsForUser(userId);
+            userEducationService.deleteEducationForUser(userId);
+            userEventPublisher.publishUserEvent(EventType.USER_DELETED, userMapper.toUserDataEvent(userEntity));
+        }
+    }
 }
