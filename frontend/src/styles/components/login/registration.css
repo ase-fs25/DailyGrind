@@ -10,13 +10,29 @@
 .registration-paper {
   height: auto;
   max-height: 85vh;
-  padding: 16px;
   width: 30vw;
   display: flex;
   flex-direction: column;
   gap: 0.2vh;
   background-color: #9c27b0;
   color: white;
+  height: auto;
+}
+
+.registration-content {
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.registration-content::-webkit-scrollbar {
+  background-color: transparent;
+}
+
+.registration-content::-webkit-scrollbar-thumb {
+  background-color: #f3e5f5;
+  border: 4px solid transparent;
+  border-radius: 9px;
+  background-clip: content-box;
 }
 
 .registration-input {
@@ -29,4 +45,10 @@
   color: red;
   font-size: 14px;
   text-align: center;
+}
+
+.registration-button {
+  position: sticky;
+  bottom: 0;
+  padding: 0px 16px 16px 16px;
 }

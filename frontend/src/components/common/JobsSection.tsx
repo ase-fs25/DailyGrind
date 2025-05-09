@@ -100,7 +100,12 @@ const JobsSection = ({ jobs, onChange, onDelete, readOnly = false, registration 
       >
         <Typography variant="h6">Work Experience</Typography>
         {!readOnly && (
-          <Button startIcon={<AddIcon />} variant="outlined" onClick={openNewJobDialog}>
+          <Button
+            startIcon={<AddIcon />}
+            variant="outlined"
+            onClick={openNewJobDialog}
+            sx={{ background: '#f3e5f5', borderColor: 'black', color: 'black' }}
+          >
             Add Job
           </Button>
         )}
@@ -113,7 +118,7 @@ const JobsSection = ({ jobs, onChange, onDelete, readOnly = false, registration 
       ) : (
         <div className="jobs-list">
           {jobs.map((job) => (
-            <Paper key={job.jobId} elevation={1} sx={{ p: 2, position: 'relative' }}>
+            <div key={job.jobId} className="single-job">
               {!readOnly && (
                 <Box sx={{ position: 'absolute', top: 5, right: 5 }}>
                   <IconButton size="small" onClick={() => openEditJobDialog(job)} sx={{ mr: 1 }}>
@@ -134,7 +139,7 @@ const JobsSection = ({ jobs, onChange, onDelete, readOnly = false, registration 
               <Typography variant="body2" sx={{ mt: 1 }}>
                 {job.description}
               </Typography>
-            </Paper>
+            </div>
           ))}
         </div>
       )}
