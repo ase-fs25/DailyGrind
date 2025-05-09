@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Generating ECS task definitions..."
+
 set -e
 
 BASE_DIR="./modules/ecs"
@@ -114,3 +116,4 @@ EOF
 done
 
 echo "🎉 Done: ECS service definitions and outputs written to $MAIN_TF"
+echo ""

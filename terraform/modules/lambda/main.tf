@@ -19,7 +19,7 @@ resource "aws_lambda_function" "confirm_user_lambda" {
   filename      = "./../lambda-functions/user-confirmation-lambda.zip"
   role          = aws_iam_role.lambda_role.arn
   handler       = "handler.lambda_handler"
-  runtime       = "python3.8"
+  runtime       = "python3.12"
   source_code_hash = filebase64sha256("./../lambda-functions/user-confirmation-lambda.zip")
 }
 
@@ -28,7 +28,7 @@ resource "aws_lambda_function" "push_notification_lambda" {
   filename      = "./../lambda-functions/push-notification-lambda.zip"
   role          = aws_iam_role.lambda_role.arn
   handler       = "index.handler"
-  runtime       = "nodejs18.x"
+  runtime       = "nodejs22.x"
   source_code_hash = filebase64sha256("./../lambda-functions/push-notification-lambda.zip")
 
   environment {
