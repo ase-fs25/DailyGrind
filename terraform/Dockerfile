@@ -14,4 +14,3 @@ RUN /venv/bin/pip install terraform-local
 
 # Set the PATH to include the virtual environment's bin directory
 ENV PATH="/venv/bin:$PATH"
-

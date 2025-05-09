@@ -5,129 +5,42 @@ networks:
 services:
   localstack:
     image: localstack/localstack-pro
-    profiles: [ dev, fe-dev, prod ]
     container_name: localstack
     hostname: localstack
+    profiles: [ dev, prod ]
     networks:
       - localstack_network
     environment:
       - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
       - AWS_DEFAULT_REGION=us-east-1
-      - SERVICES=iam, sts, cognito-idp, dynamodb, s3, ses, lambda, cloudcontrol, apigateway, events
+      - SERVICES=iam, sts, cognito-idp, dynamodb, s3, ecs, ec2, ses, lambda, cloudcontrol, apigateway, events
       - SMTP_HOST=mailhog:1025
       - SMTP_EMAIL=sender@example.com
       - LOCALSTACK_HOST=localstack
       - DISABLE_CORS_CHECKS=1
       - DYNAMODB_REMOVE_EXPIRED_ITEMS=1
-    ports:
-      - "4566:4566"            # LocalStack Gateway
-      - "4510-4559:4510-4559"  # External services port range
-      - "8443:443"             # HTTPS Gateway
+    #    ports:
+    #      - "4566:4566"            # LocalStack Gateway
+    #          - "4510-4559:4510-4559"  # External services port range
+    #          - "8443:443"             # HTTPS Gateway
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "./localstack-data:/var/lib/localstack"
-
-  mailhog:
-    image: mailhog/mailhog
-    profiles: [ dev, fe-dev, prod ]
-    networks:
-      - localstack_network
-    ports:
-      - "8025:8025"
-      - "1025:1025"
-
-  ms-user-service:
-    build: ./microservices/user-service
-    profiles: [ fe-dev, prod ]
-    container_name: ms-user-service
-    hostname: ms-user-service
-    networks:
-      - localstack_network
-    #    ports:
-    #      - "8080:8080"
-    depends_on:
-      - localstack
-      - terraform
-    environment:
-      - AWS_REGION=us-east-1
-      - AWS_ACCESS_KEY_ID=test
-      - AWS_SECRET_ACCESS_KEY=test
-      - AWS_S3_ENDPOINT=http://localstack:4566
-      - AWS_SQS_ENDPOINT=http://localstack:4566
-      - SERVER_PORT=8080
-    volumes:
-      - ./microservices/user-microservice:/app/microservices/user-microservice
-
-  ms-post-service:
-    build: ./microservices/post-service
-    profiles: [ fe-dev, prod ]
-
-    container_name: ms-post-service
-    hostname: ms-post-service
-    networks:
-      - localstack_network
-    #    ports:
-    #      - "8081:8080"
-    depends_on:
-      - localstack
-      - terraform
-    environment:
-      - AWS_REGION=us-east-1
-      - AWS_ACCESS_KEY_ID=test
-      - AWS_SECRET_ACCESS_KEY=test
-      - AWS_S3_ENDPOINT=http://localstack:4566
-      - AWS_SQS_ENDPOINT=http://localstack:4566
-      - SERVER_PORT=8080
-    volumes:
-      - ./microservices/post-microservice:/app/microservices/post-microservice
-
-  ms-push-notification:
-    build: ./microservices/push-notification-service
-    profiles: [ fe-dev, prod ]
-    ports:
-      - "8082:8080"
-    depends_on:
-      - localstack
-    environment:
-      - AWS_REGION=us-east-1
-      - AWS_ACCESS_KEY_ID=test
-      - AWS_SECRET_ACCESS_KEY=test
-      - AWS_S3_ENDPOINT=http://localstack:4566
-      - AWS_SQS_ENDPOINT=http://localstack:4566
-      - SERVER_PORT=8080
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.dev
-    profiles: [ fe-dev, prod ]
-    container_name: frontend
-    hostname: frontend
-    networks:
-      - localstack_network
-    ports:
-      - "3000:3000"
-    depends_on:
-      - localstack
-      - terraform
-    environment:
-      - CHOKIDAR_USEPOLLING=true
-    volumes:
-      - ./frontend:/app/frontend
-      - /app/frontend/node_modules  # Do not mount node_modules to avoid conflicts
 
   terraform:
     build:
       context: ./terraform
       dockerfile: Dockerfile
     image: hashicorp/terraform
-    profiles: [ dev, fe-dev, prod ]
+    container_name: terraform
+    profiles: [ dev, prod ]
     working_dir: /terraform
     networks:
       - localstack_network
     volumes:
       - ./terraform:/terraform
       - ./lambda-functions:/lambda-functions
+      - ./microservices:/microservices
     environment:
       - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
       - AWS_DEFAULT_REGION=us-east-1
@@ -136,17 +49,28 @@ services:
       - LOCALSTACK_HOSTNAME=localstack
       - EDGE_PORT=4566
       - S3_HOSTNAME=localstack
-      - BUCKET_NAME=dailygrind
     entrypoint: [ "/bin/sh", "/terraform/init-terraform.sh" ]
     depends_on:
       - localstack
     restart: "no"  # Only run once
 
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    hostname: mailhog
+    profiles: [ dev, prod ]
+    networks:
+      - localstack_network
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+
   deploy-frontend:
     build:
       context: ./frontend
       dockerfile: deploy.Dockerfile
-    profiles: [ prod ]
+    container_name: deploy-frontend
+    profiles: [ prod2 ]
     networks:
       - localstack_network
     depends_on:
