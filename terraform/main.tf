@@ -26,6 +26,7 @@ module "apigateway" {
   app_client_id = module.cognito.app_client_id
   user_pool_id  = module.cognito.user_pool_id
   depends_on = [module.lambda, module.cognito]
+  alb_dns_name  = module.alb.alb_dns_name
 }
 
 module "secrets" {
@@ -35,8 +36,20 @@ module "secrets" {
 
 
 module "ecs" {
-  source             = "./modules/ecs"
-  subnet_ids         = module.network.subnet_ids
-  security_group_ids = module.network.security_group_ids
+  source                           = "./modules/ecs"
+  subnet_ids                       = module.network.subnet_ids
+  security_group_ids               = module.network.security_group_ids
+  tg_user_service_arn              = module.alb.tg_user_service_arn
+  tg_post_service_arn              = module.alb.tg_post_service_arn
+  tg_push_notification_service_arn = module.alb.tg_push_notification_service_arn
+}
+
+
+module "alb" {
+  source            = "./modules/alb"
+  vpc_id            = module.network.vpc_id
+  subnet_id         = module.network.subnet_id
+  security_group_id = module.network.security_group_id
+
 }
 

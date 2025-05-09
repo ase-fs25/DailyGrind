@@ -5,3 +5,7 @@ variable "app_client_id" {
 variable "user_pool_id" {
   type = string
 }
+
+variable "alb_dns_name" {
+  type = string
+}
