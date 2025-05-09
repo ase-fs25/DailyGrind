@@ -1,6 +1,5 @@
 /* global navigator */
-import { mockVapidKeys } from '../mockData/mockVapidKeys';
-import { fetchAuthSession } from 'aws-amplify/auth';
+import { getAuthToken} from './authHelper';
 
 export const requestNotificationPermission = async (): Promise<string> => {
   try {
@@ -27,7 +26,7 @@ export const subscribeUserToPush = async () => {
     } else {
       const subscribeOptions = {
         userVisibleOnly: true,
-        applicationServerKey: mockVapidKeys.publicKey,
+        applicationServerKey: import.meta.env.VITE_VAPID_PUBLIC_KEY,
       };
       subscription = await registration.pushManager.subscribe(subscribeOptions);
       console.log('Created new PushSubscription: ', JSON.stringify(subscription));
@@ -43,20 +42,7 @@ export const subscribeUserToPush = async () => {
 
 export const saveSubscription = async (subscription: PushSubscription): Promise<boolean> => {
   try {
-    let authToken = null;
-    try {
-      const session = await fetchAuthSession();
-      authToken = session.tokens?.accessToken.toString();
-      console.log('auth token: ', authToken);
-    } catch (e) {
-      console.error('Failed to fetch auth token: ', e);
-      return false;
-    }
-
-    if (!authToken) {
-      console.error('User is not authenticated');
-      return false;
-    }
+    let authToken = await getAuthToken();
 
     const response = await fetch('http://localhost:8082/push-notifications/subscribe', {
       method: 'POST',

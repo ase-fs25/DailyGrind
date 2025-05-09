@@ -24,7 +24,7 @@ public class SecurityConfiguration {
                     .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .authorizeHttpRequests(r -> r
                             .requestMatchers("/push-notifications/**").permitAll()
-                            .requestMatchers("swagger-ui/**", "/v3/api-docs/**").permitAll())
+                            .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll())
                     .oauth2ResourceServer(s -> s.jwt(Customizer.withDefaults()));
 
             return http.build();
