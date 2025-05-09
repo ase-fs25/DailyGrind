@@ -12,6 +12,8 @@ interface AddPostPopupProps {
   onClose: () => void;
 }
 
+const crypto = window.crypto;
+
 const AddPostPopup = ({ open, onClose }: AddPostPopupProps) => {
   const [postTitle, setPostTitle] = useState('');
   const [postContent, setPostContent] = useState('');
@@ -22,8 +24,19 @@ const AddPostPopup = ({ open, onClose }: AddPostPopupProps) => {
 
   useEffect(() => {
     if (open) {
-      const random = inspireMeData[Math.floor(Math.random() * inspireMeData.length)];
-      setPlaceholder(random);
+      // Since Math.random() is a security hotspot we have to do it like this
+      const rand32 = new Uint32Array(1);
+      const maxUint32 = 0x100000000;
+      const threshold = maxUint32 - (maxUint32 % inspireMeData.length);
+      let val;
+      do {
+        crypto.getRandomValues(rand32);
+        val = rand32[0];
+      } while (val >= threshold);
+
+      const idx = val % inspireMeData.length;
+
+      setPlaceholder(inspireMeData[idx]);
     }
   }, [open]);
 
@@ -76,7 +89,7 @@ const AddPostPopup = ({ open, onClose }: AddPostPopupProps) => {
           fullWidth
           value={postTitle}
           onChange={(e) => setPostTitle(e.target.value)}
-          sx={{marginTop: '8px'}}
+          sx={{ marginTop: '8px' }}
         />
         <TextField
           label="Add Content"
