@@ -24,20 +24,20 @@ public interface UserMapper {
      * Maps a UserEntity to a UserInfoDto.
      *
      * @param user the UserEntity to map
-     * @param isFollowing a boolean that indicates whether the requesting user follows or not
+     * @param isFriend a boolean that indicates whether the requesting user follows or not
      * @return the mapped UserInfoDto
      */
     @Mapping(target = "userId", expression = "java(user.getId())")
+    @Mapping(target = "numberOfFriends", source = "user.numFriends")
     @Mapping(target = "email", source = "user.email")
     @Mapping(target = "firstName", source = "user.firstName")
     @Mapping(target = "lastName", source = "user.lastName")
     @Mapping(target = "birthday", source = "user.birthday")
     @Mapping(target = "location", source = "user.location")
-    @Mapping(target = "numFollowers", source = "user.numFollowers")
-    @Mapping(target = "numFollowing", source = "user.numFollowing")
-    @Mapping(target = "isFollowed", source = "isFollowed")
     @Mapping(target = "profilePictureUrl", source = "user.profilePictureUrl")
-    UserInfoDto toUserInfoDto(UserEntity user, boolean isFollowed);
+    @Mapping(target = "isFriend", source = "isFriend")
+    @Mapping(target = "requestId", ignore = true)
+    UserInfoDto toUserInfoDto(UserEntity user, boolean isFriend);
 
 
     /**

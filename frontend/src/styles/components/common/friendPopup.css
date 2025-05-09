@@ -99,3 +99,22 @@
   font-size: 0.95rem;
   color: #777;
 }
+.remove-friend-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.remove-friend-button {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.remove-friend-button:hover {
+  background-color: #d32f2f;
+}
