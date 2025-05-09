@@ -1,12 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, TextField, Button, Typography, CircularProgress } from '@mui/material';
-import { searchUsers, sendFriendRequest, UserProfile } from '../../helpers/friendsHelper';
+import { searchUsers, sendFriendRequest, fetchFriends, UserProfile } from '../../helpers/friendsHelper';
 import '../../styles/components/friends/friendsSearch.css';
+import userStore from '../../stores/userStore';
 
 const FriendsSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [profiles, setProfiles] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(false);
+  const [friends, setFriends] = useState<UserProfile[]>([]);
+
+  useEffect(() => {
+    const loadFriends = async () => {
+      try {
+        const friendsList = await fetchFriends();
+        setFriends(friendsList);
+      } catch (err) {
+        console.error('Failed to load friends:', err);
+      }
+    };
+
+    loadFriends();
+  }, []);
 
   const handleSearchChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -20,7 +35,20 @@ const FriendsSearch = () => {
     try {
       setLoading(true);
       const results = await searchUsers(value);
-      setProfiles(results);
+      const currentUserId = userStore.getUser().userId;
+
+      const enriched = results
+        .filter((user) => user.userId !== currentUserId)
+        .map((user) => {
+          const isAlreadyFriend = friends.some((f) => f.userId === user.userId);
+          return {
+            ...user,
+            hasPendingRequest: user.hasPendingRequest ?? false,
+            isAlreadyFriend,
+          };
+        });
+
+      setProfiles(enriched);
     } catch (error) {
       console.error('Search error:', error);
     } finally {
@@ -31,16 +59,14 @@ const FriendsSearch = () => {
   const handleSendFriendRequest = async (userId: string) => {
     try {
       await sendFriendRequest(userId);
-      alert('Friend request sent!');
+      setProfiles((prev) => prev.map((user) => (user.userId === userId ? { ...user, hasPendingRequest: true } : user)));
     } catch (error) {
       console.error('Send friend request error:', error);
-      alert('Failed to send friend request.');
     }
   };
 
   return (
     <Box className="search-container">
-      {/* Search Input */}
       <TextField
         label="Search People"
         variant="outlined"
@@ -49,14 +75,12 @@ const FriendsSearch = () => {
         className="search-input"
       />
 
-      {/* Loading spinner */}
       {loading && (
         <Box display="flex" justifyContent="center" mt={2}>
           <CircularProgress />
         </Box>
       )}
 
-      {/* Search results */}
       {!loading && searchTerm.trim() !== '' && (
         <Box className="search-results">
           {profiles.length === 0 ? (
@@ -73,9 +97,14 @@ const FriendsSearch = () => {
                   variant="outlined"
                   color="secondary"
                   size="small"
+                  disabled={user.hasPendingRequest || user.isAlreadyFriend}
                   onClick={() => handleSendFriendRequest(user.userId)}
                 >
-                  Add Friend
+                  {user.isAlreadyFriend
+                    ? 'Already a Friend'
+                    : user.hasPendingRequest
+                      ? 'Friend Request Sent'
+                      : 'Add Friend'}
                 </Button>
               </Box>
             ))
