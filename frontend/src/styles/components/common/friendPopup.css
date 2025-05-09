@@ -64,7 +64,10 @@
 
 .location {
   margin-bottom: 16px;
+  max-width: 60%;
+  word-break: break-word;
 }
+
 
 .section-labels {
   display: flex;
