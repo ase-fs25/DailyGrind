@@ -1,4 +1,3 @@
-/* global navigator */
 import { getAuthToken} from './authHelper';
 
 export const requestNotificationPermission = async (): Promise<string> => {
