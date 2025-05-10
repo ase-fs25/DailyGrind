@@ -1,0 +1,75 @@
+package com.uzh.ase.dailygrind.postservice.post.repository;
+
+import com.uzh.ase.dailygrind.postservice.post.repository.entity.FriendEntity;
+import com.uzh.ase.dailygrind.postservice.post.repository.entity.UserEntity;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.Key;
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
+
+import java.util.List;
+
+@Repository
+@RequiredArgsConstructor
+public class UserRepository {
+
+    private final DynamoDbTable<UserEntity> userTable;
+
+    private final DynamoDbTable<FriendEntity> friendTable;
+
+    public void addNewUser(UserEntity userEntity) {
+        userTable.putItem(userEntity);
+    }
+
+    public void updateUser(UserEntity userEntity) {
+        userTable.updateItem(userEntity);
+    }
+
+    public void deleteUser(String userId) {
+        String pk = UserEntity.generatePK(userId);
+        Key key = Key.builder()
+                .partitionValue(pk)
+                .build();
+        userTable.deleteItem(key);
+
+        key = Key.builder()
+                .partitionValue(FriendEntity.generatePK(userId))
+                .build();
+        friendTable.deleteItem(key);
+    }
+
+    public void addFriend(FriendEntity friendEntity) {
+        friendTable.putItem(friendEntity);
+    }
+
+    public void removeFriend(FriendEntity friendEntity) {
+        friendTable.deleteItem(friendEntity);
+    }
+
+    public List<FriendEntity> getFriends(String userId) {
+        String pk = FriendEntity.generatePK(userId);
+        Key key = Key.builder()
+                .partitionValue(pk)
+                .build();
+
+        QueryEnhancedRequest queryRequest = QueryEnhancedRequest.builder()
+                .queryConditional(QueryConditional.keyEqualTo(key))
+                .build();
+
+        return friendTable.query(queryRequest)
+                .items()
+                .stream()
+                .toList();
+    }
+
+    public UserEntity getUser(String friendId) {
+        String pk = UserEntity.generatePK(friendId);
+        Key key = Key.builder()
+                .partitionValue(pk)
+                .build();
+
+        return userTable.getItem(key);
+    }
+}

@@ -6,6 +6,8 @@ public record PostDto(
         String content,
         String timestamp,
         Long likeCount,
-        Long commentCount
+        Long commentCount,
+        boolean isLiked,
+        boolean isPinned
 ) {
 }

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/.env bash
 
 echo "Waiting for the S3 bucket to exist..."
 

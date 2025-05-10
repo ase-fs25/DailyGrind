@@ -5,6 +5,8 @@ resource "aws_cognito_user_pool" "daily_grind_user_pool" {
   username_attributes = ["email"]
   auto_verified_attributes = ["email"]
 
+  mfa_configuration = "OFF"
+
   verification_message_template {
     default_email_option = "CONFIRM_WITH_CODE"
     email_subject        = "Your verification code"
