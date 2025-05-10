@@ -9,6 +9,7 @@ import { User, UserJob, UserEducation } from '../../types/user';
 import JobsSection from './JobsSection';
 import EducationSection from './EducationSection';
 import { updateUser, deleteUserJob, deleteUserEducation } from '../../helpers/userHelpers';
+import postsStore from '../../stores/postsStore';
 
 interface SettingsPopupProps {
   open: boolean;
@@ -102,6 +103,8 @@ const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
     try {
       await signOut();
       userStore.deleteUser();
+      postsStore.clearPosts();
+      postsStore.clearPinnedPosts();
       window.localStorage.clear();
       navigate('/');
     } catch (e) {

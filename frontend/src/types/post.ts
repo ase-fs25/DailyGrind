@@ -3,6 +3,10 @@ export interface Post {
   title: string;
   content: string;
   timestamp: string;
+  commentCount: number;
+  isLiked: boolean;
+  isPinned: boolean;
+  likeCount: number;
 }
 
 export interface Comment {

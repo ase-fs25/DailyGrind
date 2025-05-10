@@ -72,7 +72,7 @@ const FriendPopup = ({ open, onClose, user, posts, education, jobs }: FriendPopu
               </Box>
             ))
           ) : (
-            <Typography className="no-posts">No posts available.</Typography>
+            <Typography className="no-posts">No pinned posts available.</Typography>
           )}
         </Box>
       </DialogContent>
