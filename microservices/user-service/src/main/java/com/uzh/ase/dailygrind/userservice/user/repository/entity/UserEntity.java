@@ -17,6 +17,7 @@ public class UserEntity {
 
     @Getter(onMethod_ = {@DynamoDbPartitionKey, @DynamoDbAttribute("PK")})
     private String pk;
+
     @Getter(onMethod_ = {@DynamoDbSortKey, @DynamoDbAttribute("SK")})
     private String sk;
 
@@ -26,8 +27,7 @@ public class UserEntity {
     private String profilePictureUrl;
     private String birthday;
     private String location;
-    private int numFollowers;
-    private int numFollowing;
+    private int numFriends;
 
     public static String generatePK(String id) {
         return PK_PREFIX + "#" + id;
