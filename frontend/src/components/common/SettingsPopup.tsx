@@ -1,16 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  TextField,
-  IconButton,
-  Button,
-  Box,
-  Typography,
-  Tabs,
-  Tab,
-} from '@mui/material';
+import { Dialog, DialogTitle, TextField, IconButton, Button, Box, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useNavigate } from 'react-router-dom';
 import { signOut } from 'aws-amplify/auth';
@@ -26,31 +15,8 @@ interface SettingsPopupProps {
   onClose: () => void;
 }
 
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`settings-tabpanel-${index}`}
-      aria-labelledby={`settings-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box>{children}</Box>}
-    </div>
-  );
-}
-
 const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
   const navigate = useNavigate();
-  const [tabValue, setTabValue] = useState(0);
   const [user, setUser] = useState<User>(userStore.getUser());
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -58,7 +24,6 @@ const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
   const [education, setEducation] = useState<UserEducation[]>(userStore.getEducation());
 
   const handleUserChange = (field: keyof User, value: string) => {
-    // TODO Propably not enought as it needs to be set in the backend and the store as well
     setUser((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -109,10 +74,6 @@ const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
     }
   }, [open]);
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setTabValue(newValue);
-  };
-
   const handleSaveProfile = async () => {
     setLoading(true);
     setStatusMessage(null);
@@ -155,7 +116,6 @@ const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
       className="settings-popup"
       fullWidth
       maxWidth="md"
-      sx={{ '& .MuiDialog-paper': { height: '80vh', display: 'flex', flexDirection: 'column' } }}
       slotProps={{
         backdrop: {
           timeout: 600,
@@ -167,133 +127,110 @@ const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
       }}
     >
       <DialogTitle className="settings-header">
-        Settings
-        <IconButton onClick={onClose} className="close-button">
+        <div>Settings</div>
+        <IconButton onClick={onClose} className="settings-close-button">
           <CloseIcon />
         </IconButton>
       </DialogTitle>
 
-      <DialogContent dividers sx={{ p: 0, flexGrow: 1, overflowY: 'auto' }}>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs value={tabValue} onChange={handleTabChange} aria-label="settings tabs">
-            <Tab label="Personal Info" id="settings-tab-0" />
-            <Tab label="Work Experience" id="settings-tab-1" />
-            <Tab label="Education" id="settings-tab-2" />
-            <Tab label="Account" id="settings-tab-3" />
-          </Tabs>
+      <div className="settings-content">
+        <Box className="settings-field">
+          <TextField
+            label="First Name"
+            variant="outlined"
+            fullWidth
+            className="full-input"
+            value={user.firstName}
+            onChange={(e) => handleUserChange('firstName', e.target.value)}
+            margin="normal"
+          />
         </Box>
+        <Box className="settings-field">
+          <TextField
+            label="Last Name"
+            variant="outlined"
+            fullWidth
+            className="full-input"
+            value={user.lastName}
+            onChange={(e) => handleUserChange('lastName', e.target.value)}
+            margin="normal"
+          />
+        </Box>
+        <Box className="settings-field">
+          <TextField
+            label="Email"
+            variant="outlined"
+            fullWidth
+            className="full-input"
+            value={user.email}
+            onChange={(e) => handleUserChange('email', e.target.value)}
+            margin="normal"
+          />
+        </Box>
+        <Box className="settings-field">
+          <TextField
+            label="Birthday"
+            variant="outlined"
+            fullWidth
+            className="full-input"
+            value={user.birthday}
+            onChange={(e) => handleUserChange('birthday', e.target.value)}
+            margin="normal"
+          />
+        </Box>
+        <Box className="settings-field">
+          <TextField
+            label="Location"
+            variant="outlined"
+            fullWidth
+            className="full-input"
+            value={user.location}
+            onChange={(e) => handleUserChange('location', e.target.value)}
+            margin="normal"
+          />
+        </Box>
+        <Box sx={{ p: 2 }}>
+          <JobsSection jobs={jobs} onChange={setJobs} onDelete={handleDeleteJob} readOnly={false} />
+        </Box>
+        <Box sx={{ p: 2 }}>
+          <EducationSection
+            education={education}
+            onChange={setEducation}
+            onDelete={handleDeleteEducation}
+            readOnly={false}
+          />
+        </Box>
+      </div>
 
-        {/* Personal Info Tab */}
-        <TabPanel value={tabValue} index={0}>
-          <Box sx={{ p: 2 }}>
-            <Box className="settings-field">
-              <TextField
-                label="First Name"
-                variant="outlined"
-                fullWidth
-                className="full-input"
-                value={user.firstName}
-                onChange={(e) => handleUserChange('firstName', e.target.value)}
-                margin="normal"
-              />
-            </Box>
-            <Box className="settings-field">
-              <TextField
-                label="Last Name"
-                variant="outlined"
-                fullWidth
-                className="full-input"
-                value={user.lastName}
-                onChange={(e) => handleUserChange('lastName', e.target.value)}
-                margin="normal"
-              />
-            </Box>
-            <Box className="settings-field">
-              <TextField
-                label="Email"
-                variant="outlined"
-                fullWidth
-                className="full-input"
-                value={user.email}
-                onChange={(e) => handleUserChange('email', e.target.value)}
-                margin="normal"
-              />
-            </Box>
-            <Box className="settings-field">
-              <TextField
-                label="Birthday"
-                variant="outlined"
-                fullWidth
-                className="full-input"
-                value={user.birthday}
-                onChange={(e) => handleUserChange('birthday', e.target.value)}
-                margin="normal"
-              />
-            </Box>
-            <Box className="settings-field">
-              <TextField
-                label="Location"
-                variant="outlined"
-                fullWidth
-                className="full-input"
-                value={user.location}
-                onChange={(e) => handleUserChange('location', e.target.value)}
-                margin="normal"
-              />
-            </Box>
-          </Box>
-        </TabPanel>
-
-        {/* Work Experience Tab */}
-        <TabPanel value={tabValue} index={1}>
-          <Box sx={{ p: 2 }}>
-            <JobsSection jobs={jobs} onChange={setJobs} onDelete={handleDeleteJob} readOnly={false} />
-          </Box>
-        </TabPanel>
-
-        {/* Education Tab */}
-        <TabPanel value={tabValue} index={2}>
-          <Box sx={{ p: 2 }}>
-            <EducationSection
-              education={education}
-              onChange={setEducation}
-              onDelete={handleDeleteEducation}
-              readOnly={false}
-            />
-          </Box>
-        </TabPanel>
-
-        {/* Account Tab */}
-        <TabPanel value={tabValue} index={3}>
-          <Box sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Account Settings
-            </Typography>
-            <Button variant="contained" color="error" onClick={handleLogout} sx={{ mt: 2 }}>
-              Log Out
-            </Button>
-          </Box>
-        </TabPanel>
-
-        {statusMessage && (
-          <Box sx={{ p: 2, textAlign: 'center' }}>
-            <Typography color={statusMessage.includes('success') ? 'success.main' : 'error.main'}>
-              {statusMessage}
-            </Typography>
-          </Box>
-        )}
-      </DialogContent>
-
-      {tabValue !== 3 && (
-        <Box sx={{ p: 2, display: 'flex', justifyContent: 'flex-end' }}>
-          <Button onClick={onClose} sx={{ mr: 1 }}>
-            Cancel
-          </Button>
-          <Button variant="contained" onClick={handleSaveProfile} disabled={loading}>
-            {loading ? 'Saving...' : 'Save Changes'}
-          </Button>
+      {statusMessage && (
+        <Box sx={{ p: 2, textAlign: 'center' }}>
+          <Typography color={statusMessage.includes('success') ? 'success.main' : 'error.main'}>
+            {statusMessage}
+          </Typography>
         </Box>
       )}
+
+      <Box sx={{ display: 'flex', justifyContent: 'space-between' }} className="footer-container">
+        <Button variant="contained" color="error" onClick={handleLogout} sx={{ mr: 1 }}>
+          Log Out
+        </Button>
+        <div className="footer-buttons-right">
+          <Button onClick={onClose} sx={{ mr: 1, color: '#7b1fa2', '&:hover': { backgroundColor: '#f3e5f5' } }}>
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            onClick={handleSaveProfile}
+            disabled={loading}
+            sx={{
+              backgroundColor: '#7b1fa2',
+              '&:hover': { backgroundColor: '#9c27b0' },
+            }}
+          >
+            {loading ? 'Saving...' : 'Save Changes'}
+          </Button>
+        </div>
+      </Box>
     </Dialog>
   );
 };

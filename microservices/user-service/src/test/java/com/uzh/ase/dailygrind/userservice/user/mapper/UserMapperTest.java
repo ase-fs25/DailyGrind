@@ -8,7 +8,6 @@ import org.mapstruct.factory.Mappers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
 class UserMapperTest {
 
     private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
@@ -33,13 +32,32 @@ class UserMapperTest {
         // then
         assertThat(userEntity)
                 .isNotNull()
-                .extracting(UserEntity::getPk, UserEntity::getSk, UserEntity::getEmail, UserEntity::getFirstName, UserEntity::getLastName, UserEntity::getBirthday, UserEntity::getLocation, UserEntity::getProfilePictureUrl, UserEntity::getNumFollowers, UserEntity::getNumFollowing
+                .extracting(
+                        UserEntity::getPk,
+                        UserEntity::getSk,
+                        UserEntity::getEmail,
+                        UserEntity::getFirstName,
+                        UserEntity::getLastName,
+                        UserEntity::getBirthday,
+                        UserEntity::getLocation,
+                        UserEntity::getProfilePictureUrl,
+                        UserEntity::getNumFriends
                 )
-                .containsExactly("USER#12345", "INFO", "test@example.com", "John", "Doe", "1990-01-01", "New York", userCreateDto.profilePictureUrl(), 0, 0);
+                .containsExactly(
+                        "USER#12345",
+                        "INFO",
+                        "test@example.com",
+                        "John",
+                        "Doe",
+                        "1990-01-01",
+                        "New York",
+                        userCreateDto.profilePictureUrl(),
+                        0
+                );
     }
 
     @Test
-    void toUserInfoDto() {
+    void toUserInfoDto_shouldMapFieldsCorrectly() {
         // given
         UserEntity userEntity = UserEntity.builder()
                 .pk("USER#12345")
@@ -50,21 +68,39 @@ class UserMapperTest {
                 .profilePictureUrl("profile.jpg")
                 .birthday("1990-01-01")
                 .location("New York")
-                .numFollowers(10)
-                .numFollowing(5)
+                .numFriends(10)
                 .build();
-        boolean isFollowing = true;
+        boolean isFriend = true;
 
         // when
-        UserInfoDto userInfoDto = userMapper.toUserInfoDto(userEntity, isFollowing);
+        UserInfoDto dto = userMapper.toUserInfoDto(userEntity, isFriend);
 
         // then
-        assertThat(userInfoDto)
+        assertThat(dto)
                 .isNotNull()
-                .extracting(UserInfoDto::userId, UserInfoDto::email, UserInfoDto::firstName, UserInfoDto::lastName, UserInfoDto::birthday, UserInfoDto::location, UserInfoDto::profilePictureUrl, UserInfoDto::numFollowers, UserInfoDto::numFollowing, UserInfoDto::isFollowed)
+                .extracting(
+                        UserInfoDto::userId,
+                        UserInfoDto::email,
+                        UserInfoDto::firstName,
+                        UserInfoDto::lastName,
+                        UserInfoDto::birthday,
+                        UserInfoDto::location,
+                        UserInfoDto::profilePictureUrl,
+                        UserInfoDto::numberOfFriends,
+                        UserInfoDto::isFriend,
+                        UserInfoDto::requestId
+                )
                 .containsExactly(
-                        "12345", userEntity.getEmail(), userEntity.getFirstName(), userEntity.getLastName(), userEntity.getBirthday(), userEntity.getLocation(), userEntity.getProfilePictureUrl(), userEntity.getNumFollowers(), userEntity.getNumFollowing(), isFollowing
+                        "12345",
+                        userEntity.getEmail(),
+                        userEntity.getFirstName(),
+                        userEntity.getLastName(),
+                        userEntity.getBirthday(),
+                        userEntity.getLocation(),
+                        userEntity.getProfilePictureUrl(),
+                        userEntity.getNumFriends(),
+                        isFriend,
+                        null
                 );
-
     }
 }

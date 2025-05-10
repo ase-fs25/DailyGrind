@@ -1,8 +1,13 @@
 .settings-popup .MuiDialog-paper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
   width: 50%;
   max-width: 600px;
   padding: 20px;
-  background-color: #f3e5f5;
+  background-color: white;
+  overflow-y: auto;
+  height: 80vh;
 }
 
 .settings-header {
@@ -10,18 +15,32 @@
   justify-content: space-between;
   align-items: center;
   color: #9c27b0;
-  font-weight: bold;
-  margin-bottom: 0px;
+  height: 3vh;
+  margin: 0 0 8px 0 !important;
+  padding: 0 !important;
 }
 
-.close-button {
+.settings-close-button {
   color: #9c27b0 !important;
 }
 
 .settings-content {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  height: 100%;
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+.settings-content::-webkit-scrollbar {
+  background-color: transparent;
+}
+
+.settings-content::-webkit-scrollbar-thumb {
+  background-color: #f3e5f5;
+  border: 4px solid transparent;
+  border-radius: 9px;
+  background-clip: content-box;
 }
 
 .profile-section {
@@ -82,4 +101,15 @@
 .edit-buttons {
   display: flex;
   gap: 4px;
+}
+
+.footer-container {
+  padding-top: 20px;
+  height: 8vh;
+}
+
+.footer-buttons-right {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
 }

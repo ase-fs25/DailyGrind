@@ -1,7 +1,6 @@
-/* global navigator */
-import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Card } from '@mui/material';
 import { useEffect, useRef } from 'react';
+import { useNavigate } from "react-router";
 
 import Header from '../common/Header';
 import userStore from '../../stores/userStore';
@@ -73,6 +72,7 @@ const Feed = () => {
     }
   }, [navigate]);
 
+  console.log('Feed component rendered');
   const formatDate = (timestamp: string) => {
     const date = new Date(timestamp);
     return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1)

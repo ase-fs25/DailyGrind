@@ -1,22 +1,44 @@
 // TODO This should be avoided
-/* eslint-disable no-unused-vars */
-import { useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, Button, DialogActions, TextField } from '@mui/material';
+
+import { useEffect, useState } from 'react';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import { createPost } from '../../helpers/postHelper';
 import '../../styles/components/common/addPostPopup.css';
 import postStore from '../../stores/postsStore';
+import { inspireMeData } from '../../constants/inspireMe';
 
 interface AddPostPopupProps {
   open: boolean;
   onClose: () => void;
 }
 
+const crypto = window.crypto;
+
 const AddPostPopup = ({ open, onClose }: AddPostPopupProps) => {
   const [postTitle, setPostTitle] = useState('');
   const [postContent, setPostContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [placeholder, setPlaceholder] = useState('');
 
   const isFormValid = postTitle.trim().length > 0 && postContent.trim().length > 0;
+
+  useEffect(() => {
+    if (open) {
+      // Since Math.random() is a security hotspot we have to do it like this
+      const rand32 = new Uint32Array(1);
+      const maxUint32 = 0x100000000;
+      const threshold = maxUint32 - (maxUint32 % inspireMeData.length);
+      let val;
+      do {
+        crypto.getRandomValues(rand32);
+        val = rand32[0];
+      } while (val >= threshold);
+
+      const idx = val % inspireMeData.length;
+
+      setPlaceholder(inspireMeData[idx]);
+    }
+  }, [open]);
 
   const handleClose = () => {
     setPostTitle('');
@@ -59,25 +81,25 @@ const AddPostPopup = ({ open, onClose }: AddPostPopupProps) => {
         },
       }}
     >
-      <DialogTitle className="add-post-header">Add your daily Post</DialogTitle>
+      <DialogTitle className="add-post-header">What do you want to post today?</DialogTitle>
       <DialogContent className="add-post-content">
         <TextField
-          label="Post Title"
+          label="Add Title"
           variant="outlined"
           fullWidth
           value={postTitle}
           onChange={(e) => setPostTitle(e.target.value)}
-          className="post-title-field"
+          sx={{ marginTop: '8px' }}
         />
         <TextField
-          label="Post Content"
+          label="Add Content"
+          placeholder={placeholder}
           variant="outlined"
           fullWidth
           multiline
           rows={4}
           value={postContent}
           onChange={(e) => setPostContent(e.target.value)}
-          className="post-text-field"
         />
       </DialogContent>
       <DialogActions className="add-post-actions">

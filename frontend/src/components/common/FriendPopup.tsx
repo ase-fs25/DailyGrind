@@ -1,25 +1,38 @@
-import { Dialog, DialogTitle, DialogContent, IconButton, Box, Typography } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, IconButton, Box, Typography, Button } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { Post } from '../../types/post';
-import { User } from '../../types/user';
+import { UserProfile } from '../../helpers/friendsHelper';
+import { removeFriend } from '../../helpers/friendsHelper';
+import { UserJob, UserEducation } from '../../types/user';
+import JobsSection from './JobsSection';
+import EducationSection from './EducationSection';
 import '../../styles/components/common/friendPopup.css';
 
 interface FriendPopupProps {
   open: boolean;
   onClose: () => void;
-  user: User | null;
+  user: UserProfile | null;
   posts: Post[];
+  education: UserEducation[];
+  jobs: UserJob[];
 }
 
-const FriendPopup = ({ open, onClose, user, posts }: FriendPopupProps) => {
+const FriendPopup = ({ open, onClose, user, posts, education, jobs }: FriendPopupProps) => {
   if (!user) return null;
+
+  const handleRemoveFriend = async () => {
+    try {
+      await removeFriend(user.userId);
+      onClose();
+    } catch (error) {
+      console.error('Failed to remove friend:', error);
+    }
+  };
 
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      fullWidth
-      maxWidth="md"
       scroll="paper"
       slotProps={{
         backdrop: { className: 'popup-backdrop' },
@@ -27,47 +40,39 @@ const FriendPopup = ({ open, onClose, user, posts }: FriendPopupProps) => {
       }}
     >
       <DialogTitle className="popup-header">
-        {user.firstName + ' ' + user.lastName}
-        <IconButton onClick={onClose} className="close-button">
-          <CloseIcon />
-        </IconButton>
+        <Button className="remove-btn" onClick={handleRemoveFriend}>
+          Remove
+        </Button>
+        <Typography variant="h6" className="popup-title">
+          {user.firstName} {user.lastName}
+        </Typography>
+        <div className="profile-close-button-wrapper">
+          <IconButton onClick={onClose} className="profile-close-button">
+            <CloseIcon />
+          </IconButton>
+        </div>
       </DialogTitle>
 
       <DialogContent className="popup-content">
-        <Box className="friend-profile-section">
-          <Typography variant="h6" className="profile-name">
-            {user.firstName + ' ' + user.lastName}
-          </Typography>
-          <Typography variant="body1" className="profile-info">
-            Location: {user.location}
-          </Typography>
-          <Typography variant="body1" className="profile-info">
-            Education: TODO
-          </Typography>
-          <Typography variant="body1" className="profile-info">
-            Work Experience: TODO
-          </Typography>
-        </Box>
+        <Typography variant="h6" className="location">
+          Location: {user.location || 'N/A'}
+        </Typography>
 
-        <Box className="posts-section">
-          <Typography variant="h6" className="posts-heading">
-            Posts
-          </Typography>
+        <EducationSection education={education} onChange={() => {}} readOnly />
+
+        <JobsSection jobs={jobs} onChange={() => {}} readOnly />
+
+        <Box className="posts-heading">
+          <Typography variant="h6">Posts</Typography>
           {posts.length > 0 ? (
             posts.map((post) => (
-              <Box key={post.postId} className="post-item">
-                <Typography variant="subtitle1" className="post-title">
-                  {post.title}
-                </Typography>
-                <Typography variant="body2" className="post-content">
-                  {post.content}
-                </Typography>
+              <Box key={post.postId} className="post-box">
+                <Typography fontWeight="bold">{post.title}</Typography>
+                <Typography>{post.content}</Typography>
               </Box>
             ))
           ) : (
-            <Typography variant="body2" className="no-posts">
-              No posts available.
-            </Typography>
+            <Typography className="no-posts">No posts available.</Typography>
           )}
         </Box>
       </DialogContent>

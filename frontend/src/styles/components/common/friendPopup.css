@@ -4,98 +4,107 @@
 }
 
 .popup-dialog-paper {
-  max-height: 80vh;
+  width: 40%;
+  max-height: 90vh;
   display: flex;
   flex-direction: column;
-  background-color: #f8eaff;
+  background-color: white;
   border-radius: 12px;
 }
 
 .popup-header {
-  position: relative;
-  font-size: 1.5rem;
-  font-weight: 600;
-  padding: 16px 24px;
-  border-bottom: 1px solid #ddd;
-  background-color: #f3e5f5;
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  color: #9c27b0;
+  background-color: #9c27b0;
+  color: white;
+  width: 100%;
 }
 
-.close-button {
-  position: absolute;
-  top: 12px;
-  right: 16px;
-  color: #9c27b0;
+.popup-title {
+  display: flex;
+  justify-content: flex-end;
+  width: 30%;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.remove-btn {
+  width: 20%;
+  background-color: #f44336 !important;
+  color: white !important;
+  font-weight: bold;
+  text-transform: none;
+}
+
+.profile-close-button-wrapper {
+  display: flex;
+  justify-content: right;
+  width: 30%;
+}
+
+.profile-close-button {
+  color: white !important;
 }
 
 .popup-content {
   padding: 24px;
   overflow-y: auto;
-  flex-grow: 1;
-  background-color: #f8eaff;
+  background-color: white;
+  margin-top: 8px;
 }
 
-.friend-profile-section {
+.popup-content::-webkit-scrollbar {
+  background-color: transparent;
+}
+
+.popup-content::-webkit-scrollbar-thumb {
+  background-color: #f3e5f5;
+  border: 4px solid transparent;
+  border-radius: 9px;
+  background-clip: content-box;
+}
+
+.location {
+  padding-bottom: 16px;
+  word-break: break-word;
+}
+
+.section-labels {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  margin-bottom: 24px;
+  justify-content: space-between;
+  margin-bottom: 8px;
 }
 
-.profile-avatar-large {
-  width: 100px;
-  height: 100px;
-  margin-bottom: 12px;
-  border: 2px solid #9c27b0;
+.scrollable-sections {
+  display: flex;
+  gap: 16px;
 }
 
-.profile-name {
-  margin-bottom: 6px;
-  font-weight: bold;
+.education-scroll,
+.work-scroll {
+  flex: 1;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 8px;
 }
 
-.profile-info {
-  margin: 2px 0;
-  color: #444;
-}
-
-.posts-section {
-  margin-top: 16px;
+.section-box {
+  background-color: #d1aaff;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  font-family: monospace;
 }
 
 .posts-heading {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #333;
   margin-bottom: 12px;
 }
 
-.post-item {
-  background-color: #ffffff;
+.post-box {
+  margin-top: 16px;
   padding: 16px;
   border-radius: 8px;
-  margin-bottom: 12px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.post-title {
-  font-weight: bold;
-  margin-bottom: 6px;
-  font-size: 1.1rem;
-  color: #5e005e;
-}
-
-.post-content {
-  font-size: 0.95rem;
-  line-height: 1.5;
-  color: #444;
-}
-
-.no-posts {
-  font-size: 0.95rem;
-  color: #777;
+  background-color: #f0e6f6;
 }

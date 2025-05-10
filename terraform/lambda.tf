@@ -3,7 +3,7 @@ data "aws_iam_policy_document" "assume_role_lambda" {
     effect = "Allow"
 
     principals {
-      type        = "Service"
+      type = "Service"
       identifiers = ["lambda.amazonaws.com"]
     }
 
@@ -30,7 +30,3 @@ resource "aws_lambda_function" "confirm_user_lambda" {
   runtime          = "python3.8"
   source_code_hash = data.archive_file.lambda.output_base64sha256
 }
-
-
-
-

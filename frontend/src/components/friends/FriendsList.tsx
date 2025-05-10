@@ -1,43 +1,90 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Card, CardContent, Typography } from '@mui/material';
-import { mockProfiles } from '../../mockData/mockProfiles';
-import { mockPosts } from '../../mockData/mockPosts';
-import { User } from '../../types/user';
 import { Post } from '../../types/post';
 import FriendPopup from '../common/FriendPopup';
+import { fetchFriends, getEducationByUserId, getJobsByUserId, UserProfile } from '../../helpers/friendsHelper';
+import { getPostsByUserId } from '../../helpers/postHelper';
+import { UserEducation, UserJob } from '../../types/user';
 import '../../styles/components/friends/friendList.css';
 
 const FriendsList = () => {
-  const [selectedProfile, setSelectedProfile] = useState<User | null>(null);
+  const [friends, setFriends] = useState<UserProfile[]>([]);
+  const [selectedProfile, setSelectedProfile] = useState<UserProfile | null>(null);
+  const [userPosts, setUserPosts] = useState<Post[]>([]);
+  const [userJobs, setUserJobs] = useState<UserJob[]>([]);
+  const [userEducation, setUserEducation] = useState<UserEducation[]>([]);
   const [open, setOpen] = useState(false);
 
-  const handleOpen = (user: User) => {
+  useEffect(() => {
+    const loadFriends = async () => {
+      try {
+        const data = await fetchFriends();
+        setFriends(data);
+      } catch (error) {
+        console.error('Failed to fetch friends:', error);
+      }
+    };
+
+    loadFriends();
+  }, []);
+
+  const handleOpen = async (user: UserProfile) => {
     setSelectedProfile(user);
     setOpen(true);
+
+    try {
+      const [posts, jobs, education] = await Promise.all([
+        getPostsByUserId(user.userId),
+        getJobsByUserId(user.userId),
+        getEducationByUserId(user.userId),
+      ]);
+
+      setUserPosts(posts);
+      setUserJobs(jobs);
+      setUserEducation(education);
+    } catch (error) {
+      console.error(`Failed to load full profile for user ${user.userId}:`, error);
+      setUserPosts([]);
+      setUserJobs([]);
+      setUserEducation([]);
+    }
   };
 
   const handleClose = () => {
     setSelectedProfile(null);
+    setUserPosts([]);
+    setUserJobs([]);
+    setUserEducation([]);
     setOpen(false);
   };
 
-  const userPosts: Post[] = selectedProfile
-    ? mockPosts.filter((post) => post.postId === String(selectedProfile.userId)).slice(0, 2)
-    : [];
-
   return (
     <Box className="friends-list-container">
-      {mockProfiles.map((user) => (
+      {friends.length === 0 && (
+        <Typography variant="h6" className="friend-username">
+          Add some friends to see them here
+        </Typography>
+      )}
+      {friends.map((user) => (
         <Card key={user.userId} className="friend-card" onClick={() => handleOpen(user)}>
           <CardContent className="friend-card-content">
             <Typography variant="h6" className="friend-username">
-              {user.firstName + ' ' + user.lastName}
+              {user.firstName} {user.lastName}
             </Typography>
           </CardContent>
         </Card>
       ))}
 
-      <FriendPopup open={open} onClose={handleClose} user={selectedProfile} posts={userPosts} />
+      {selectedProfile && (
+        <FriendPopup
+          open={open}
+          onClose={handleClose}
+          user={selectedProfile}
+          posts={userPosts}
+          jobs={userJobs}
+          education={userEducation}
+        />
+      )}
     </Box>
   );
 };
