@@ -208,7 +208,7 @@
               </execution>
             </executions>
             <configuration>
-              <skipITs>true</skipITs>
+              <skip>true</skip>
               <skipTests>true</skipTests>  <!-- Skips tests if none exist -->
             </configuration>
           </plugin>
