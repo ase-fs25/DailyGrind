@@ -28,10 +28,10 @@ resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
 
 # Rule to trigger Lambda every day at 12:00 PM
 resource "aws_cloudwatch_event_rule" "daily_notification_trigger" {
-  name  = "DailyNotificationTrigger"
-  description = "Triggers push notification service daily at 12:00 PM"
-  #schedule_expression = "cron(0 12 * * ? *)" #for production
-  schedule_expression = "rate(1 minute)" #for testing
+  name                = "DailyNotificationTrigger"
+  description         = "Triggers push notification service daily at 12:00 PM"
+  schedule_expression = "cron(0 12 * * ? *)" #for production
+  #schedule_expression = "rate(1 minute)" #for testing
   state = "ENABLED"
 }
 

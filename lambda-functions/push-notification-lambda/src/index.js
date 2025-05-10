@@ -23,7 +23,6 @@ exports.handler = async (event, context) => {
                 };
             }
         } else {
-            // Handle direct payload
             payload = event;
         }
 
@@ -39,7 +38,6 @@ exports.handler = async (event, context) => {
 
         console.log('Sending notification to subscription:', JSON.stringify(subscription));
 
-        // Send the notification
         const result = await webpush.sendNotification(subscription, JSON.stringify(message));
         console.log('Notification sent successfully:', result);
 
