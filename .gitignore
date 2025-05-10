@@ -8,7 +8,6 @@ localstack-data/
 /terraform/.terraform.lock.hcl
 /terraform/terraform.tfstate
 /terraform/terraform.tfstate.backup
-/terraform/modules/ecs/
 terraform.tfvars
 /terraform/tf_outputs.json
 
