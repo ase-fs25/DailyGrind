@@ -28,21 +28,7 @@ public class DynamoDBConfig {
     @Value("${dg.us.aws.base-url}")
     private String awsBaseUrl;
 
-    @Value("${dg.us.aws.access-key}")
-    private String amazonAWSAccessKey;
-
-    @Value("${dg.us.aws.secret-key}")
-    private String amazonAWSSecretKey;
-
     private static final String TABLE_NAME = "users";
-
-    @Bean
-    @Profile("!test")
-    public AwsCredentialsProvider awsCredentialsProvider() {
-        return StaticCredentialsProvider.create(
-                AwsBasicCredentials.create(amazonAWSAccessKey, amazonAWSSecretKey)
-        );
-    }
 
     @Bean
     @Profile("!test")

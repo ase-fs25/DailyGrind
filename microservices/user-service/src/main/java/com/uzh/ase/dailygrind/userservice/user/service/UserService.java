@@ -5,6 +5,8 @@ import com.uzh.ase.dailygrind.userservice.user.mapper.UserMapper;
 import com.uzh.ase.dailygrind.userservice.user.repository.UserFriendRepository;
 import com.uzh.ase.dailygrind.userservice.user.repository.UserRepository;
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserEntity;
+import com.uzh.ase.dailygrind.userservice.user.sns.UserEventPublisher;
+import com.uzh.ase.dailygrind.userservice.user.sns.events.EventType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,9 @@ public class UserService {
     private final UserJobService userJobService;
     private final UserEducationService userEducationService;
     private final UserFriendRepository UserFriendRepository;
+
+
+    private final UserEventPublisher userEventPublisher;
 
     private final UserMapper userMapper;
 
@@ -69,12 +74,14 @@ public class UserService {
     public UserInfoDto createUser(UserCreateDto createUserDto, String userId) {
         UserEntity userEntity = userMapper.toUserEntity(createUserDto, userId);
         userRepository.saveUser(userEntity);
+        userEventPublisher.publishUserEvent(EventType.USER_CREATED, userMapper.toUserDataEvent(userEntity));
         return userMapper.toUserInfoDto(userEntity, false);
     }
 
     public UserInfoDto updateUser(UserCreateDto updateUserDto, String name) {
         UserEntity userEntity = userMapper.toUserEntity(updateUserDto, name);
         userRepository.updateUser(userEntity);
+        userEventPublisher.publishUserEvent(EventType.USER_UPDATED, userMapper.toUserDataEvent(userEntity));
         return userMapper.toUserInfoDto(userEntity, false);
     }
 
@@ -83,9 +90,17 @@ public class UserService {
         return userRepository.findAllUserEntities().stream()
             .filter(user -> user.getFirstName().toLowerCase().startsWith(name.toLowerCase())
                          || user.getLastName().toLowerCase().startsWith(name.toLowerCase()))
-            .map(user -> userMapper.toUserInfoDto(user, requesterId.equals(user.getPk()) ? false : true)) // or however you handle isFriend
+            .map(user -> userMapper.toUserInfoDto(user, !requesterId.equals(user.getPk())))
             .toList();
     }
-    
-    
+
+    public void deleteUser(String userId) {
+        UserEntity userEntity = userRepository.findUserById(userId);
+        if (userEntity != null) {
+            userRepository.deleteUser(userEntity);
+            userJobService.deleteJobsForUser(userId);
+            userEducationService.deleteEducationForUser(userId);
+            userEventPublisher.publishUserEvent(EventType.USER_DELETED, userMapper.toUserDataEvent(userEntity));
+        }
+    }
 }

@@ -13,6 +13,8 @@ dg:
         user-pool-id: ${AWS_COGNITO_USER_POOL_ID:us-east-1_de7d439c918046768a26c1934078dbec}
         issuer-uri: http://localstack:${dg.us.aws.port}/${dg.us.aws.cognito.user-pool-id}
         jwk-set-uri: http://localhost:${dg.us.aws.port}/${dg.us.aws.cognito.user-pool-id}/.well-known/jwks.json
+      sns:
+        topic-arn: ${AWS_SNS_TOPIC_ARN:arn:aws:sns:us-east-1:000000000000:user-events-topic}
 
 spring:
   application:

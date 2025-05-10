@@ -16,14 +16,13 @@ import java.util.UUID;
 @Builder
 public class PostEntity {
 
-    public static String TABLE_NAME = "posts";
-
     public static String PREFIX = "USER";
 
     public static String POSTFIX = "POST";
 
     @Getter(onMethod_ =  {@DynamoDbPartitionKey, @DynamoDbAttribute("PK")})
     private String pk;
+
     @Getter(onMethod_ =  {@DynamoDbSortKey, @DynamoDbAttribute("SK")})
     private String sk;
 

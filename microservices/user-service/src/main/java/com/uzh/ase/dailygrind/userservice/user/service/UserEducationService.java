@@ -38,4 +38,11 @@ public class UserEducationService {
     public void deleteUserEducation(String name, String educationId) {
         userEducationRepository.deleteUserEducation(name, educationId);
     }
+
+    public void deleteEducationForUser(String userId) {
+        List<UserEducationEntity> userEducationEntities = userEducationRepository.findAllUserEducations(userId);
+        for (UserEducationEntity userEducationEntity : userEducationEntities) {
+            userEducationRepository.deleteUserEducation(userId, userEducationEntity.getSk());
+        }
+    }
 }

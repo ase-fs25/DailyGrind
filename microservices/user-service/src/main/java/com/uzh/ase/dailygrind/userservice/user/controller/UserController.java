@@ -74,12 +74,20 @@ public class UserController {
         return ResponseEntity.ok(updatedUser);
     }
 
+    @Operation(summary = "Delete user", description = "Deletes the authenticated user.")
+    @ApiResponse(responseCode = "204", description = "User deleted successfully")
+    @DeleteMapping("/me")
+    public ResponseEntity<Void> deleteUser(Principal principal) {
+        userService.deleteUser(principal.getName());
+        return ResponseEntity.noContent().build();
+    }
+
     @Operation(summary = "Search users by name", description = "Search for users whose first name starts with the given term.")
-@ApiResponse(responseCode = "200", description = "Users retrieved successfully",
+    @ApiResponse(responseCode = "200", description = "Users retrieved successfully",
     content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserInfoDto[].class)))
-    @GetMapping("/search")
-public List<UserInfoDto> searchUsers(@RequestParam String name, Principal principal) {
-    return userService.searchUsersByName(name, principal.getName());
-}
+    @GetMapping("/users/search")
+    public List<UserInfoDto> searchUsers(@RequestParam String name, Principal principal) {
+        return userService.searchUsersByName(name, principal.getName());
+    }
 
 }
