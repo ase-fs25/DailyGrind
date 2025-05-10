@@ -8,7 +8,7 @@ COPY pom.xml ./
 RUN mvn dependency:go-offline
 
 # Copy the source code and build the application
-COPY src/ ./src
+COPY src ./src
 RUN mvn package -DskipTests
 
 # Stage 2: Run the application
@@ -17,6 +17,9 @@ WORKDIR /app
 
 # Copy the built JAR from the previous stage
 COPY --from=builder /app/target/*.jar app.jar
+
+# Set the PORT environment variable
+ENV PORT=8080
 
 # Expose the port Spring Boot runs on
 EXPOSE 8080

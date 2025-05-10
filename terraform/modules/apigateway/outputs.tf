@@ -3,5 +3,5 @@ output "http_api_id" {
 }
 
 output "api_url" {
-  value = "http://${aws_apigatewayv2_api.http_api.api_endpoint}/$default/"
+  value = "${aws_apigatewayv2_api.http_api.api_endpoint}/$default/"
 }

@@ -3,9 +3,9 @@ import react from '@vitejs/plugin-react';
 import viteTsconfigPaths from 'vite-tsconfig-paths';
 import eslint from 'vite-plugin-eslint';
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   // depending on your application, base can also be "/"
-  base: '/',
+  base: mode === 'production' ? '/dailygrind/' : '/',
   plugins: [react(), viteTsconfigPaths(), eslint()],
   build: {
     rollupOptions: {
@@ -26,4 +26,4 @@ export default defineConfig({
     port: 3000,
     allowedHosts: ['frontend'],
   },
-});
+}));

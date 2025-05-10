@@ -37,23 +37,22 @@ services:
     working_dir: /terraform
     networks:
       - localstack_network
-    volumes:
-      - ./terraform:/terraform
-      - ./lambda-functions:/lambda-functions
-      - ./microservices:/microservices
-      - ./frontend:/frontend
     environment:
-      - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
       - AWS_DEFAULT_REGION=us-east-1
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
       - LOCALSTACK_HOSTNAME=localstack
       - EDGE_PORT=4566
       - S3_HOSTNAME=localstack
-    entrypoint: [ "/bin/sh", "/terraform/init-terraform.sh" ]
     depends_on:
       - localstack
-    restart: "no"  # Only run once
+    volumes:
+      - ./terraform:/terraform
+      - ./lambda-functions:/lambda-functions
+      - ./microservices:/microservices
+      - ./frontend:/frontend
+    entrypoint: [ "/bin/sh", "/terraform/init-terraform.sh" ]
+    restart: "no"
 
   mailhog:
     image: mailhog/mailhog
@@ -66,19 +65,22 @@ services:
       - "8025:8025"
       - "1025:1025"
 
-  deploy-frontend:
+  deploy:
     build:
-      context: ./frontend
+      context: .
       dockerfile: deploy.Dockerfile
-    container_name: deploy-frontend
-    profiles: [ prod2 ]
+    container_name: deploy
+    profiles: [ deploy, prod ]
     networks:
       - localstack_network
-    depends_on:
-      - terraform
     environment:
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
       - AWS_REGION=us-east-1
       - BUCKET_NAME=dailygrind
-    restart: "no"  # Only run once
+    depends_on:
+      - localstack
+    volumes:
+      - ./microservices:/microservices
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: "no"
