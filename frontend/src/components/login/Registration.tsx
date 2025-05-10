@@ -11,6 +11,7 @@ import EducationSection from '../common/EducationSection';
 import { registerUser } from '../../helpers/loginHelpers';
 
 import '../../styles/components/login/registration.css';
+import { getUserEmail } from '../../helpers/authHelper';
 
 const Registration = () => {
   const navigate = useNavigate();
@@ -23,6 +24,13 @@ const Registration = () => {
   const [education, setEducation] = useState<UserEducation[]>([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const test = async () => {
+    const userEmail = await getUserEmail();
+    setEmail(userEmail);
+  };
+
+  test();
 
   const handleRegister = async () => {
     if (!firstName || !lastName || !email || !location || !birthday) {
@@ -55,80 +63,82 @@ const Registration = () => {
   return (
     <Box className="registration-container">
       <Paper elevation={6} className="registration-paper">
-        <Typography variant="h5" textAlign="center" gutterBottom>
-          Complete your Profile
-        </Typography>
-        <TextField
-          label="First Name"
-          variant="outlined"
-          fullWidth
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
-          className="registration-input"
-          margin="normal"
-        />
-        <TextField
-          label="Last Name"
-          variant="outlined"
-          fullWidth
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
-          className="registration-input"
-          margin="normal"
-        />
-        <TextField
-          label="Email"
-          type="email"
-          variant="outlined"
-          fullWidth
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="registration-input"
-          margin="normal"
-        />
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DatePicker
-            label="Birthday"
-            value={birthday}
-            onChange={(newValue) => setBirthday(newValue)}
-            slotProps={{
-              textField: {
-                fullWidth: true,
-                margin: 'normal',
-                className: 'registration-input',
-              },
-            }}
-          />
-        </LocalizationProvider>
-        <TextField
-          label="Location"
-          variant="outlined"
-          fullWidth
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          className="registration-input"
-          margin="normal"
-        />
-
-        <Divider sx={{ my: 3 }} />
-        <JobsSection jobs={jobs} onChange={setJobs} registration />
-
-        <Divider sx={{ my: 3 }} />
-        <EducationSection education={education} onChange={setEducation} registration />
-
-        {error && (
-          <Typography className="error-text" color="error" textAlign="center">
-            Something went wrong during registration. Please try again.
+        <div className="registration-content">
+          <Typography variant="h5" textAlign="center" gutterBottom>
+            Complete your Profile
           </Typography>
-        )}
+          <TextField
+            label="First Name"
+            variant="outlined"
+            fullWidth
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            className="registration-input"
+            margin="normal"
+          />
+          <TextField
+            label="Last Name"
+            variant="outlined"
+            fullWidth
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            className="registration-input"
+            margin="normal"
+          />
+          <TextField
+            label="Email"
+            type="email"
+            variant="outlined"
+            fullWidth
+            value={email}
+            className="registration-input"
+            margin="normal"
+            disabled
+          />
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              label="Birthday"
+              value={birthday}
+              onChange={(newValue) => setBirthday(newValue)}
+              slotProps={{
+                textField: {
+                  fullWidth: true,
+                  margin: 'normal',
+                  className: 'registration-input',
+                },
+              }}
+            />
+          </LocalizationProvider>
+          <TextField
+            label="Location"
+            variant="outlined"
+            fullWidth
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            className="registration-input"
+            margin="normal"
+          />
 
-        <Box mt={3}>
+          <Divider sx={{ margin: '8px 0' }} />
+          <JobsSection jobs={jobs} onChange={setJobs} registration />
+
+          <Divider sx={{ my: 1 }} />
+          <EducationSection education={education} onChange={setEducation} registration />
+        </div>
+
+        {error && <div className="error-text">Something went wrong during registration. Please try again.</div>}
+
+        <Box mt={1} className="registration-button">
           <Button
             variant="contained"
             color="primary"
             fullWidth
             disabled={loading || !firstName || !lastName || !email || !location || !birthday}
             onClick={handleRegister}
+            sx={{
+              backgroundColor: '#7b1fa2',
+              '&:hover': { backgroundColor: '#9c27b0' },
+            }}
           >
             {loading ? 'Registering...' : 'Complete Registration'}
           </Button>
