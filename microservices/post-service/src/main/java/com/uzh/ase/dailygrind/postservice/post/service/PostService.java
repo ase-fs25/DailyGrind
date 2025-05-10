@@ -38,6 +38,7 @@ public class PostService {
 
     public PostDto addIsLikedAndIsPinnedToPostDto(PostEntity postEntity, String userId) {
         List<String> pinnedPostIds = pinnedPostRepository.findPinnedPostIdsForUser(userId);
+        if (postEntity == null) return null;
         return postMapper.toPostDto(
             postEntity,
             postRepository.findAllUsersWhoLikedPost(postEntity.getPostId()).contains(userId),
@@ -46,7 +47,6 @@ public class PostService {
 
     public List<PostDto> getPostsForUser(String userId) {
         List<PostEntity> postEntities = postRepository.findAllPostsForUser(userId);
-        List<String> pinnedPostIds = pinnedPostRepository.findPinnedPostIdsForUser(userId);
         return postEntities.stream()
             .map(postEntity -> addIsLikedAndIsPinnedToPostDto(postEntity, userId))
             .toList();
@@ -64,6 +64,7 @@ public class PostService {
     }
 
     public void deletePost(String postId, String userId) {
+        unpinPost(postId, userId);
         postRepository.deletePostById(postId, userId);
         postRepository.deleteLikesForPost(postId);
         dailyPostRepository.deleteDailyPostById(postId, userId);
