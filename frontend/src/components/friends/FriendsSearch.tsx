@@ -65,14 +65,18 @@ const FriendsSearch = () => {
     }
   };
 
-  console.log(profiles)
+  function getFriendButtonLabel(user: UserProfile) {
+    if (user.isAlreadyFriend) return 'Already a Friend';
+    if (user.hasPendingRequest) return 'Request Sent';
+    return 'Add Friend';
+  }
 
   return (
     <Box className="search-container">
       <TextField
         label="Search People"
         variant="outlined"
-        color='secondary'
+        color="secondary"
         value={searchTerm}
         onChange={handleSearchChange}
         className="search-input"
@@ -103,11 +107,7 @@ const FriendsSearch = () => {
                   disabled={user.hasPendingRequest || user.isAlreadyFriend}
                   onClick={() => handleSendFriendRequest(user.userId)}
                 >
-                  {user.isAlreadyFriend
-                    ? 'Already a Friend'
-                    : user.hasPendingRequest
-                      ? 'Request Sent'
-                      : 'Add Friend'}
+                  {getFriendButtonLabel(user)}{' '}
                 </Button>
               </Box>
             ))
