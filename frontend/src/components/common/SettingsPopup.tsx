@@ -127,8 +127,8 @@ const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
       }}
     >
       <DialogTitle className="settings-header">
-        Settings
-        <IconButton onClick={onClose} className="close-button">
+        <div>Settings</div>
+        <IconButton onClick={onClose} className="settings-close-button">
           <CloseIcon />
         </IconButton>
       </DialogTitle>

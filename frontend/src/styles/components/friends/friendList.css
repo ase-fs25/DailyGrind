@@ -1,14 +1,20 @@
 .friends-list-container {
+  display: flex;
+  justify-content: center;
+  position: relative;
   margin-top: 16px;
+  width: 50%;
 }
 
 .friend-card {
   display: flex;
   align-items: center;
-  width: 100%;
-  max-width: 600px;
+  justify-content: center;
+  text-align: center;
+  width: 100% !important;
+  height: auto;
   margin-bottom: 16px;
-  padding: 8px;
+  padding-bottom: 0;
   box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2);
   cursor: pointer;
 }
