@@ -4,6 +4,7 @@
 }
 
 .popup-dialog-paper {
+  width: 40%;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
@@ -13,28 +14,37 @@
 
 .popup-header {
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
   background-color: #9c27b0;
   color: white;
-  padding: 16px 24px;
-  position: relative;
+  width: 100%;
 }
 
 .popup-title {
-  margin: 0 auto;
+  display: flex;
+  justify-content: flex-end;
+  width: 30%;
   font-size: 1.25rem;
   font-weight: bold;
 }
 
 .remove-btn {
+  width: 20%;
   background-color: #f44336 !important;
   color: white !important;
   font-weight: bold;
   text-transform: none;
 }
 
-.close-button {
+.profile-close-button-wrapper {
+  display: flex;
+  justify-content: right;
+  width: 30%;
+}
+
+.profile-close-button {
   color: white !important;
 }
 
@@ -42,32 +52,24 @@
   padding: 24px;
   overflow-y: auto;
   background-color: white;
+  margin-top: 8px;
 }
 
-.popup-body {
-  display: flex;
-  gap: 32px;
-  flex-wrap: nowrap;
+.popup-content::-webkit-scrollbar {
+  background-color: transparent;
 }
 
-.left-column {
-  flex: 2;
-  display: flex;
-  flex-direction: column;
-}
-
-.right-column {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+.popup-content::-webkit-scrollbar-thumb {
+  background-color: #f3e5f5;
+  border: 4px solid transparent;
+  border-radius: 9px;
+  background-clip: content-box;
 }
 
 .location {
-  margin-bottom: 16px;
-  max-width: 60%;
+  padding-bottom: 16px;
   word-break: break-word;
 }
-
 
 .section-labels {
   display: flex;

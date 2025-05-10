@@ -33,8 +33,6 @@ const FriendPopup = ({ open, onClose, user, posts, education, jobs }: FriendPopu
     <Dialog
       open={open}
       onClose={onClose}
-      fullWidth
-      maxWidth="md"
       scroll="paper"
       slotProps={{
         backdrop: { className: 'popup-backdrop' },
@@ -43,18 +41,20 @@ const FriendPopup = ({ open, onClose, user, posts, education, jobs }: FriendPopu
     >
       <DialogTitle className="popup-header">
         <Button className="remove-btn" onClick={handleRemoveFriend}>
-          Remove Friend
+          Remove
         </Button>
         <Typography variant="h6" className="popup-title">
           {user.firstName} {user.lastName}
         </Typography>
-        <IconButton onClick={onClose} className="close-button">
-          <CloseIcon />
-        </IconButton>
+        <div className="profile-close-button-wrapper">
+          <IconButton onClick={onClose} className="profile-close-button">
+            <CloseIcon />
+          </IconButton>
+        </div>
       </DialogTitle>
 
       <DialogContent className="popup-content">
-        <Typography variant="subtitle1" className="location">
+        <Typography variant="h6" className="location">
           Location: {user.location || 'N/A'}
         </Typography>
 

@@ -60,6 +60,11 @@ const FriendsList = () => {
 
   return (
     <Box className="friends-list-container">
+      {friends.length === 0 && (
+        <Typography variant="h6" className="friend-username">
+          Add some friends to see them here
+        </Typography>
+      )}
       {friends.map((user) => (
         <Card key={user.userId} className="friend-card" onClick={() => handleOpen(user)}>
           <CardContent className="friend-card-content">

@@ -14,10 +14,6 @@
   margin-bottom: 0px;
 }
 
-.close-button {
-  color: #9c27b0 !important;
-}
-
 .add-post-content {
   display: flex;
   flex-direction: column;

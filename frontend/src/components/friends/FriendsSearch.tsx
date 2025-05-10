@@ -65,11 +65,14 @@ const FriendsSearch = () => {
     }
   };
 
+  console.log(profiles)
+
   return (
     <Box className="search-container">
       <TextField
         label="Search People"
         variant="outlined"
+        color='secondary'
         value={searchTerm}
         onChange={handleSearchChange}
         className="search-input"
@@ -94,7 +97,7 @@ const FriendsSearch = () => {
                   {user.firstName} {user.lastName}
                 </Typography>
                 <Button
-                  variant="outlined"
+                  variant="contained"
                   color="secondary"
                   size="small"
                   disabled={user.hasPendingRequest || user.isAlreadyFriend}
@@ -103,7 +106,7 @@ const FriendsSearch = () => {
                   {user.isAlreadyFriend
                     ? 'Already a Friend'
                     : user.hasPendingRequest
-                      ? 'Friend Request Sent'
+                      ? 'Request Sent'
                       : 'Add Friend'}
                 </Button>
               </Box>
