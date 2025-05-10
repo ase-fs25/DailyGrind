@@ -21,7 +21,7 @@ VITE_VAPID_PUBLIC_KEY=BGNKMIqVDc7udZPZ8manv9UF7uzQtCaYJvzEEe7rr6zor3HPkFuPTN5q1c
 EOF
 
 cat <<EOF > /microservices/.env
-AWS_COGNITO_USER_POOL_ID=$APP_CLIENT_ID
+AWS_COGNITO_USER_POOL_ID=$USER_POOL_ID
 EOF
 
 echo ".env files written successfully."
