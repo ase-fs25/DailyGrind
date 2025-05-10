@@ -17,7 +17,7 @@ import java.util.List;
 public class UserFriendService {
 
     private final UserFriendRepository userFriendRepository;
-    private final UserService userService; 
+    private final UserService userService;
     // --- Friend Request actions ---
 
 public void sendFriendRequest(String senderId, String receiverId) {
@@ -26,7 +26,7 @@ public void sendFriendRequest(String senderId, String receiverId) {
     }
     userFriendRepository.createFriendRequest(senderId, receiverId);
 }
-    
+
 
   public void acceptFriendRequest(String requestId, String receiverId) {
     // Step 1: mark the original request as accepted
@@ -64,7 +64,7 @@ public void sendFriendRequest(String senderId, String receiverId) {
     }
     public List<UserInfoDto> getIncomingFriendRequests(String userId) {
         List<FriendRequestEntity> requests = userFriendRepository.findIncomingRequests(userId);
-    
+
         return requests.stream()
             .map(req -> {
                 UserInfoDto sender = userService.getUserInfo(req.getSenderId(), userId);
@@ -78,13 +78,11 @@ public void sendFriendRequest(String senderId, String receiverId) {
                     sender.numberOfFriends(),
                     sender.profilePictureUrl(),
                     sender.isFriend(),
-                    req.getSk() 
+                    req.getSk()
                 );
             })
             .toList();
     }
-    
-    
 
     public List<UserInfoDto> getOutgoingFriendRequests(String userId) {
         List<String> outgoingIds = userFriendRepository.findOutgoingRequests(userId);

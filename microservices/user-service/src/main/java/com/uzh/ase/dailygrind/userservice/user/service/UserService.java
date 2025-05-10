@@ -90,7 +90,7 @@ public class UserService {
         return userRepository.findAllUserEntities().stream()
             .filter(user -> user.getFirstName().toLowerCase().startsWith(name.toLowerCase())
                          || user.getLastName().toLowerCase().startsWith(name.toLowerCase()))
-            .map(user -> userMapper.toUserInfoDto(user, requesterId.equals(user.getPk()) ? false : true)) // or however you handle isFriend
+            .map(user -> userMapper.toUserInfoDto(user, !requesterId.equals(user.getPk())))
             .toList();
     }
 

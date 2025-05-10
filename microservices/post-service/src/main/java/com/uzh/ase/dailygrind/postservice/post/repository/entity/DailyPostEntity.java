@@ -1,14 +1,8 @@
 package com.uzh.ase.dailygrind.postservice.post.repository.entity;
 
+import com.uzh.ase.dailygrind.postservice.post.util.TimeToLiveHelper;
 import lombok.*;
-import org.springframework.beans.factory.annotation.Value;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.*;
-
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
 
 @DynamoDbBean
 @Getter
@@ -30,25 +24,10 @@ public class DailyPostEntity {
 
     private long ttl;
 
-    public DailyPostEntity(String userId, String postId, boolean ttlMinutes) {
+    public DailyPostEntity(String userId, String postId) {
         this.pk = generatePK(userId);
         this.sk = generateSK(postId);
-        System.out.println(ttlMinutes);
-        if (ttlMinutes) {
-            this.ttl = Instant.now()
-                .plus(Duration.ofMinutes(1))
-                .getEpochSecond();
-        } else {
-            // Tomorrow 1pm
-            // Tomorrow 1 PM UTC
-            this.ttl = LocalDateTime.now(ZoneOffset.UTC)
-                .plusDays(1)
-                .withHour(13)
-                .withMinute(0)
-                .withSecond(0)
-                .withNano(0)
-                .toEpochSecond(ZoneOffset.UTC);
-        }
+        this.ttl = TimeToLiveHelper.getTimeToLive();
     }
 
     public static String generatePK(String userId) {
@@ -59,7 +38,11 @@ public class DailyPostEntity {
         return SK_PREFIX + "#" + postId;
     }
 
-    public String getId() {
+    public String getUserId() {
+        return pk.split("#")[1];
+    }
+
+    public String getPostId() {
         return sk.split("#")[1];
     }
 

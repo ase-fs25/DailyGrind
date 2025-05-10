@@ -1,20 +1,21 @@
 package com.uzh.ase.dailygrind.postservice.post.mapper;
 
-import com.uzh.ase.dailygrind.postservice.post.controller.dto.CommentDto;
 import com.uzh.ase.dailygrind.postservice.post.controller.dto.PostDto;
-import com.uzh.ase.dailygrind.postservice.post.repository.entity.CommentEntity;
-import com.uzh.ase.dailygrind.postservice.post.repository.entity.DailyPostEntity;
 import com.uzh.ase.dailygrind.postservice.post.repository.entity.LikeEntity;
 import com.uzh.ase.dailygrind.postservice.post.repository.entity.PostEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Named;
-
-import java.util.UUID;
 
 @Mapper(componentModel = "spring")
 public interface PostMapper {
 
+    /**
+     * Maps a PostDto to a PostEntity.
+     *
+     * @param userId the user ID
+     * @param postDto the PostDto to map
+     * @return the mapped PostEntity
+     */
     @Mapping(target = "pk", expression = "java(PostEntity.generatePK(userId))")
     @Mapping(target = "sk", expression = "java(PostEntity.generateSK(postDto.postId()))")
     @Mapping(target = "postTitle", source = "postDto.title")
@@ -24,25 +25,31 @@ public interface PostMapper {
     @Mapping(target = "commentCount", expression = "java(postDto.commentCount() == null ? 0 : postDto.commentCount())")
     PostEntity toPostEntity(String userId, PostDto postDto);
 
-    @Mapping(target = "pk", expression = "java(CommentEntity.generatePK(userId, postId))")
-    @Mapping(target = "sk", expression = "java(CommentEntity.generateSK(commentDto.commentId()))")
-    @Mapping(target = "commentContent", source = "commentDto.content")
-    @Mapping(target = "commentTimestamp", source = "commentDto.timestamp")
-    CommentEntity toCommentEntity(String userId, String postId, CommentDto commentDto);
-
+    /**
+     * Maps a LikeEntity to a PostDto.
+     *
+     * @param postId the post ID
+     * @param userId the user ID
+     * @return the mapped LikeEntity
+     */
     @Mapping(target = "pk", expression = "java(LikeEntity.generatePK(postId))")
     @Mapping(target = "sk", expression = "java(LikeEntity.generateSK(userId))")
     LikeEntity toLikeEntity(String postId, String userId);
 
+    /**
+     * Maps a PostEntity to a PostDto.
+     *
+     * @param postEntity the PostEntity to map
+     * @return the mapped PostDto
+     */
     @Mapping(target = "postId", expression = "java(postEntity.getPostId())")
     @Mapping(target = "title", source = "postEntity.postTitle")
     @Mapping(target = "content", source = "postEntity.postContent")
     @Mapping(target = "timestamp", source = "postEntity.postTimestamp")
-    PostDto toPostDto(PostEntity postEntity);
-
-    @Mapping(target = "commentId", expression = "java(commentEntity.getCommentId())")
-    @Mapping(target = "content", source = "commentEntity.commentContent")
-    @Mapping(target = "timestamp", source = "commentEntity.commentTimestamp")
-    CommentDto toCommentDto(CommentEntity commentEntity);
+    @Mapping(target = "likeCount", source = "postEntity.likeCount")
+    @Mapping(target = "commentCount", source = "postEntity.commentCount")
+    @Mapping(target = "isLiked", source = "isLiked")
+    @Mapping(target = "isPinned", source = "isPinned")
+    PostDto toPostDto(PostEntity postEntity, boolean isLiked, boolean isPinned);
 
 }
