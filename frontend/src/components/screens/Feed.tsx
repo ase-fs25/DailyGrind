@@ -8,7 +8,6 @@ import '../../styles/components/screens/screen.css';
 import '../../styles/components/screens/feed.css';
 
 const Feed = () => {
-  console.log('Feed component rendered');
   const formatDate = (timestamp: string) => {
     const date = new Date(timestamp);
     return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1)
