@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 @TestPropertySource(properties = {
     "dg.lambda.function-name=test-lambda-function"
 })
-public class PushNotificationServiceIT {
+public class PushNotificationServiceIntegrationTest {
 
     @Autowired
     private PushNotificationService pushNotificationService;

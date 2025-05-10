@@ -23,7 +23,7 @@ import static org.testcontainers.containers.localstack.LocalStackContainer.Servi
 
 @SpringBootTest
 @Testcontainers
-public class PushSubscriptionRepositoryIT {
+public class PushSubscriptionRepositoryIntegrationTest {
 
     @Container
     static LocalStackContainer localStack = new LocalStackContainer(DockerImageName.parse("localstack/localstack:latest"))
