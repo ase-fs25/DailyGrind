@@ -4,7 +4,7 @@ echo "Generating ECS task definitions..."
 
 set -e
 
-BASE_DIR="./modules/ecs"
+BASE_DIR="/terraform/modules/ecs"
 MAIN_TF="$BASE_DIR/main.tf"
 OUTPUTS_TF="$BASE_DIR/outputs.tf"
 VARIABLES_TF="$BASE_DIR/variables.tf"

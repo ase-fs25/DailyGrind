@@ -4,7 +4,7 @@
 cd /lambda-functions/push-notification-lambda/src && npm i > /dev/null 2>&1
 
 # generate terraform files for ECS
-/bin/sh /terraform/generate-ecs.sh
+cd /terraform && /bin/sh /terraform/generate-ecs.sh
 
 # Run Terraform
 cd /terraform || exit 1
