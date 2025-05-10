@@ -46,9 +46,6 @@ const FriendsRequests = () => {
 
   return (
     <Box className="requests-container">
-      <Typography variant="h6" className="requests-title">
-        Friend Requests
-      </Typography>
       <Box className="requests-list">
         {requests.map((request) => (
           <Box key={request.requestId} className="request-item">

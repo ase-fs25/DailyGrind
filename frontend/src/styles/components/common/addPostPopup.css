@@ -14,22 +14,10 @@
   margin-bottom: 0px;
 }
 
-.close-button {
-  color: #9c27b0 !important;
-}
-
 .add-post-content {
   display: flex;
   flex-direction: column;
   gap: 20px;
-}
-
-.post-title-field {
-  margin-top: 16px;
-}
-
-.post-text-field {
-  margin-top: 16px;
 }
 
 .add-post-actions {

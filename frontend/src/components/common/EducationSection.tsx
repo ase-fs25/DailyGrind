@@ -5,7 +5,6 @@ import {
   Box,
   Button,
   Typography,
-  Paper,
   IconButton,
   Dialog,
   DialogTitle,
@@ -19,6 +18,7 @@ import EditIcon from '@mui/icons-material/Edit';
 
 import { UserEducation } from '../../types/user';
 import { addUserEducation, updateUserEducation } from '../../helpers/userHelpers';
+import '../../styles/components/common/educationSection.css';
 
 interface EducationSectionProps {
   education: UserEducation[];
@@ -96,7 +96,12 @@ const EducationSection = ({ education, onChange, onDelete, readOnly = false, reg
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Typography variant="h6">Education</Typography>
         {!readOnly && (
-          <Button startIcon={<AddIcon />} variant="outlined" onClick={openNewEducationDialog}>
+          <Button
+            startIcon={<AddIcon />}
+            variant="outlined"
+            onClick={openNewEducationDialog}
+            sx={{ background: '#f3e5f5', borderColor: 'black', color: 'black' }}
+          >
             Add Education
           </Button>
         )}
@@ -107,32 +112,34 @@ const EducationSection = ({ education, onChange, onDelete, readOnly = false, reg
           No education history added yet.
         </Typography>
       ) : (
-        education.map((edu) => (
-          <Paper key={edu.educationId} elevation={1} sx={{ p: 2, mb: 2, position: 'relative' }}>
-            {!readOnly && (
-              <Box sx={{ position: 'absolute', top: 5, right: 5 }}>
-                <IconButton size="small" onClick={() => openEditEducationDialog(edu)} sx={{ mr: 1 }}>
-                  <EditIcon fontSize="small" />
-                </IconButton>
-                <IconButton size="small" onClick={() => deleteEducation(edu.educationId)}>
-                  <DeleteIcon fontSize="small" />
-                </IconButton>
-              </Box>
-            )}
-            <Typography variant="subtitle1">
-              {edu.degree} in {edu.fieldOfStudy}
-            </Typography>
-            <Typography variant="body2">
-              {edu.institution}, {edu.educationLocation}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {edu.educationStartDate} - {edu.educationEndDate || 'Present'}
-            </Typography>
-            <Typography variant="body2" sx={{ mt: 1 }}>
-              {edu.educationDescription}
-            </Typography>
-          </Paper>
-        ))
+        <div className="education-list">
+          {education.map((edu) => (
+            <div key={edu.educationId} className="single-education">
+              {!readOnly && (
+                <Box sx={{ position: 'absolute', top: 5, right: 5 }}>
+                  <IconButton size="small" onClick={() => openEditEducationDialog(edu)} sx={{ mr: 1 }}>
+                    <EditIcon fontSize="small" />
+                  </IconButton>
+                  <IconButton size="small" onClick={() => deleteEducation(edu.educationId)}>
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </Box>
+              )}
+              <Typography variant="subtitle1">
+                {edu.degree} in {edu.fieldOfStudy}
+              </Typography>
+              <Typography variant="body2">
+                {edu.institution}, {edu.educationLocation}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {edu.educationStartDate} - {edu.educationEndDate || 'Present'}
+              </Typography>
+              <Typography variant="body2" sx={{ mt: 1 }}>
+                {edu.educationDescription}
+              </Typography>
+            </div>
+          ))}
+        </div>
       )}
 
       {/* Education Dialog */}
