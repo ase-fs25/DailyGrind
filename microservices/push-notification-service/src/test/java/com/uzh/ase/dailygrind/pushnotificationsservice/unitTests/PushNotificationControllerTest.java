@@ -1,4 +1,4 @@
-package com.uzh.ase.dailygrind.pushnotificationsservice.controller;
+package com.uzh.ase.dailygrind.pushnotificationsservice.unitTests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uzh.ase.dailygrind.pushnotificationsservice.pushNotification.controller.PushNotificationController;

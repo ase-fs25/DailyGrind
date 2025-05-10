@@ -4,7 +4,6 @@ package com.uzh.ase.dailygrind.pushnotificationsservice.pushNotification.control
 import com.uzh.ase.dailygrind.pushnotificationsservice.pushNotification.controller.dto.SubscriptionDto;
 import com.uzh.ase.dailygrind.pushnotificationsservice.pushNotification.repository.entity.PushSubscription;
 import com.uzh.ase.dailygrind.pushnotificationsservice.pushNotification.service.PushNotificationService;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,5 +37,23 @@ public class PushNotificationController {
     public ResponseEntity<Void> sendNotification(@RequestBody String message) {
         pushNotificationService.sendNotification(message);
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @Operation(summary = "Delete a push notification subscription", description = "Removes a user's push notification subscription by ID")
+    @ApiResponse(responseCode = "204", description = "Subscription successfully deleted", content = @Content)
+    @DeleteMapping("/{subscriptionId}")
+    public ResponseEntity<Void> deleteSubscription(@PathVariable String subscriptionId) {
+        pushNotificationService.deleteSubscription(subscriptionId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Get a subscription by ID", description = "Retrieves details of a specific push notification subscription")
+    @ApiResponse(responseCode = "200", description = "Subscription found",
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = PushSubscription.class)))
+    @GetMapping("/{subscriptionId}")
+    public ResponseEntity<PushSubscription> getSubscription(@PathVariable String subscriptionId) {
+        return pushNotificationService.getSubscriptionById(subscriptionId)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
     }
 }

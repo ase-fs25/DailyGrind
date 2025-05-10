@@ -16,6 +16,7 @@ import software.amazon.awssdk.services.lambda.model.InvokeResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -77,6 +78,14 @@ public void sendNotification(String message) {
             log.error("Error sending notification for user: {}",subscription.getUserId(), e);
             }
         }
+    }
+
+    public void deleteSubscription(String subscriptionId) {
+        pushSubscriptionRepository.deleteById(subscriptionId);
+    }
+
+    public Optional<PushSubscription> getSubscriptionById(String subscriptionId) {
+        return pushSubscriptionRepository.findById(subscriptionId);
     }
 
     private void invokeNotificationLambda(String payload) {

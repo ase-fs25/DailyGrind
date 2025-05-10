@@ -1,4 +1,4 @@
-package com.uzh.ase.dailygrind.pushnotificationsservice.service;
+package com.uzh.ase.dailygrind.pushnotificationsservice.unitTests;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -125,12 +125,14 @@ class PushNotificationServiceTest {
 
     @Test
     void sendNotificationHandlesEmptySubscriptionList() {
+        // When
         when(pushSubscriptionRepository.findAll()).thenReturn(Collections.emptyList());
 
         Exception exception = assertThrows(RuntimeException.class, () -> {
             pushNotificationService.sendNotification("Test message");
         });
 
+        // Then
         assertEquals("No subscriptions found", exception.getMessage());
         verify(lambdaClient, never()).invoke(any(InvokeRequest.class));
     }

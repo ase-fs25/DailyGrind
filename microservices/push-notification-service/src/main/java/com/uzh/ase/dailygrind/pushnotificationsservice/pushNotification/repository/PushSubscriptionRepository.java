@@ -4,8 +4,10 @@ import com.uzh.ase.dailygrind.pushnotificationsservice.pushNotification.reposito
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.Key;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -19,8 +21,20 @@ public class PushSubscriptionRepository {
         return subscription;
     }
 
-
     public List<PushSubscription> findAll() {
         return pushSubscriptionTable.scan().items().stream().toList();
+    }
+
+    public Optional<PushSubscription> findById(String subscriptionId) {
+        PushSubscription subscription = pushSubscriptionTable.getItem(
+            Key.builder().partitionValue(subscriptionId).build()
+        );
+        return Optional.ofNullable(subscription);
+    }
+
+    public void deleteById(String subscriptionId) {
+        pushSubscriptionTable.deleteItem(
+            Key.builder().partitionValue(subscriptionId).build()
+        );
     }
 }
