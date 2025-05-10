@@ -109,10 +109,14 @@ export async function userHasPostedAlready(): Promise<boolean> {
         Authorization: `Bearer ${authToken}`,
       },
     });
-    console.log(response);
+
     if (response.ok) {
-      const data = await response.json();
-      return !!data && !!data.postId;
+      try {
+        const data = await response.json();
+        return !!data && !!data.postId;
+      } catch (error) {
+        console.error('User has not posted yet!', error);
+      }
     }
 
     return false;

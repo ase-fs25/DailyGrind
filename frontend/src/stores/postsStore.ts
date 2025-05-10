@@ -54,6 +54,10 @@ class PostsStore {
   removePinnedPost(postId: string) {
     this.pinnedPosts = this.pinnedPosts.filter((pinnedPosts) => pinnedPosts.postId !== postId);
   }
+
+  clearPinnedPosts(): void {
+    this.pinnedPosts = [];
+  }
 }
 
 const postsStore = new PostsStore();

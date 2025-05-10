@@ -13,7 +13,7 @@ import { Post } from '../../types/post';
 const Posts = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [personalPosts, setPersonalPosts] = useState<Post[]>([]);
+  const [personalPosts, setPersonalPosts] = useState<Post[]>(postsStore.getPosts());
   const [pinnedPosts, setPinnedPosts] = useState<Post[]>([]);
 
   useEffect(() => {
@@ -23,7 +23,7 @@ const Posts = () => {
       fetchPosts();
       fetchPinnedPosts();
     }
-  }, [personalPosts, pinnedPosts]);
+  }, []);
 
   const fetchPosts = async () => {
     try {
@@ -45,13 +45,16 @@ const Posts = () => {
     }
   };
 
-  // Something is not working here
   const handleDelete = async (postId: string) => {
     try {
       await deletePost(postId);
-      postsStore.removePost(postId);
-      setPersonalPosts((posts) => posts.filter((p) => p.postId !== postId));
-      const isPinned = pinnedPosts.some(pinnedPost => pinnedPost.postId === postId);
+
+      const isPersonal = personalPosts.some((pinnedPost) => pinnedPost.postId === postId);
+      if (isPersonal) {
+        postsStore.removePost(postId);
+        setPersonalPosts((posts) => posts.filter((p) => p.postId !== postId));
+      }
+      const isPinned = pinnedPosts.some((pinnedPost) => pinnedPost.postId === postId);
       if (isPinned) {
         postsStore.removePinnedPost(postId);
         setPinnedPosts((posts) => posts.filter((p) => p.postId !== postId));
@@ -83,21 +86,25 @@ const Posts = () => {
   };
 
   const handlePinPost = async (post: Post) => {
+    const updatedPost = { ...post, isPinned: true };
     try {
       await pinPost(post.postId);
-      postsStore.addPinnedPost(post);
-      setPinnedPosts((pinned) => [...pinned, post]);
+      postsStore.addPinnedPost(updatedPost);
+      postsStore.updatePost(post.postId, updatedPost);
+      setPinnedPosts((pinned) => [...pinned, updatedPost]);
     } catch (err) {
       console.error('Error unpinning post:', err);
       setError('Failed to unpin post. Please try again later.');
     }
   };
 
-  const handleUnpinPost = async (postId: string) => {
+  const handleUnpinPost = async (pinnedPost: Post) => {
+    const updatedPost = { ...pinnedPost, isPinned: false };
     try {
-      await unpinPost(postId);
-      postsStore.removePinnedPost(postId);
-      setPinnedPosts((posts) => posts.filter((p) => p.postId !== postId));
+      await unpinPost(pinnedPost.postId);
+      postsStore.removePinnedPost(pinnedPost.postId);
+      postsStore.updatePost(pinnedPost.postId, updatedPost);
+      setPinnedPosts((posts) => posts.filter((p) => p.postId !== pinnedPost.postId));
     } catch (err) {
       console.error('Error pinning post:', err);
       setError('Failed to pin post. Please try again later.');
@@ -148,14 +155,21 @@ const Posts = () => {
                     </Typography>
                   </Card>
                   <div className="pin-icon-wrapper">
-                    <IconButton edge="end" onClick={() => handleUnpinPost(pinnedPost.postId)} aria-label="delete" color="secondary">
+                    <IconButton
+                      edge="end"
+                      onClick={() => handleUnpinPost(pinnedPost)}
+                      aria-label="delete"
+                      color="secondary"
+                    >
                       <TurnedInIcon />
                     </IconButton>
                   </div>
                 </Box>
               ))}
             </Box>
-            {postsStore.getPinnedPosts().length > 0 && <Divider sx={{marginTop: '16px', marginBottom: '10px', bgcolor: "secondary.light"}}/>}
+            {postsStore.getPinnedPosts().length > 0 && (
+              <Divider sx={{ marginTop: '16px', marginBottom: '10px', bgcolor: 'secondary.light' }} />
+            )}
             <Box className="post-grid">
               <div>All posts:</div>
               {postsStore.getPosts().map((post) => (
@@ -185,19 +199,26 @@ const Posts = () => {
                     </IconButton>
                   </div>
                   <div className="pin-icon-wrapper">
-                    {/* Todo Add if else depending if post is pinned or not */}
-                    <IconButton
-                      edge="end"
-                      onClick={() => handlePinPost(post)}
-                      aria-label="delete"
-                      sx={{ width: '36px', height: '36px' }}
-                      color="secondary"
-                    >
-                      <TurnedInNotIcon />
-                    </IconButton>
-                    {/* <IconButton edge="end" onClick={() => handleUnpinPost(post.postId)} aria-label="delete">
+                    {post.isPinned ? (
+                      <IconButton
+                        edge="end"
+                        onClick={() => handleUnpinPost(post)}
+                        aria-label="delete"
+                        color="secondary"
+                      >
                         <TurnedInIcon />
-                      </IconButton> */}
+                      </IconButton>
+                    ) : (
+                      <IconButton
+                        edge="end"
+                        onClick={() => handlePinPost(post)}
+                        aria-label="delete"
+                        sx={{ width: '36px', height: '36px' }}
+                        color="secondary"
+                      >
+                        <TurnedInNotIcon />
+                      </IconButton>
+                    )}
                   </div>
                 </Box>
               ))}
