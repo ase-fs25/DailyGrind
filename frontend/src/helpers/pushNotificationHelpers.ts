@@ -1,4 +1,4 @@
-import { getAuthToken} from './authHelper';
+import { getAuthToken } from './authHelper';
 
 export const requestNotificationPermission = async (): Promise<string> => {
   try {

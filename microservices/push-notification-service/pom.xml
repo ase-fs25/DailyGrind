@@ -177,12 +177,20 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>3.5.3</version>
+      </plugin>
     </plugins>
   </build>
 
   <profiles>
     <profile>
       <id>integration-tests</id>
+      <activation>
+        <activeByDefault>false</activeByDefault> <!-- Only runs when explicitly activated -->
+      </activation>
       <build>
         <plugins>
           <plugin>
@@ -192,12 +200,16 @@
             <executions>
               <execution>
                 <id>integration-test</id>
+                <phase>integration-test</phase>
                 <goals>
                   <goal>integration-test</goal>
                   <goal>verify</goal>
                 </goals>
               </execution>
             </executions>
+            <configuration>
+              <skipTests>${skipIntegrationTests}</skipTests>  <!-- Skips tests if none exist -->
+            </configuration>
           </plugin>
         </plugins>
       </build>

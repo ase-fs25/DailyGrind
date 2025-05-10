@@ -6,7 +6,7 @@ import Header from '../common/Header';
 import userStore from '../../stores/userStore';
 import { loginUser } from '../../helpers/loginHelpers';
 import { getAuthToken } from '../../helpers/authHelper';
-import { requestNotificationPermission, subscribeUserToPush} from "../../helpers/pushNotificationHelpers";
+import { requestNotificationPermission, subscribeUserToPush } from '../../helpers/pushNotificationHelpers';
 
 import { mockPosts } from '../../mockData/mockPosts';
 
@@ -37,8 +37,7 @@ const Feed = () => {
           }
           return null;
         })
-        .then(() => {
-        })
+        .then(() => {})
         .catch((error) => console.error('Service worker or notification error:', error));
     }
   }, []);
