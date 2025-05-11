@@ -46,10 +46,10 @@ public class UserFriendService {
         userFriendRepository.deleteFriendship(userId, friendId);
     }
 
-    public List<UserInfoDto> getFriends(String userId) {
+    public List<UserInfoDto> getFriends(String userId, String requestingUserId) {
         List<String> friendIds = userFriendRepository.findFriends(userId);
         return friendIds.stream()
-                .map(id -> userService.getUserInfo(id, userId))
+                .map(id -> userService.getUserInfo(id, requestingUserId))
                 .toList();
     }
 
