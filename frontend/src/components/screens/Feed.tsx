@@ -1,12 +1,11 @@
 import { Box, Typography, Card } from '@mui/material';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Header from '../common/Header';
 import userStore from '../../stores/userStore';
 import { loginUser } from '../../helpers/loginHelpers';
 import { getAuthToken } from '../../helpers/authHelper';
-import { requestNotificationPermission, subscribeUserToPush } from '../../helpers/pushNotificationHelpers';
 
 import { mockPosts } from '../../mockData/mockPosts';
 
@@ -15,34 +14,6 @@ import '../../styles/components/screens/feed.css';
 
 const Feed = () => {
   const navigate = useNavigate();
-  const initialized = useRef(false);
-
-  // TODO This makes the screen flashing again
-  useEffect(() => {
-    if (initialized.current) return;
-    initialized.current = true;
-
-    console.log('Service Worker Registration');
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register('/service-worker.js')
-        .then(() => {
-          if (Notification.permission !== 'denied') {
-            return requestNotificationPermission();
-          }
-          return null;
-        })
-        .then((permission) => {
-          console.log('Permission result: ', permission);
-          if (permission === 'granted') {
-            return subscribeUserToPush();
-          }
-          return null;
-        })
-        .then(() => {})
-        .catch((error) => console.error('Service worker or notification error:', error));
-    }
-  }, []);
 
   useEffect(() => {
     if (userStore.getUser().userId === '') {

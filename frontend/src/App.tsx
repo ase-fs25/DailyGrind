@@ -12,6 +12,7 @@ import Registration from './components/login/Registration';
 import { useEffect, useState } from 'react';
 import { loginUser } from './helpers/loginHelpers';
 import { getAuthToken } from './helpers/authHelper';
+import { registerUserForSubscription } from './helpers/pushNotificationHelpers';
 
 Amplify.configure({
   Auth: {
@@ -61,6 +62,8 @@ function AppContent() {
 
           if (userInfo.ok && authToken) {
             const userInfoRaw = await userInfo.text();
+
+            await registerUserForSubscription();
 
             if (userInfoRaw) {
               loginUser(userInfoRaw, authToken);

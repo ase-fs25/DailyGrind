@@ -1,4 +1,5 @@
-import postsStore from '../stores/postsStore';
+/* import postsStore from '../stores/postsStore';
+ */
 import userStore from '../stores/userStore';
 import { UserEducation, UserJob } from '../types/user';
 import { getAuthToken } from './authHelper';
@@ -131,5 +132,4 @@ export async function loginUser(userInfoRaw: string, authToken: string) {
       postsStore.setFeedPosts(userFeedData);
     }
   } */
-
 }
