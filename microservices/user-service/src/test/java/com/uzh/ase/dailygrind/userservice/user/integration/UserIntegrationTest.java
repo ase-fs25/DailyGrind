@@ -13,7 +13,6 @@ import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserJobEntity;
 import com.uzh.ase.dailygrind.userservice.user.sns.UserEventPublisher;
 import com.uzh.ase.dailygrind.userservice.user.sns.events.EventType;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
