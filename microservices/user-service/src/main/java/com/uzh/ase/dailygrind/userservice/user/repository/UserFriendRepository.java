@@ -1,6 +1,6 @@
 package com.uzh.ase.dailygrind.userservice.user.repository;
 
-import com.uzh.ase.dailygrind.userservice.user.repository.entity.FriendRequestEntity;
+import com.uzh.ase.dailygrind.userservice.user.repository.entity.FriendshipEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
@@ -8,183 +8,159 @@ import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 
 import java.util.List;
-import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
 public class UserFriendRepository {
 
-    private final DynamoDbTable<FriendRequestEntity> friendRequestTable;
+    private final DynamoDbTable<FriendshipEntity> friendRequestTable;
 
     public boolean isFriend(String userId, String otherUserId) {
-        List<String> userFriends = findFriends(userId);
-        return userFriends.contains(otherUserId);
+        if (userId.equals(otherUserId)) return false;
+        Key key = Key.builder()
+                .partitionValue(FriendshipEntity.generatePK(userId))
+                .sortValue(FriendshipEntity.generateSK(otherUserId))
+                .build();
+
+        FriendshipEntity friendRequest = friendRequestTable.getItem(key);
+        return friendRequest != null && friendRequest.isFriendshipAccepted();
     }
+
     public List<String> findAllFriends(String userId) {
         QueryConditional query = QueryConditional.keyEqualTo(
-            Key.builder().partitionValue("FRIEND_REQUEST#" + userId).build()
+            Key.builder().partitionValue(FriendshipEntity.generatePK(userId)).build()
         );
-    
+
         return friendRequestTable.query(r -> r.queryConditional(query))
                 .items()
                 .stream()
-                .filter(item -> "ACCEPTED".equals(item.getStatus()))
-                .map(FriendRequestEntity::getReceiverId)
+                .filter(FriendshipEntity::isFriendshipAccepted)
+                .map(FriendshipEntity::getFriendId)
                 .distinct()
                 .toList();
     }
-    
-    
 
-    // --- Create friend request ---
     public void createFriendRequest(String senderId, String receiverId) {
-        FriendRequestEntity request = FriendRequestEntity.builder()
-                .pk("FRIEND_REQUEST#" + receiverId)
-                .sk(UUID.randomUUID().toString())
-                .senderId(senderId)
-                .receiverId(receiverId)
-                .status("PENDING")
+        FriendshipEntity incomingRequest = FriendshipEntity.builder()
+            .pk(FriendshipEntity.generatePK(receiverId))
+            .sk(FriendshipEntity.generateSK(senderId))
+            .friendshipAccepted(false)
+            .incoming(true)
+            .build();
+        friendRequestTable.putItem(incomingRequest);
+
+        FriendshipEntity outgoingRequest = FriendshipEntity.builder()
+                .pk(FriendshipEntity.generatePK(senderId))
+                .sk(FriendshipEntity.generateSK(receiverId))
+                .friendshipAccepted(false)
+                .incoming(false)
                 .build();
-        friendRequestTable.putItem(request);
+        friendRequestTable.putItem(outgoingRequest);
     }
 
-    // --- Accept friend request ---
-    public void acceptFriendRequest(String requestId, String receiverId) {
-        FriendRequestEntity request = friendRequestTable.getItem(
-                Key.builder().partitionValue("FRIEND_REQUEST#" + receiverId).sortValue(requestId).build()
+    public void acceptFriendRequest(String requestingUserId, String senderId) {
+        FriendshipEntity incomingRequest = friendRequestTable.getItem(
+                Key.builder()
+                    .partitionValue(FriendshipEntity.generatePK(requestingUserId))
+                    .sortValue(FriendshipEntity.generateSK(senderId))
+                    .build()
         );
-        if (request != null && request.getStatus().equals("PENDING")) {
-            request.setStatus("ACCEPTED");
-            friendRequestTable.putItem(request);
+        if (incomingRequest != null && !incomingRequest.isFriendshipAccepted()) {
+            incomingRequest.setFriendshipAccepted(true);
+            friendRequestTable.putItem(incomingRequest);
         }
-    }
 
-    // --- Decline friend request ---
-    public void declineFriendRequest(String requestId, String receiverId) {
-        FriendRequestEntity request = friendRequestTable.getItem(
-                Key.builder().partitionValue("FRIEND_REQUEST#" + receiverId).sortValue(requestId).build()
+        FriendshipEntity outgoingRequest = friendRequestTable.getItem(
+                Key.builder()
+                    .partitionValue(FriendshipEntity.generatePK(senderId))
+                    .sortValue(FriendshipEntity.generateSK(requestingUserId))
+                    .build()
         );
-        if (request != null && request.getStatus().equals("PENDING")) {
-            request.setStatus("DECLINED");
-            friendRequestTable.putItem(request);
+        if (outgoingRequest != null && !outgoingRequest.isFriendshipAccepted()) {
+            outgoingRequest.setFriendshipAccepted(true);
+            friendRequestTable.putItem(outgoingRequest);
         }
+
     }
 
-    // --- Cancel outgoing friend request ---
-    public void cancelFriendRequest(String requestId, String senderId) {
-        // Here you would need to delete if you want, or mark as CANCELLED
-        FriendRequestEntity request = friendRequestTable.getItem(
-                Key.builder().partitionValue("FRIEND_REQUEST#" + senderId).sortValue(requestId).build()
-        );
-        if (request != null) {
-            request.setStatus("CANCELLED");
-            friendRequestTable.putItem(request);
-        }
-    }
-
-    // --- List incoming friend requests ---
-    public List<FriendRequestEntity> findIncomingRequests(String receiverId) {
-        QueryConditional query = QueryConditional.keyEqualTo(
-                Key.builder().partitionValue("FRIEND_REQUEST#" + receiverId).build()
-        );
-    
-        return friendRequestTable.query(r -> r.queryConditional(query))
-                .items()
-                .stream()
-                .filter(item -> "PENDING".equals(item.getStatus()))
-                .distinct()
-                .toList();  
-    }
-    
-
-    // --- List outgoing friend requests ---
-    public List<String> findOutgoingRequests(String senderId) {
-       
-        throw new UnsupportedOperationException("Outgoing requests require GSI or custom design");
-    }
-
-    // --- List friends ---
-    public List<String> findFriends(String userId) {
-        QueryConditional query = QueryConditional.keyEqualTo(
-                Key.builder().partitionValue("FRIEND_REQUEST#" + userId).build()
-        );
-
-        return friendRequestTable.query(r -> r.queryConditional(query))
-                .items()
-                .stream()
-                .filter(item -> "ACCEPTED".equals(item.getStatus()))
-                .map(FriendRequestEntity::getSenderId)
-                .distinct()
-                .toList();
-    }
-
-    public void removeFriend(String userId, String friendId) {
-        
-        QueryConditional queryUser = QueryConditional.keyEqualTo(
-            Key.builder().partitionValue("FRIEND_REQUEST#" + userId).build()
-        );
-    
-        friendRequestTable.query(r -> r.queryConditional(queryUser))
-            .items()
-            .stream()
-            .filter(item -> "ACCEPTED".equals(item.getStatus()) && friendId.equals(item.getSenderId()))
-            .forEach(item -> friendRequestTable.deleteItem(item));
-    
-        QueryConditional queryFriend = QueryConditional.keyEqualTo(
-            Key.builder().partitionValue("FRIEND_REQUEST#" + friendId).build()
-        );
-    
-        friendRequestTable.query(r -> r.queryConditional(queryFriend))
-            .items()
-            .stream()
-            .filter(item -> "ACCEPTED".equals(item.getStatus()) && userId.equals(item.getSenderId()))
-            .forEach(item -> friendRequestTable.deleteItem(item));
-    }
-    
-    
-    
-    public void addFriendship(String userIdA, String userIdB) {
-        FriendRequestEntity aToB = FriendRequestEntity.builder()
-                .pk("FRIEND_REQUEST#" + userIdA)
-                .sk(UUID.randomUUID().toString())
-                .senderId(userIdB)
-                .receiverId(userIdA)
-                .status("ACCEPTED")
-                .build();
-    
-        FriendRequestEntity bToA = FriendRequestEntity.builder()
-                .pk("FRIEND_REQUEST#" + userIdB)
-                .sk(UUID.randomUUID().toString())
-                .senderId(userIdA)
-                .receiverId(userIdB)
-                .status("ACCEPTED")
-                .build();
-    
-        friendRequestTable.putItem(aToB);
-        friendRequestTable.putItem(bToA);
-    }
-    public FriendRequestEntity getRequestById(String requestId, String receiverId) {
-        return friendRequestTable.getItem(
+    public void deleteFriendship(String userId, String friendId) {
+        FriendshipEntity incomingRequest = friendRequestTable.getItem(
             Key.builder()
-                .partitionValue("FRIEND_REQUEST#" + receiverId)
-                .sortValue(requestId)
+                .partitionValue(FriendshipEntity.generatePK(userId))
+                .sortValue(FriendshipEntity.generateSK(friendId))
                 .build()
         );
+
+        if (incomingRequest != null) {
+            friendRequestTable.deleteItem(incomingRequest);
+        }
+
+        FriendshipEntity outgoingRequest = friendRequestTable.getItem(
+            Key.builder()
+                .partitionValue(FriendshipEntity.generatePK(friendId))
+                .sortValue(FriendshipEntity.generateSK(userId))
+                .build()
+        );
+
+        if (outgoingRequest != null) {
+            friendRequestTable.deleteItem(outgoingRequest);
+        }
+
+    }
+
+    public List<String> findUserIdsOfIncomingRequests(String userId) {
+        QueryConditional query = QueryConditional.keyEqualTo(
+            Key.builder().partitionValue(FriendshipEntity.generatePK(userId)).build()
+        );
+
+        return friendRequestTable.query(r -> r.queryConditional(query))
+                .items()
+                .stream()
+                .filter(FriendshipEntity::isIncoming)
+                .filter(item -> !item.isFriendshipAccepted())
+                .map(FriendshipEntity::getSenderId)
+                .distinct()
+                .toList();
+    }
+
+    public List<String> findUserIdsOfOutgoingRequests(String userId) {
+        QueryConditional query = QueryConditional.keyEqualTo(
+            Key.builder().partitionValue(FriendshipEntity.generatePK(userId)).build()
+        );
+
+        return friendRequestTable.query(r -> r.queryConditional(query))
+                .items()
+                .stream()
+                .filter(item -> !item.isIncoming())
+                .filter(item -> !item.isFriendshipAccepted())
+                .map(FriendshipEntity::getReceiverId)
+                .distinct()
+                .toList();
+    }
+
+    public List<String> findFriends(String userId) {
+        QueryConditional query = QueryConditional.keyEqualTo(
+            Key.builder().partitionValue(FriendshipEntity.generatePK(userId)).build()
+        );
+
+        return friendRequestTable.query(r -> r.queryConditional(query))
+                .items()
+                .stream()
+                .filter(FriendshipEntity::isFriendshipAccepted)
+                .map(FriendshipEntity::getFriendId)
+                .distinct()
+                .toList();
     }
 
     public boolean existsPendingRequest(String senderId, String receiverId) {
-        QueryConditional query = QueryConditional.keyEqualTo(
-            Key.builder().partitionValue("FRIEND_REQUEST#" + receiverId).build()
+        FriendshipEntity request = friendRequestTable.getItem(
+                Key.builder()
+                        .partitionValue(FriendshipEntity.generatePK(senderId))
+                        .sortValue(FriendshipEntity.generateSK(receiverId))
+                        .build()
         );
-    
-        return friendRequestTable.query(r -> r.queryConditional(query))
-                .items()
-                .stream()
-                .anyMatch(item ->
-                    "PENDING".equals(item.getStatus()) && senderId.equals(item.getSenderId())
-                );
+
+        return request != null && !request.isFriendshipAccepted();
     }
-    
-    
-    
+
 }

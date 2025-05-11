@@ -2,6 +2,7 @@ package com.uzh.ase.dailygrind.userservice.user.sns;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uzh.ase.dailygrind.userservice.user.sns.events.EventType;
+import com.uzh.ase.dailygrind.userservice.user.sns.events.FriendshipEvent;
 import com.uzh.ase.dailygrind.userservice.user.sns.events.UserDataEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,6 +40,26 @@ public class UserEventPublisher {
             );
         } catch (Exception e) {
             throw new RuntimeException("Failed to convert UserDataEvent to JSON", e);
+        }
+    }
+
+    public void publishFriendshipEvent(EventType eventType, FriendshipEvent friendshipEvent) {
+        Map<String, MessageAttributeValue> messageAttributes = Map.of(
+            "eventType", MessageAttributeValue.builder()
+                .dataType("String")
+                .stringValue(eventType.getEventType())
+                .build()
+        );
+
+        try {
+            String json = objectMapper.writeValueAsString(friendshipEvent);
+            snsClient.publish(publishRequest -> publishRequest
+                .topicArn(topicArn)
+                .message(json)
+                .messageAttributes(messageAttributes)
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to convert FriendshipEvent to JSON", e);
         }
     }
 

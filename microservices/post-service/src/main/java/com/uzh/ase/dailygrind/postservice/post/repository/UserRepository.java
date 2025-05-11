@@ -65,10 +65,10 @@ public class UserRepository {
     }
 
     public UserEntity getUser(String friendId) {
-        String pk = UserEntity.generatePK(friendId);
         Key key = Key.builder()
-                .partitionValue(pk)
-                .build();
+            .partitionValue(UserEntity.generatePK(friendId))
+            .sortValue(UserEntity.generateSK())
+            .build();
 
         return userTable.getItem(key);
     }

@@ -18,7 +18,7 @@ public interface UserMapper {
      * @return the mapped UserEntity
      */
     @Mapping(target = "pk", expression = "java(UserEntity.generatePK(userDataEvent.userId()))")
-    @Mapping(target = "sk", expression = "java(UserEntity.generateSK(userDataEvent.userId()))")
+    @Mapping(target = "sk", expression = "java(UserEntity.generateSK())")
     @Mapping(target = "email", source = "userDataEvent.email")
     @Mapping(target = "firstName", source = "userDataEvent.firstName")
     @Mapping(target = "lastName", source = "userDataEvent.lastName")

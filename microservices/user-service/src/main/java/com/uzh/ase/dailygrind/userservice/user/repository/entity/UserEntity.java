@@ -11,7 +11,6 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.*;
 @Builder
 public class UserEntity {
 
-    public static final String TABLE_NAME = "users";
     public static final String PK_PREFIX = "USER";
     public static final String SK_PREFIX = "INFO";
 
