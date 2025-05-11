@@ -62,7 +62,7 @@ public class DynamoDBConfig {
     }
 
     @Bean
-    public DynamoDbTable<PushSubscription> pushSubscriptionDynamoDbTable(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
+    public DynamoDbTable<PushSubscription> pushSubscriptionTable(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
         return dynamoDbEnhancedClient.table(TABLE_NAME, TableSchema.fromBean(PushSubscription.class));
     }
 

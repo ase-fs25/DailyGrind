@@ -31,6 +31,16 @@ public class PushNotificationService {
     private final LambdaClient lambdaClient;
 
     public PushSubscription saveSubscription(SubscriptionDto pushSubscription, String userId) {
+        if (pushSubscription.endpoint() == null || pushSubscription.keys() == null) {
+            log.error("Invalid subscription: endpoint or keys are null for user {}", userId);
+            return null;
+        }
+
+        if (!pushSubscription.keys().containsKey("p256dh") || !pushSubscription.keys().containsKey("auth")) {
+            log.error("Invalid subscription: missing required keys p256dh or auth for user {}", userId);
+            return null;
+        }
+
         PushSubscription subscription = PushSubscription.builder()
             .userId(userId)
             .endpoint(pushSubscription.endpoint())
@@ -45,7 +55,7 @@ public class PushNotificationService {
 public void sendNotification(String message) {
     List<PushSubscription> subscriptions = pushSubscriptionRepository.findAll();
     if(subscriptions == null || subscriptions.isEmpty()) {
-        throw new RuntimeException("No subscriptions found");
+        log.error("No subscriptions found");
     }
 
     for(PushSubscription subscription : subscriptions) {
