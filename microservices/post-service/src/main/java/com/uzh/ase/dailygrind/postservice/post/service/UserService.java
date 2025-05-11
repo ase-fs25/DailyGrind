@@ -51,10 +51,20 @@ public class UserService {
     public void addFriend(FriendshipEvent friendshipEvent) {
         FriendEntity friendEntity = userMapper.toFriendEntity(friendshipEvent);
         userRepository.addFriend(friendEntity);
+
+        // Add also the inverse direction
+        friendshipEvent = new FriendshipEvent(friendshipEvent.userBId(), friendshipEvent.userAId());
+        friendEntity = userMapper.toFriendEntity(friendshipEvent);
+        userRepository.addFriend(friendEntity);
     }
 
     public void removeFriend(FriendshipEvent friendshipEvent) {
         FriendEntity friendEntity = userMapper.toFriendEntity(friendshipEvent);
+        userRepository.removeFriend(friendEntity);
+
+        // Remove also the inverse direction
+        friendshipEvent = new FriendshipEvent(friendshipEvent.userBId(), friendshipEvent.userAId());
+        friendEntity = userMapper.toFriendEntity(friendshipEvent);
         userRepository.removeFriend(friendEntity);
     }
 
