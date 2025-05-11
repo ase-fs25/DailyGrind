@@ -36,7 +36,6 @@ public interface UserMapper {
     @Mapping(target = "location", source = "user.location")
     @Mapping(target = "profilePictureUrl", source = "user.profilePictureUrl")
     @Mapping(target = "isFriend", source = "isFriend")
-    @Mapping(target = "requestId", ignore = true)
     UserInfoDto toUserInfoDto(UserEntity user, boolean isFriend);
 
 
