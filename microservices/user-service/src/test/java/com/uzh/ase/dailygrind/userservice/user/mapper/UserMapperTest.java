@@ -87,8 +87,7 @@ class UserMapperTest {
                         UserInfoDto::location,
                         UserInfoDto::profilePictureUrl,
                         UserInfoDto::numberOfFriends,
-                        UserInfoDto::isFriend,
-                        UserInfoDto::requestId
+                        UserInfoDto::isFriend
                 )
                 .containsExactly(
                         "12345",
@@ -99,8 +98,7 @@ class UserMapperTest {
                         userEntity.getLocation(),
                         userEntity.getProfilePictureUrl(),
                         userEntity.getNumFriends(),
-                        isFriend,
-                        null
+                        isFriend
                 );
     }
 }

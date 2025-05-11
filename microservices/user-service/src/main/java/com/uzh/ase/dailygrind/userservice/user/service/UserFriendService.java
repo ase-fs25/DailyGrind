@@ -2,8 +2,10 @@ package com.uzh.ase.dailygrind.userservice.user.service;
 
 import com.uzh.ase.dailygrind.userservice.user.controller.dto.UserInfoDto;
 import com.uzh.ase.dailygrind.userservice.user.repository.UserFriendRepository;
-import com.uzh.ase.dailygrind.userservice.user.repository.entity.FriendRequestEntity;
 
+import com.uzh.ase.dailygrind.userservice.user.sns.UserEventPublisher;
+import com.uzh.ase.dailygrind.userservice.user.sns.events.EventType;
+import com.uzh.ase.dailygrind.userservice.user.sns.events.FriendshipEvent;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
@@ -18,80 +20,69 @@ public class UserFriendService {
 
     private final UserFriendRepository userFriendRepository;
     private final UserService userService;
-    // --- Friend Request actions ---
+    private final UserEventPublisher userEventPublisher;
 
-public void sendFriendRequest(String senderId, String receiverId) {
-    if (userFriendRepository.existsPendingRequest(senderId, receiverId)) {
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Friend request already sent.");
-    }
-    userFriendRepository.createFriendRequest(senderId, receiverId);
-}
+    public void sendFriendRequest(String senderId, String receiverId) {
+        if (userService.getUserInfoById(receiverId, senderId) == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Receiver not found.");
 
+        if (userFriendRepository.isFriend(senderId, receiverId))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Already friends.");
 
-  public void acceptFriendRequest(String requestId, String receiverId) {
-    // Step 1: mark the original request as accepted
-    userFriendRepository.acceptFriendRequest(requestId, receiverId);
+        if (userFriendRepository.existsPendingRequest(senderId, receiverId))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Friend request already exists.");
 
-    // Step 2: fetch senderId from the accepted request
-    // We do this by reloading the request entity
-    FriendRequestEntity request = userFriendRepository.getRequestById(requestId, receiverId);
-    if (request == null || !"ACCEPTED".equals(request.getStatus())) {
-        throw new RuntimeException("Friend request not found or not accepted.");
+        userFriendRepository.createFriendRequest(senderId, receiverId);
     }
 
-    String senderId = request.getSenderId();
-
-    // Step 3: add reciprocal friendship entries
-    userFriendRepository.addFriendship(receiverId, senderId);
-}
-
-
-    public void declineFriendRequest(String requestId, String receiverId) {
-        userFriendRepository.declineFriendRequest(requestId, receiverId);
+    public void acceptFriendRequest(String requestingUserId, String senderId) {
+        if (!userFriendRepository.existsPendingRequest(senderId, requestingUserId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Friend request does not exist.");
+        }
+        userFriendRepository.acceptFriendRequest(requestingUserId, senderId);
+        FriendshipEvent friendshipEvent = new FriendshipEvent(senderId, requestingUserId);
+        userEventPublisher.publishFriendshipEvent(EventType.FRIENDSHIP_CREATED, friendshipEvent);
     }
 
-    public void cancelFriendRequest(String requestId, String senderId) {
-        userFriendRepository.cancelFriendRequest(requestId, senderId);
+    public void declineFriendRequest(String userId, String friendId) {
+        if (!userFriendRepository.existsPendingRequest(friendId, userId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Friend request does not exist.");
+        }
+        userFriendRepository.deleteFriendship(userId, friendId);
     }
 
-    // --- Listing friends and requests ---
+    public void cancelFriendRequest(String userId, String friendId) {
+        if (!userFriendRepository.existsPendingRequest(friendId, userId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Friend request does not exist.");
+        }
+        userFriendRepository.deleteFriendship(userId, friendId);
+    }
 
-    public List<UserInfoDto> getFriends(String userId) {
+    public List<UserInfoDto> getFriends(String userId, String requestingUserId) {
         List<String> friendIds = userFriendRepository.findFriends(userId);
         return friendIds.stream()
+                .map(id -> userService.getUserInfo(id, requestingUserId))
+                .toList();
+    }
+
+    public List<UserInfoDto> getIncomingFriendRequests(String userId) {
+        List<String> userIds = userFriendRepository.findUserIdsOfIncomingRequests(userId);
+        return userIds.stream()
                 .map(id -> userService.getUserInfo(id, userId))
                 .toList();
     }
-    public List<UserInfoDto> getIncomingFriendRequests(String userId) {
-        List<FriendRequestEntity> requests = userFriendRepository.findIncomingRequests(userId);
-
-        return requests.stream()
-            .map(req -> {
-                UserInfoDto sender = userService.getUserInfo(req.getSenderId(), userId);
-                return new UserInfoDto(
-                    sender.userId(),
-                    sender.email(),
-                    sender.firstName(),
-                    sender.lastName(),
-                    sender.birthday(),
-                    sender.location(),
-                    sender.numberOfFriends(),
-                    sender.profilePictureUrl(),
-                    sender.isFriend(),
-                    req.getSk()
-                );
-            })
-            .toList();
-    }
 
     public List<UserInfoDto> getOutgoingFriendRequests(String userId) {
-        List<String> outgoingIds = userFriendRepository.findOutgoingRequests(userId);
+        List<String> outgoingIds = userFriendRepository.findUserIdsOfOutgoingRequests(userId);
         return outgoingIds.stream()
                 .map(id -> userService.getUserInfo(id, userId))
                 .toList();
     }
 
     public void removeFriend(String userId, String friendId) {
-        userFriendRepository.removeFriend(userId, friendId);
+        if (!userFriendRepository.isFriend(userId, friendId)) return;
+        userFriendRepository.deleteFriendship(userId, friendId);
+        FriendshipEvent friendshipEvent = new FriendshipEvent(userId, friendId);
+        userEventPublisher.publishFriendshipEvent(EventType.FRIENDSHIP_DELETED, friendshipEvent);
     }
 }

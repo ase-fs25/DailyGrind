@@ -85,9 +85,9 @@ public class UserController {
     @Operation(summary = "Search users by name", description = "Search for users whose first name starts with the given term.")
     @ApiResponse(responseCode = "200", description = "Users retrieved successfully",
     content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserInfoDto[].class)))
-    @GetMapping("/users/search")
-    public List<UserInfoDto> searchUsers(@RequestParam String name, Principal principal) {
-        return userService.searchUsersByName(name, principal.getName());
+    @GetMapping("/search")
+    public ResponseEntity<List<UserInfoDto>> searchUsers(@RequestParam String name, Principal principal) {
+        return ResponseEntity.ok(userService.searchUsersByName(name, principal.getName()));
     }
 
 }

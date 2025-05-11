@@ -16,7 +16,7 @@ public class UserEntity {
 
     public static String PREFIX = "USER";
 
-    public static String POSTFIX = "info";
+    public static String POSTFIX = "INFO";
 
     @Getter(onMethod_ =  {@DynamoDbPartitionKey, @DynamoDbAttribute("PK")})
     private String pk;
@@ -33,8 +33,8 @@ public class UserEntity {
         return PREFIX + "#" + userId + "#" + POSTFIX;
     }
 
-    public static String generateSK(String userId) {
-        return POSTFIX + "#" + userId;
+    public static String generateSK() {
+        return POSTFIX;
     }
 
     public String getUserId() {

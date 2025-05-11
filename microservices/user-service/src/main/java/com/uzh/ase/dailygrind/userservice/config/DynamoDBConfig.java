@@ -1,10 +1,9 @@
 package com.uzh.ase.dailygrind.userservice.config;
 
 
-import com.uzh.ase.dailygrind.userservice.user.repository.entity.FriendRequestEntity;
+import com.uzh.ase.dailygrind.userservice.user.repository.entity.FriendshipEntity;
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserEducationEntity;
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserEntity;
-import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserFollowerEntity;
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserJobEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -41,7 +40,6 @@ public class DynamoDBConfig {
     }
 
     @Bean
-    @Profile("!test")
     DynamoDbEnhancedClient dynamoDbEnhancedClient(DynamoDbClient dynamoDbClient) {
         return DynamoDbEnhancedClient.builder()
                 .dynamoDbClient(dynamoDbClient)
@@ -64,14 +62,8 @@ public class DynamoDBConfig {
     }
 
     @Bean
-    public DynamoDbTable<UserFollowerEntity> userFollowerTable(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
-        return dynamoDbEnhancedClient.table(TABLE_NAME, TableSchema.fromBean(UserFollowerEntity.class));
+    public DynamoDbTable<FriendshipEntity> friendRequestTable(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
+        return dynamoDbEnhancedClient.table(TABLE_NAME, TableSchema.fromBean(FriendshipEntity.class));
     }
-
-    @Bean
-public DynamoDbTable<FriendRequestEntity> friendRequestTable(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
-    return dynamoDbEnhancedClient.table(TABLE_NAME, TableSchema.fromBean(FriendRequestEntity.class));
-}
-
 
 }
