@@ -26,6 +26,12 @@ const Feed = () => {
     if (initialized.current) return;
     initialized.current = true;
 
+    // Using mockPosts by default
+    // TODO: Replace this with API call to fetch posts from backend
+    // fetch('/api/posts')
+    //   .then(res => res.json())
+    //   .then(data => setPosts(data));
+
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker
         .register('/service-worker.js')
@@ -89,6 +95,9 @@ const Feed = () => {
           : post,
       ),
     );
+
+    // TODO:  Send to backend
+    // fetch(`/api/posts/${postId}/like`, { method: 'POST', headers: { Authorization: `Bearer ${authToken}` } });
   };
 
   const handleCommentChange = (postId: string, value: string) => {
@@ -112,6 +121,16 @@ const Feed = () => {
     );
 
     setNewComments((prev) => ({ ...prev, [postId]: '' }));
+
+    // TODO: Send comment to backend
+    // fetch(`/api/posts/${postId}/comments`, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     Authorization: `Bearer ${authToken}`,
+    //   },
+    //   body: JSON.stringify({ text }),
+    // });
   };
 
   return (
