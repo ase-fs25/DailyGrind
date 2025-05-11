@@ -116,12 +116,12 @@ const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
   };
 
   const handleDeleteClick = async () => {
-    setDeleteProfilePopup(true)
+    setDeleteProfilePopup(true);
   };
 
   const handleDefiniteDelete = async () => {
-    await deleteUser();
     await deleteUserProfile();
+    await deleteUser();
     userStore.deleteUser();
     postsStore.clearPosts();
     postsStore.clearPinnedPosts();
@@ -257,8 +257,11 @@ const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
           </Button>
         </div>
       </Box>
-        <DeleteProfilePopup open={deleteProfilePopup} onClose={() => setDeleteProfilePopup(false)} onDelete={handleDefiniteDelete}/>
-
+      <DeleteProfilePopup
+        open={deleteProfilePopup}
+        onClose={() => setDeleteProfilePopup(false)}
+        onDelete={handleDefiniteDelete}
+      />
     </Dialog>
   );
 };

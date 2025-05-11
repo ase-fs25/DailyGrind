@@ -25,16 +25,14 @@ const DeleteProfilePopup = ({ open, onClose, onDelete }: DeleteProfilePopupProps
         },
       }}
     >
-      <DialogTitle className="delete-profile-header">You are about to delete your profile. This action is irreversible. Are you sure?</DialogTitle>
+      <DialogTitle className="delete-profile-header">
+        You are about to delete your profile. This action is irreversible. Are you sure?
+      </DialogTitle>
       <DialogActions className="delete-profile-buttons">
         <Button onClick={onClose} color="error">
           Cancel
         </Button>
-        <Button
-          onClick={onDelete}
-          color="error"
-          variant="contained"
-        >
+        <Button onClick={onDelete} color="error" variant="contained">
           Delete Profile
         </Button>
       </DialogActions>
