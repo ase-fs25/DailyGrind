@@ -3,8 +3,9 @@ import { Post } from '../types/post';
 class PostsStore {
   private posts: Post[] = [];
   private pinnedPosts: Post[] = [];
+  private feedPosts: Post[] = [];
 
-  /** Posts array **/
+  /* Getters/Setters for all personal posts */
   setPosts(posts: Post[]) {
     this.posts = posts;
   }
@@ -17,7 +18,6 @@ class PostsStore {
     this.posts = [];
   }
 
-  /** Individual Post **/
   addPost(post: Post) {
     this.posts.push(post);
   }
@@ -57,6 +57,19 @@ class PostsStore {
 
   clearPinnedPosts(): void {
     this.pinnedPosts = [];
+  }
+
+  /* Getters/Setters for feed posts */
+  getFeedPosts(): Post[] {
+    return this.feedPosts;
+  }
+
+  setFeedPosts(feedPosts: Post[]) {
+    this.feedPosts = feedPosts;
+  }
+
+  clearFeedPosts(): void {
+    this.feedPosts = [];
   }
 }
 

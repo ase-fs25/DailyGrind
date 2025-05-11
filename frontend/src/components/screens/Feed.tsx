@@ -16,6 +16,8 @@ import '../../styles/components/screens/feed.css';
 const Feed = () => {
   const navigate = useNavigate();
   const initialized = useRef(false);
+
+  // TODO This makes the screen flashing again
   useEffect(() => {
     if (initialized.current) return;
     initialized.current = true;
@@ -72,6 +74,7 @@ const Feed = () => {
   }, [navigate]);
 
   console.log('Feed component rendered');
+
   const formatDate = (timestamp: string) => {
     const date = new Date(timestamp);
     return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1)

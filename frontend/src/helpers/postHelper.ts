@@ -114,8 +114,8 @@ export async function userHasPostedAlready(): Promise<boolean> {
       try {
         const data = await response.json();
         return !!data && !!data.postId;
-      } catch (error) {
-        console.error('User has not posted yet!', error);
+      } catch {
+        console.log('User has not posted yet!');
       }
     }
 

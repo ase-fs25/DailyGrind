@@ -1,3 +1,4 @@
+import postsStore from '../stores/postsStore';
 import userStore from '../stores/userStore';
 import { UserEducation, UserJob } from '../types/user';
 import { getAuthToken } from './authHelper';
@@ -99,12 +100,14 @@ export async function loginUser(userInfoRaw: string, authToken: string) {
       userStore.setJobs(userJobData);
     }
   }
+
   const userEducationInfo = await fetch('http://localhost:8080/users/me/education', {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${authToken}`,
     },
   });
+
   if (userEducationInfo.ok) {
     const userEducationInfoRaw = await userEducationInfo.text();
     if (userEducationInfoRaw) {
@@ -112,4 +115,21 @@ export async function loginUser(userInfoRaw: string, authToken: string) {
       userStore.setEducation(userEducationData);
     }
   }
+
+  // TODO Prepare timeline call
+  /* const userFeed = await fetch('http://localhost:8081/users/me/timeline', {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  });
+
+  if (userFeed.ok) {
+    const userFeedRaw = await userFeed.text();
+    if (userFeedRaw) {
+      const userFeedData = JSON.parse(userFeedRaw);
+      postsStore.setFeedPosts(userFeedData);
+    }
+  } */
+
 }
