@@ -98,8 +98,7 @@ class UserMapperTest {
                         userEntity.getLocation(),
                         userEntity.getProfilePictureUrl(),
                         userEntity.getNumFriends(),
-                        isFriend,
-                        null
+                        isFriend
                 );
     }
 }

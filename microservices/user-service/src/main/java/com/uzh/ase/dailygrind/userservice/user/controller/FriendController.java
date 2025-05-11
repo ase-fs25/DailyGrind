@@ -23,7 +23,7 @@ public class FriendController {
 
     @Operation(summary = "Send a friend request", description = "Send a friend request to another user.")
     @ApiResponse(responseCode = "200", description = "Friend request sent successfully")
-    @PostMapping("/me/requests")
+    @PostMapping("/requests")
     public ResponseEntity<String> sendFriendRequest(@RequestParam String targetUserId, Principal principal) {
         if (Objects.equals(targetUserId, principal.getName())) return ResponseEntity.badRequest().body("You cannot send a friend request to yourself.");
         userFriendService.sendFriendRequest(principal.getName(), targetUserId);
@@ -32,7 +32,7 @@ public class FriendController {
 
     @Operation(summary = "Accept a friend request", description = "Accept an incoming friend request.")
     @ApiResponse(responseCode = "200", description = "Friend request accepted successfully")
-    @PostMapping("/me/requests/{friendRequestSenderUserId}/accept")
+    @PostMapping("/requests/{friendRequestSenderUserId}/accept")
     public ResponseEntity<Void> acceptFriendRequest(@PathVariable String friendRequestSenderUserId, Principal principal) {
         userFriendService.acceptFriendRequest(principal.getName(), friendRequestSenderUserId);
         return ResponseEntity.ok().build();
@@ -40,7 +40,7 @@ public class FriendController {
 
     @Operation(summary = "Decline a friend request", description = "Decline an incoming friend request.")
     @ApiResponse(responseCode = "200", description = "Friend request declined successfully")
-    @PostMapping("/me/requests/{friendRequestSenderUserId}/decline")
+    @DeleteMapping("/requests/{friendRequestSenderUserId}/decline")
     public ResponseEntity<Void> declineFriendRequest(@PathVariable String friendRequestSenderUserId, Principal principal) {
         userFriendService.declineFriendRequest(principal.getName(), friendRequestSenderUserId);
         return ResponseEntity.ok().build();
@@ -48,7 +48,7 @@ public class FriendController {
 
     @Operation(summary = "Cancel a sent friend request", description = "Cancel an outgoing friend request.")
     @ApiResponse(responseCode = "200", description = "Friend request cancelled successfully")
-    @DeleteMapping("/me/requests/{friendRequestReceiverUserId}/cancel")
+    @DeleteMapping("/requests/{friendRequestReceiverUserId}/cancel")
     public ResponseEntity<Void> cancelFriendRequest(@PathVariable String friendRequestReceiverUserId, Principal principal) {
         userFriendService.cancelFriendRequest(principal.getName(), friendRequestReceiverUserId);
         return ResponseEntity.ok().build();
@@ -57,7 +57,7 @@ public class FriendController {
     @Operation(summary = "List incoming friend requests", description = "List all incoming friend requests for the current user.")
     @ApiResponse(responseCode = "200", description = "Incoming friend requests retrieved successfully",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserInfoDto[].class)))
-    @GetMapping("/me/requests/incoming")
+    @GetMapping("/requests/incoming")
     public List<UserInfoDto> listIncomingRequests(Principal principal) {
         return userFriendService.getIncomingFriendRequests(principal.getName());
     }
@@ -65,7 +65,7 @@ public class FriendController {
     @Operation(summary = "List outgoing friend requests", description = "List all outgoing friend requests sent by the current user.")
     @ApiResponse(responseCode = "200", description = "Outgoing friend requests retrieved successfully",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserInfoDto[].class)))
-    @GetMapping("/me/requests/outgoing")
+    @GetMapping("/requests/outgoing")
     public List<UserInfoDto> listOutgoingRequests(Principal principal) {
         return userFriendService.getOutgoingFriendRequests(principal.getName());
     }

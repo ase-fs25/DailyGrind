@@ -77,6 +77,10 @@ public class UserIntegrationTest {
     @AfterEach
     void tearDown() {
         userTable.scan().items().forEach(userTable::deleteItem);
+        userJobTable.scan().items().forEach(userJobTable::deleteItem);
+        userEducationTable.scan().items().forEach(userEducationTable::deleteItem);
+        friendRequestEntityDynamoDbTable.scan().items().forEach(friendRequestEntityDynamoDbTable::deleteItem);
+        Mockito.clearInvocations(userEventPublisher);
     }
 
     @Nested

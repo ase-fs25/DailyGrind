@@ -18,6 +18,7 @@ public interface UserMapper {
      */
     @Mapping(target = "pk", expression = "java(UserEntity.generatePK(userId))")
     @Mapping(target = "sk", expression = "java(UserEntity.generateSK())")
+    @Mapping(target = "numFriends", ignore = true)
     UserEntity toUserEntity(UserCreateDto user, String userId);
 
     /**

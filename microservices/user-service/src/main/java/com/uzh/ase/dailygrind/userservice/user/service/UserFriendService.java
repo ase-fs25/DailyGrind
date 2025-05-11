@@ -23,9 +23,15 @@ public class UserFriendService {
     private final UserEventPublisher userEventPublisher;
 
     public void sendFriendRequest(String senderId, String receiverId) {
-        if (userFriendRepository.existsPendingRequest(senderId, receiverId)) {
+        if (userService.getUserInfoById(receiverId, senderId) == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Receiver not found.");
+
+        if (userFriendRepository.isFriend(senderId, receiverId))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Already friends.");
+
+        if (userFriendRepository.existsPendingRequest(senderId, receiverId))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Friend request already exists.");
-        }
+
         userFriendRepository.createFriendRequest(senderId, receiverId);
     }
 
@@ -39,10 +45,16 @@ public class UserFriendService {
     }
 
     public void declineFriendRequest(String userId, String friendId) {
+        if (!userFriendRepository.existsPendingRequest(friendId, userId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Friend request does not exist.");
+        }
         userFriendRepository.deleteFriendship(userId, friendId);
     }
 
     public void cancelFriendRequest(String userId, String friendId) {
+        if (!userFriendRepository.existsPendingRequest(friendId, userId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Friend request does not exist.");
+        }
         userFriendRepository.deleteFriendship(userId, friendId);
     }
 
@@ -68,6 +80,7 @@ public class UserFriendService {
     }
 
     public void removeFriend(String userId, String friendId) {
+        if (!userFriendRepository.isFriend(userId, friendId)) return;
         userFriendRepository.deleteFriendship(userId, friendId);
         FriendshipEvent friendshipEvent = new FriendshipEvent(userId, friendId);
         userEventPublisher.publishFriendshipEvent(EventType.FRIENDSHIP_DELETED, friendshipEvent);

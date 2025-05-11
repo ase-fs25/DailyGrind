@@ -91,7 +91,7 @@ public class UserFriendRepository {
                 .build()
         );
 
-        if (incomingRequest != null && !incomingRequest.isFriendshipAccepted()) {
+        if (incomingRequest != null) {
             friendRequestTable.deleteItem(incomingRequest);
         }
 
@@ -102,7 +102,7 @@ public class UserFriendRepository {
                 .build()
         );
 
-        if (outgoingRequest != null && !outgoingRequest.isFriendshipAccepted()) {
+        if (outgoingRequest != null) {
             friendRequestTable.deleteItem(outgoingRequest);
         }
 
