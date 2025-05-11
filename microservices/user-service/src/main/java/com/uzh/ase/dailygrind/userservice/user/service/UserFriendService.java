@@ -3,6 +3,9 @@ package com.uzh.ase.dailygrind.userservice.user.service;
 import com.uzh.ase.dailygrind.userservice.user.controller.dto.UserInfoDto;
 import com.uzh.ase.dailygrind.userservice.user.repository.UserFriendRepository;
 
+import com.uzh.ase.dailygrind.userservice.user.sns.UserEventPublisher;
+import com.uzh.ase.dailygrind.userservice.user.sns.events.EventType;
+import com.uzh.ase.dailygrind.userservice.user.sns.events.FriendshipEvent;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
@@ -17,6 +20,7 @@ public class UserFriendService {
 
     private final UserFriendRepository userFriendRepository;
     private final UserService userService;
+    private final UserEventPublisher userEventPublisher;
 
     public void sendFriendRequest(String senderId, String receiverId) {
         if (userFriendRepository.existsPendingRequest(senderId, receiverId)) {
@@ -25,12 +29,13 @@ public class UserFriendService {
         userFriendRepository.createFriendRequest(senderId, receiverId);
     }
 
-
     public void acceptFriendRequest(String requestingUserId, String senderId) {
         if (!userFriendRepository.existsPendingRequest(senderId, requestingUserId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Friend request does not exist.");
         }
         userFriendRepository.acceptFriendRequest(requestingUserId, senderId);
+        FriendshipEvent friendshipEvent = new FriendshipEvent(senderId, requestingUserId);
+        userEventPublisher.publishFriendshipEvent(EventType.FRIENDSHIP_CREATED, friendshipEvent);
     }
 
     public void declineFriendRequest(String userId, String friendId) {
@@ -64,5 +69,7 @@ public class UserFriendService {
 
     public void removeFriend(String userId, String friendId) {
         userFriendRepository.deleteFriendship(userId, friendId);
+        FriendshipEvent friendshipEvent = new FriendshipEvent(userId, friendId);
+        userEventPublisher.publishFriendshipEvent(EventType.FRIENDSHIP_DELETED, friendshipEvent);
     }
 }

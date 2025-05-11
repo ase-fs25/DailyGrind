@@ -16,6 +16,7 @@ public class UserFriendRepository {
     private final DynamoDbTable<FriendshipEntity> friendRequestTable;
 
     public boolean isFriend(String userId, String otherUserId) {
+        if (userId.equals(otherUserId)) return false;
         Key key = Key.builder()
                 .partitionValue(FriendshipEntity.generatePK(userId))
                 .sortValue(FriendshipEntity.generateSK(otherUserId))

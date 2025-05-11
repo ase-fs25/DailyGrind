@@ -12,31 +12,32 @@ import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserEntity;
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserJobEntity;
 import com.uzh.ase.dailygrind.userservice.user.sns.UserEventPublisher;
 import com.uzh.ase.dailygrind.userservice.user.sns.events.EventType;
-import com.uzh.ase.dailygrind.userservice.user.sns.events.UserDataEvent;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.testcontainers.containers.localstack.LocalStackContainer;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 
-import java.io.IOException;
 
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -45,8 +46,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import({LocalStackTestConfig.class, AwsTestCredentialsConfig.class, DynamoDBTestConfig.class, DynamoDBConfig.class})
 public class UserIntegrationTest {
 
-    @MockBean
+    @Autowired
     private UserEventPublisher userEventPublisher;
+
+    @TestConfiguration
+    static class MockConfig {
+        @Bean
+        public UserEventPublisher userEventPublisher() {
+            return Mockito.mock(UserEventPublisher.class);
+        }
+    }
 
     @Autowired
     MockMvc mockMvc;
@@ -207,6 +216,107 @@ public class UserIntegrationTest {
     }
 
     @Nested
+    class UpdateUserTest {
+
+        @Test
+        @WithMockUser(username = "54321")
+        void updateUserTest_userInDb() throws Exception {
+            // Given
+            UserEntity userEntity = UserEntity.builder()
+                .pk(UserEntity.generatePK("54321"))
+                .sk(UserEntity.generateSK())
+                .email("testUser@gmail.com")
+                .build();
+            userTable.putItem(userEntity);
+
+            UserCreateDto userCreateDto = new UserCreateDto(
+                "54321",
+                "testUser2@gmail.com",
+                "John",
+                "Doe",
+                "1990-01-01",
+                "New York",
+                "http://example.com/profile.jpg"
+            );
+
+            // When
+            mockMvc.perform(put("/users/me")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(userCreateDto)))
+                .andExpect(status().isOk());
+
+            // Then
+            mockMvc.perform(get("/users/me")
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userId").value("54321"))
+                .andExpect(jsonPath("$.email").value("testUser2@gmail.com"))
+                .andExpect(jsonPath("$.firstName").value("John"))
+                .andExpect(jsonPath("$.lastName").value("Doe"))
+                .andExpect(jsonPath("$.birthday").value("1990-01-01"))
+                .andExpect(jsonPath("$.location").value("New York"))
+                .andExpect(jsonPath("$.profilePictureUrl").value("http://example.com/profile.jpg"));
+
+            verify(userEventPublisher).publishUserEvent(
+                eq(EventType.USER_UPDATED),
+                argThat(event -> event.userId().equals("54321"))
+            );
+        }
+    }
+
+    @Nested
+    class DeleteUserTest {
+
+        @Test
+        @WithMockUser(username = "54321")
+        void deleteUserTest_userInDb() throws Exception {
+            // Given
+            UserEntity userEntity = UserEntity.builder()
+                .pk(UserEntity.generatePK("54321"))
+                .sk(UserEntity.generateSK())
+                .email("testUser@gmail.com")
+                .build();
+            userTable.putItem(userEntity);
+
+            // When
+            mockMvc.perform(delete("/users/me")
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+            // Then
+            mockMvc.perform(get("/users/me")
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(""));
+
+            verify(userEventPublisher).publishUserEvent(
+                eq(EventType.USER_DELETED),
+                argThat(event -> event.userId().equals("54321"))
+            );
+        }
+
+        @Test
+        @WithMockUser(username = "54321")
+        void deleteUserTest_userNotInDb() throws Exception {
+            // Given
+
+            // When
+            mockMvc.perform(delete("/users/me")
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+            // Then
+            mockMvc.perform(get("/users/me")
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(""));
+
+            verifyNoInteractions(userEventPublisher);
+        }
+
+    }
+
+    @Nested
     class GetMyUserInfoTest {
 
         @Test
@@ -342,16 +452,149 @@ public class UserIntegrationTest {
             );
 
             // When + Then
-            mockMvc.perform(get("/users/12345/details")
+            mockMvc.perform(get("/users/22222/details")
                     .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.userInfo.userId").value("12345"))
-                .andExpect(jsonPath("$.userInfo.email").value("testuser@gmail.com"))
+                .andExpect(jsonPath("$.userInfo.userId").value("22222"))
+                .andExpect(jsonPath("$.userInfo.email").value("testuser2@gmail.com"))
+                .andExpect(jsonPath("$.userInfo.isFriend").value(true))
                 .andExpect(jsonPath("$.jobs").isEmpty())
                 .andExpect(jsonPath("$.userInfo.numberOfFriends").value("1"))
                 .andExpect(jsonPath("$.educations").isEmpty());
         }
 
+    }
+
+    @Nested
+    class SearchUsersTest {
+
+        @Test
+        @WithMockUser(username = "12345")
+        void searchUsersTest_firstName() throws Exception {
+            // Given
+            UserEntity userEntity = UserEntity.builder()
+                .pk(UserEntity.generatePK("12345"))
+                .sk(UserEntity.generateSK())
+                .email("testuser@gmail.com")
+                .firstName("John")
+                .lastName("Doe")
+                .build();
+            userTable.putItem(userEntity);
+
+            // When + Then
+            mockMvc.perform(get("/users/search")
+                    .param("name", "John")
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].userId").value("12345"));
+        }
+
+        @Test
+        @WithMockUser(username = "12345")
+        void searchUsersTest_firstNamePart() throws Exception {
+            // Given
+            UserEntity userEntity = UserEntity.builder()
+                .pk(UserEntity.generatePK("12345"))
+                .sk(UserEntity.generateSK())
+                .email("testuser@gmail.com")
+                .firstName("John")
+                .lastName("Doe")
+                .build();
+            userTable.putItem(userEntity);
+
+            // When + Then
+            mockMvc.perform(get("/users/search")
+                    .param("name", "Jo")
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].userId").value("12345"));
+        }
+
+        @Test
+        @WithMockUser(username = "12345")
+        void searchUsersTest_lastName() throws Exception {
+            // Given
+            UserEntity userEntity = UserEntity.builder()
+                .pk(UserEntity.generatePK("12345"))
+                .sk(UserEntity.generateSK())
+                .email("testuser@gmail.com")
+                .firstName("John")
+                .lastName("Doe")
+                .build();
+            userTable.putItem(userEntity);
+
+            // When + Then
+            mockMvc.perform(get("/users/search")
+                    .param("name", "Doe")
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].userId").value("12345"));
+        }
+
+        @Test
+        @WithMockUser(username = "12345")
+        void searchUsersTest_lastNamePart() throws Exception {
+            // Given
+            UserEntity userEntity = UserEntity.builder()
+                .pk(UserEntity.generatePK("12345"))
+                .sk(UserEntity.generateSK())
+                .email("testuser@gmail.com")
+                .firstName("John")
+                .lastName("Doe")
+                .build();
+            userTable.putItem(userEntity);
+
+            // When + Then
+            mockMvc.perform(get("/users/search")
+                    .param("name", "Do")
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].userId").value("12345"));
+        }
+
+        @Test
+        @WithMockUser(username = "12345")
+        void searchUsersTest_firstNameAndLastName() throws Exception {
+            // Given
+            UserEntity userEntity = UserEntity.builder()
+                .pk(UserEntity.generatePK("12345"))
+                .sk(UserEntity.generateSK())
+                .email("testuser@gmail.com")
+                .firstName("John")
+                .lastName("Doe")
+                .build();
+            userTable.putItem(userEntity);
+
+            UserEntity userEntity2 = UserEntity.builder()
+                .pk(UserEntity.generatePK("12345655"))
+                .sk(UserEntity.generateSK())
+                .email("testuser2@gmail.com")
+                .firstName("Peter")
+                .lastName("Doe")
+                .build();
+            userTable.putItem(userEntity2);
+
+            UserEntity userEntity3 = UserEntity.builder()
+                .pk(UserEntity.generatePK("3334564"))
+                .sk(UserEntity.generateSK())
+                .email("testuser2@gmail.com")
+                .firstName("John")
+                .lastName("Smith")
+                .build();
+            userTable.putItem(userEntity3);
+
+            // When + Then
+            mockMvc.perform(get("/users/search")
+                    .param("name", "John Doe")
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].userId").value("12345"));
+        }
     }
 
 }
