@@ -1,0 +1,22 @@
+.delete-profile-popup .MuiDialog-paper {
+  width: 50%;
+  max-width: 600px;
+  padding: 20px;
+  background-color:rgb(245, 229, 229);
+  border: red 1px;
+}
+
+.delete-profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: black;
+  font-weight: bold;
+  margin-bottom: 0px;
+}
+
+.delete-profile-buttons {
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+}

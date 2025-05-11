@@ -213,3 +213,23 @@ export async function deleteUserEducation(educationId: string) {
     };
   }
 }
+
+export async function deleteUserProfile() {
+  try {
+    const authToken = await getAuthToken();
+
+    const response = await fetch(`${API_URL}/users/me`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Deleting the user profile failed: ${response.status}`);
+    }
+  } catch (error) {
+    console.error('Error deleting user profile:', error);
+  }
+}
