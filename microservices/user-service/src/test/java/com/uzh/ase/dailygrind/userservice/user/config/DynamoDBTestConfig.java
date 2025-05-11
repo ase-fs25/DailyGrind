@@ -8,6 +8,7 @@ import org.springframework.context.event.EventListener;
 import org.testcontainers.containers.localstack.LocalStackContainer;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 import static org.testcontainers.containers.localstack.LocalStackContainer.Service.DYNAMODB;
@@ -20,6 +21,7 @@ public class DynamoDBTestConfig {
         return DynamoDbClient.builder()
             .credentialsProvider(credentialsProvider)
             .endpointOverride(localstack.getEndpointOverride(DYNAMODB))
+            .region(Region.of(localstack.getRegion()))
             .build();
     }
 
