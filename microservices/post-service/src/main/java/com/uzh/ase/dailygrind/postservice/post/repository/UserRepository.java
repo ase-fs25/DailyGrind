@@ -49,26 +49,30 @@ public class UserRepository {
     }
 
     public List<FriendEntity> getFriends(String userId) {
-        String pk = FriendEntity.generatePK(userId);
-        Key key = Key.builder()
-                .partitionValue(pk)
-                .build();
+//        String pk = FriendEntity.generatePK(userId);
+//        Key key = Key.builder()
+//                .partitionValue(pk)
+//                .build();
+//
+//        QueryEnhancedRequest queryRequest = QueryEnhancedRequest.builder()
+//                .queryConditional(QueryConditional.keyEqualTo(key))
+//                .build();
+//
+//        return friendTable.query(queryRequest)
+//                .items()
+//                .stream()
+//                .toList();
 
-        QueryEnhancedRequest queryRequest = QueryEnhancedRequest.builder()
-                .queryConditional(QueryConditional.keyEqualTo(key))
-                .build();
-
-        return friendTable.query(queryRequest)
-                .items()
-                .stream()
+        return friendTable.scan().items().stream()
+                .filter(item -> item.getPk().equals(FriendEntity.generatePK(userId)))
                 .toList();
     }
 
     public UserEntity getUser(String friendId) {
-        String pk = UserEntity.generatePK(friendId);
         Key key = Key.builder()
-                .partitionValue(pk)
-                .build();
+            .partitionValue(UserEntity.generatePK(friendId))
+            .sortValue(UserEntity.generateSK())
+            .build();
 
         return userTable.getItem(key);
     }
