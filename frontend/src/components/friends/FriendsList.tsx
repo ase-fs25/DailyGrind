@@ -3,7 +3,7 @@ import { Box, Card, CardContent, Typography } from '@mui/material';
 import { Post } from '../../types/post';
 import FriendPopup from '../common/FriendPopup';
 import { fetchFriends, getEducationByUserId, getJobsByUserId, UserProfile } from '../../helpers/friendsHelper';
-import { getPostsByUserId } from '../../helpers/postHelper';
+import { getPinnedPostsByUserId } from '../../helpers/postHelper';
 import { UserEducation, UserJob } from '../../types/user';
 import '../../styles/components/friends/friendList.css';
 
@@ -34,7 +34,7 @@ const FriendsList = () => {
 
     try {
       const [posts, jobs, education] = await Promise.all([
-        getPostsByUserId(user.userId),
+        getPinnedPostsByUserId(user.userId),
         getJobsByUserId(user.userId),
         getEducationByUserId(user.userId),
       ]);

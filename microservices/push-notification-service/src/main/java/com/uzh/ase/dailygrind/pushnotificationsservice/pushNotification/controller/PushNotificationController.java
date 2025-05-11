@@ -27,8 +27,11 @@ public class PushNotificationController {
     @ApiResponse(responseCode = "201", description = "Subscription created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PushSubscription.class)))
     @PostMapping("/subscribe")
     public ResponseEntity<PushSubscription> saveSubscription(@RequestBody SubscriptionDto pushSubscription, Principal principal) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(pushNotificationService.saveSubscription(pushSubscription, principal.getName()));
-
+        PushSubscription savedSubscription = pushNotificationService.saveSubscription(pushSubscription, principal.getName());
+        if (savedSubscription == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedSubscription);
     }
 
     @Operation(summary = "Send notification to all users", description = "Sends a push notification to all subscribed users")

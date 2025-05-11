@@ -1,12 +1,9 @@
 {
-  "name": "push-notification-lambda",
+  "name": "schedule-notification-lambda",
   "version": "1.0.0",
-  "description": "Lambda function for sending web push notifications",
+  "description": "Lambda function that schedules the push notifications",
   "main": "index.js",
   "type": "commonjs",
-  "dependencies": {
-    "web-push": "^3.6.7"
-  },
   "scripts": {
     "test": "jest"
   },

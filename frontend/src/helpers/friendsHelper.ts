@@ -27,7 +27,7 @@ export interface FriendRequest {
 export async function searchUsers(name: string): Promise<UserProfile[]> {
   const authToken = await getAuthToken();
 
-  const response = await fetch(`${API_URL}/search?name=${encodeURIComponent(name)}`, {
+  const response = await fetch(`${API_URL}/users/search?name=${encodeURIComponent(name)}`, {
     headers: { Authorization: `Bearer ${authToken}` },
   });
 
