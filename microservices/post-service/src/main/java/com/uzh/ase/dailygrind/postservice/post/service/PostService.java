@@ -60,7 +60,9 @@ public class PostService {
     }
 
     public PostDto updatePost(String postId, String userId, PostDto postDto) {
-        PostEntity postEntity = postMapper.toPostEntity(userId, postDto);
+        PostEntity postEntity = postRepository.findPostById(postId);
+        if (postEntity == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post not found");
+        postEntity = postMapper.toPostEntity(userId, postDto);
         postRepository.savePost(postEntity);
         return addIsLikedAndIsPinnedToPostDto(postEntity, userId);
     }
@@ -78,11 +80,15 @@ public class PostService {
     }
 
     public void likePost(String postId, String userId) {
+        PostEntity postEntity = postRepository.findPostById(postId);
+        if (postEntity == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post not found");
         LikeEntity likeEntity = postMapper.toLikeEntity(postId, userId);
         postRepository.likePost(likeEntity);
     }
 
     public void unlikePost(String postId, String userId) {
+        PostEntity postEntity = postRepository.findPostById(postId);
+        if (postEntity == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post not found");
         LikeEntity likeEntity = postMapper.toLikeEntity(postId, userId);
         postRepository.unlikePost(likeEntity);
     }
