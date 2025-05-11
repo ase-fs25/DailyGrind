@@ -106,8 +106,10 @@ const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
     try {
       await signOut();
       userStore.deleteUser();
+      userStore.setFeedHasLoaded(false);
       postsStore.clearPosts();
       postsStore.clearPinnedPosts();
+      postsStore.clearFeedPosts();
       window.localStorage.clear();
       navigate('/');
     } catch (e) {
@@ -123,8 +125,10 @@ const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
     await deleteUserProfile();
     await deleteUser();
     userStore.deleteUser();
+    userStore.setFeedHasLoaded(false);
     postsStore.clearPosts();
     postsStore.clearPinnedPosts();
+    postsStore.clearFeedPosts();
     window.localStorage.clear();
     setDeleteProfilePopup(false);
     navigate('/');

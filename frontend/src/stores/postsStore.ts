@@ -1,9 +1,9 @@
-import { Post } from '../types/post';
+import { FeedPost, Post } from '../types/post';
 
 class PostsStore {
   private posts: Post[] = [];
   private pinnedPosts: Post[] = [];
-  private feedPosts: Post[] = [];
+  private feedPosts: FeedPost[] = [];
 
   /* Getters/Setters for all personal posts */
   setPosts(posts: Post[]) {
@@ -60,11 +60,11 @@ class PostsStore {
   }
 
   /* Getters/Setters for feed posts */
-  getFeedPosts(): Post[] {
+  getFeedPosts(): FeedPost[] {
     return this.feedPosts;
   }
 
-  setFeedPosts(feedPosts: Post[]) {
+  setFeedPosts(feedPosts: FeedPost[]) {
     this.feedPosts = feedPosts;
   }
 

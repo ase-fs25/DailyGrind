@@ -12,6 +12,8 @@ class UserStore {
     education: [],
   };
 
+  private feedHasLoaded = false;
+
   /** Entire User **/
   setUser(user: User) {
     this.user = user;
@@ -130,6 +132,15 @@ class UserStore {
 
   removeEducation(educationId: string) {
     this.user.education = this.user.education.filter((edu) => edu.educationId !== educationId);
+  }
+
+  /** Getter/Setter to manage Feed load **/
+  getFeedHasLoaded(): boolean {
+    return this.feedHasLoaded;
+  }
+
+  setFeedHasLoaded(feedLoadingStatus: boolean) {
+    this.feedHasLoaded = feedLoadingStatus;
   }
 }
 

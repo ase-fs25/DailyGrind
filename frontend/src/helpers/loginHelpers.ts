@@ -1,5 +1,4 @@
-/* import postsStore from '../stores/postsStore';
- */
+import postsStore from '../stores/postsStore';
 import userStore from '../stores/userStore';
 import { UserEducation, UserJob } from '../types/user';
 import { getAuthToken } from './authHelper';
@@ -117,8 +116,7 @@ export async function loginUser(userInfoRaw: string, authToken: string) {
     }
   }
 
-  // TODO Prepare timeline call
-  /* const userFeed = await fetch('http://localhost:8081/users/me/timeline', {
+  const userFeed = await fetch('http://localhost:8081/users/me/timeline', {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${authToken}`,
@@ -131,5 +129,5 @@ export async function loginUser(userInfoRaw: string, authToken: string) {
       const userFeedData = JSON.parse(userFeedRaw);
       postsStore.setFeedPosts(userFeedData);
     }
-  } */
+  }
 }

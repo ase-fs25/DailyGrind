@@ -46,7 +46,19 @@
   align-items: center;
 }
 
+.post-title-wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+}
+
 .post-title {
+  font-weight: bold;
+}
+
+.post-user {
+  padding-left: 8px;
   font-weight: bold;
 }
 
@@ -57,6 +69,10 @@
 .post-content {
   text-align: left;
   margin-top: 4px;
+}
+
+.sub-feed-message {
+  text-align: center;
 }
 
 /* Responsive Design */

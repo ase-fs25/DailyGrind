@@ -56,7 +56,7 @@ const Registration = () => {
     setLoading(false);
 
     if (result.success) {
-      navigate('/feed', { replace: true });
+      navigate('/', { replace: true });
     } else {
       setError(result.error ?? 'Registration failed. Please try again.');
     }

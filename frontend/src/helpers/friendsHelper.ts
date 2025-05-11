@@ -1,7 +1,7 @@
 import { getAuthToken } from './authHelper';
-import { UserEducation, UserJob } from '../types/user';
+import { User, UserEducation, UserJob } from '../types/user';
 
-const API_URL = 'http://localhost:8080/users';
+const API_URL = 'http://localhost:8080';
 
 export interface UserProfile {
   userId: string;
@@ -39,7 +39,7 @@ export async function searchUsers(name: string): Promise<UserProfile[]> {
 export async function sendFriendRequest(targetUserId: string): Promise<void> {
   const authToken = await getAuthToken();
 
-  const response = await fetch(`${API_URL}/requests?targetUserId=${encodeURIComponent(targetUserId)}`, {
+  const response = await fetch(`${API_URL}/users/requests?targetUserId=${encodeURIComponent(targetUserId)}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -54,7 +54,7 @@ export async function sendFriendRequest(targetUserId: string): Promise<void> {
 export async function fetchFriends(): Promise<UserProfile[]> {
   const authToken = await getAuthToken();
 
-  const response = await fetch(`${API_URL}/friends`, {
+  const response = await fetch(`${API_URL}/users/me/friends`, {
     headers: { Authorization: `Bearer ${authToken}` },
   });
 
@@ -63,10 +63,10 @@ export async function fetchFriends(): Promise<UserProfile[]> {
 }
 
 // --- Fetch Incoming Friend Requests ---
-export async function fetchIncomingRequests(): Promise<FriendRequest[]> {
+export async function fetchIncomingRequests(): Promise<User[]> {
   const authToken = await getAuthToken();
 
-  const response = await fetch(`${API_URL}/requests/incoming`, {
+  const response = await fetch(`${API_URL}/users/requests/incoming`, {
     headers: { Authorization: `Bearer ${authToken}` },
   });
 
@@ -78,7 +78,7 @@ export async function fetchIncomingRequests(): Promise<FriendRequest[]> {
 export async function fetchOutgoingRequests(): Promise<UserProfile[]> {
   const authToken = await getAuthToken();
 
-  const response = await fetch(`${API_URL}/requests/outgoing`, {
+  const response = await fetch(`${API_URL}/users/requests/outgoing`, {
     headers: { Authorization: `Bearer ${authToken}` },
   });
 
@@ -87,10 +87,10 @@ export async function fetchOutgoingRequests(): Promise<UserProfile[]> {
 }
 
 // --- Accept Friend Request ---
-export async function acceptFriendRequest(requestId: string): Promise<void> {
+export async function acceptFriendRequest(requestSenderId: string): Promise<void> {
   const authToken = await getAuthToken();
 
-  const response = await fetch(`${API_URL}/requests/${requestId}/accept`, {
+  const response = await fetch(`${API_URL}/users/requests/${requestSenderId}/accept`, {
     method: 'POST',
     headers: { Authorization: `Bearer ${authToken}` },
   });
@@ -99,11 +99,11 @@ export async function acceptFriendRequest(requestId: string): Promise<void> {
 }
 
 // --- Decline Friend Request ---
-export async function declineFriendRequest(requestId: string): Promise<void> {
+export async function declineFriendRequest(requestSenderId: string): Promise<void> {
   const authToken = await getAuthToken();
 
-  const response = await fetch(`${API_URL}/requests/${requestId}/decline`, {
-    method: 'POST',
+  const response = await fetch(`${API_URL}/users/requests/${requestSenderId}/decline`, {
+    method: 'DELETE',
     headers: { Authorization: `Bearer ${authToken}` },
   });
 
@@ -125,7 +125,7 @@ export async function checkExistingFriendRequest(targetUserId: string): Promise<
 export async function removeFriend(friendId: string): Promise<void> {
   const authToken = await getAuthToken();
 
-  const response = await fetch(`${API_URL}/friends/${friendId}/remove`, {
+  const response = await fetch(`${API_URL}/users/me/friends/${friendId}/remove`, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${authToken}`,
@@ -139,7 +139,7 @@ export async function removeFriend(friendId: string): Promise<void> {
 export async function getJobsByUserId(userId: string): Promise<UserJob[]> {
   const authToken = await getAuthToken();
 
-  const response = await fetch(`${API_URL}/${userId}/jobs`, {
+  const response = await fetch(`${API_URL}/users/${userId}/jobs`, {
     headers: { Authorization: `Bearer ${authToken}` },
   });
 
@@ -151,7 +151,7 @@ export async function getJobsByUserId(userId: string): Promise<UserJob[]> {
 export async function getEducationByUserId(userId: string): Promise<UserEducation[]> {
   const authToken = await getAuthToken();
 
-  const response = await fetch(`${API_URL}/${userId}/education`, {
+  const response = await fetch(`${API_URL}/users/${userId}/education`, {
     headers: { Authorization: `Bearer ${authToken}` },
   });
 

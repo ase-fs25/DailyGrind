@@ -36,8 +36,6 @@ export async function createPost(title: string, content: string): Promise<Post> 
       content: content,
     };
 
-    console.log('Sending post request:', postRequest);
-
     const response = await fetch(`${API_URL}/posts`, {
       method: 'POST',
       headers: {
@@ -54,7 +52,6 @@ export async function createPost(title: string, content: string): Promise<Post> 
     }
 
     const createdPost = await response.json();
-    console.log('Created post response:', createdPost);
     return createdPost;
   } catch (error) {
     console.error('Error creating post:', error);
