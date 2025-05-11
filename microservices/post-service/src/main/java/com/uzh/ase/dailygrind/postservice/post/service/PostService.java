@@ -8,7 +8,9 @@ import com.uzh.ase.dailygrind.postservice.post.repository.PinnedPostRepository;
 import com.uzh.ase.dailygrind.postservice.post.repository.PostRepository;
 import com.uzh.ase.dailygrind.postservice.post.repository.entity.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -28,7 +30,7 @@ public class PostService {
         postEntity.setPostTimestamp(String.valueOf(System.currentTimeMillis()));
         String postId = dailyPostRepository.findDailyPostForUser(userId);
         if (postId != null) {
-            throw new IllegalStateException("You already have a daily post for today");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already has a daily post");
         }
         postRepository.savePost(postEntity);
         DailyPostEntity dailyPostEntity = new DailyPostEntity(userId, postEntity.getPostId());
@@ -37,8 +39,8 @@ public class PostService {
     }
 
     public PostDto addIsLikedAndIsPinnedToPostDto(PostEntity postEntity, String userId) {
-        List<String> pinnedPostIds = pinnedPostRepository.findPinnedPostIdsForUser(userId);
         if (postEntity == null) return null;
+        List<String> pinnedPostIds = pinnedPostRepository.findPinnedPostIdsForUser(userId);
         return postMapper.toPostDto(
             postEntity,
             postRepository.findAllUsersWhoLikedPost(postEntity.getPostId()).contains(userId),
