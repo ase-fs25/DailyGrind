@@ -33,6 +33,7 @@ public class UserService {
 
         return userEntities.stream()
                 .map(userEntity -> userMapper.toUserInfoDto(userEntity, followingIds.contains(requesterId)))
+                .filter(userInfoDto -> !userInfoDto.userId().equals(requesterId))
                 .toList();
     }
 
