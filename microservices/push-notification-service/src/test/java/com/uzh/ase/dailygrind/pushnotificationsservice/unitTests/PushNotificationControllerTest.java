@@ -58,6 +58,7 @@ class PushNotificationControllerTest {
 
     @Test
     void subscribeReturnsCreatedAndSavesSubscription() throws Exception {
+        // When && Then
         when(pushNotificationService.saveSubscription(any(SubscriptionDto.class), eq("testUser")))
             .thenReturn(savedSubscription);
 
@@ -73,6 +74,84 @@ class PushNotificationControllerTest {
             .andExpect(jsonPath("$.subscriptionId").value("SUBSCRIPTION#1234"))
             .andExpect(jsonPath("$.userId").value("testUser"))
             .andExpect(jsonPath("$.endpoint").value("https://example.com/endpoint"));
+
+        verify(pushNotificationService).saveSubscription(any(SubscriptionDto.class), eq("testUser"));
+    }
+
+    @Test
+    void subscribeReturnsBadRequestForNullEndpoint() throws Exception {
+        // Given
+        SubscriptionDto invalidDto = new SubscriptionDto(
+            null,
+            123456789L,
+            Map.of("p256dh", "key1", "auth", "key2")
+        );
+
+        when(pushNotificationService.saveSubscription(any(SubscriptionDto.class), anyString()))
+            .thenReturn(null);
+
+        // When & Then
+        mockMvc.perform(post("/push-notifications/subscribe")
+                .with(request -> {
+                    request.setUserPrincipal(mock(Principal.class));
+                    when(request.getUserPrincipal().getName()).thenReturn("testUser");
+                    return request;
+                })
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(invalidDto)))
+            .andExpect(status().isBadRequest());
+
+        verify(pushNotificationService).saveSubscription(any(SubscriptionDto.class), eq("testUser"));
+    }
+
+    @Test
+    void subscribeReturnsBadRequestForNullKeys() throws Exception {
+        // Given
+        SubscriptionDto invalidDto = new SubscriptionDto(
+            "https://example.com/endpoint",
+            123456789L,
+            null
+        );
+
+        when(pushNotificationService.saveSubscription(any(SubscriptionDto.class), anyString()))
+            .thenReturn(null);
+
+        // When & Then
+        mockMvc.perform(post("/push-notifications/subscribe")
+                .with(request -> {
+                    request.setUserPrincipal(mock(Principal.class));
+                    when(request.getUserPrincipal().getName()).thenReturn("testUser");
+                    return request;
+                })
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(invalidDto)))
+            .andExpect(status().isBadRequest());
+
+        verify(pushNotificationService).saveSubscription(any(SubscriptionDto.class), eq("testUser"));
+    }
+
+    @Test
+    void subscribeReturnsBadRequestForMissingRequiredKeys() throws Exception {
+        // Given
+        SubscriptionDto invalidDto = new SubscriptionDto(
+            "https://example.com/endpoint",
+            123456789L,
+            Map.of("someKey", "someValue") // Missing p256dh and auth
+        );
+
+        when(pushNotificationService.saveSubscription(any(SubscriptionDto.class), anyString()))
+            .thenReturn(null);
+
+        // When & Then
+        mockMvc.perform(post("/push-notifications/subscribe")
+                .with(request -> {
+                    request.setUserPrincipal(mock(Principal.class));
+                    when(request.getUserPrincipal().getName()).thenReturn("testUser");
+                    return request;
+                })
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(invalidDto)))
+            .andExpect(status().isBadRequest());
 
         verify(pushNotificationService).saveSubscription(any(SubscriptionDto.class), eq("testUser"));
     }
