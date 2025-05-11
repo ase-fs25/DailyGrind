@@ -1,5 +1,9 @@
 package com.uzh.ase.dailygrind.pushnotificationsservice.unitTests;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uzh.ase.dailygrind.pushnotificationsservice.pushNotification.controller.dto.SubscriptionDto;
@@ -9,6 +13,7 @@ import com.uzh.ase.dailygrind.pushnotificationsservice.pushNotification.service.
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
+import org.slf4j.LoggerFactory;
 import org.springframework.test.util.ReflectionTestUtils;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.lambda.LambdaClient;
@@ -74,11 +79,14 @@ class PushNotificationServiceTest {
 
     @Test
     void saveSubscriptionGenerateIdAndSaveData() {
+        // Given
         String userId = "testUser";
         when(pushSubscriptionRepository.save(any(PushSubscription.class))).thenReturn(pushSubscription);
 
+        // When
         PushSubscription result = pushNotificationService.saveSubscription(subscriptionDto, userId);
 
+        // Then
         verify(pushSubscriptionRepository).save(subscriptionArgumentCaptor.capture());
         PushSubscription capturedSubscription = subscriptionArgumentCaptor.getValue();
 
@@ -88,6 +96,60 @@ class PushNotificationServiceTest {
         assertEquals(subscriptionDto.expirationTime(), capturedSubscription.getExpirationTime());
         assertEquals(subscriptionDto.keys(), capturedSubscription.getKeys());
         assertEquals(pushSubscription, result);
+    }
+
+    @Test
+    void saveSubscriptionShouldReturnNullForNullEndpoint() {
+        // Given
+        String userId = "testUser";
+        SubscriptionDto invalidDto = new SubscriptionDto(
+            null,
+            null,
+            Map.of("p256dh", "key1", "auth", "key2")
+        );
+
+        // When
+        PushSubscription result = pushNotificationService.saveSubscription(invalidDto, userId);
+
+        // Then
+        assertNull(result);
+        verify(pushSubscriptionRepository, never()).save(any());
+    }
+
+    @Test
+    void saveSubscriptionShouldReturnNullForNullKeys() {
+        // Given
+        String userId = "testUser";
+        SubscriptionDto invalidDto = new SubscriptionDto(
+            "https://example.com/endpoint",
+            null,
+            null
+        );
+
+        // When
+        PushSubscription result = pushNotificationService.saveSubscription(invalidDto, userId);
+
+        // Then
+        assertNull(result);
+        verify(pushSubscriptionRepository, never()).save(any());
+    }
+
+    @Test
+    void saveSubscriptionShouldReturnNullForMissingRequiredKeys() {
+        // Given
+        String userId = "testUser";
+        SubscriptionDto invalidDto = new SubscriptionDto(
+            "https://example.com/endpoint",
+            null,
+            Map.of("someKey", "someValue")
+        );
+
+        // When
+        PushSubscription result = pushNotificationService.saveSubscription(invalidDto, userId);
+
+        // Then
+        assertNull(result);
+        verify(pushSubscriptionRepository, never()).save(any());
     }
 
     @Test
@@ -125,16 +187,27 @@ class PushNotificationServiceTest {
 
     @Test
     void sendNotificationHandlesEmptySubscriptionList() {
-        // When
-        when(pushSubscriptionRepository.findAll()).thenReturn(Collections.emptyList());
+        // Set up log capture
+        Logger serviceLogger = (Logger) LoggerFactory.getLogger(PushNotificationService.class);
+        ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
+        listAppender.start();
+        serviceLogger.addAppender(listAppender);
 
-        Exception exception = assertThrows(RuntimeException.class, () -> {
+        try {
+            // When
+            when(pushSubscriptionRepository.findAll()).thenReturn(Collections.emptyList());
             pushNotificationService.sendNotification("Test message");
-        });
 
-        // Then
-        assertEquals("No subscriptions found", exception.getMessage());
-        verify(lambdaClient, never()).invoke(any(InvokeRequest.class));
+            // Then
+            List<ILoggingEvent> loggedEvents = listAppender.list;
+            assertEquals(1, loggedEvents.size());
+            assertEquals(Level.ERROR, loggedEvents.get(0).getLevel());
+            assertEquals("No subscriptions found", loggedEvents.get(0).getFormattedMessage());
+            verify(lambdaClient, never()).invoke(any(InvokeRequest.class));
+        } finally {
+            // Clean up
+            serviceLogger.detachAppender(listAppender);
+        }
     }
 
     @Test
@@ -167,7 +240,7 @@ class PushNotificationServiceTest {
         when(objectMapper.writeValueAsString(any())).thenReturn("{\"test\":\"payload\"}");
         when(lambdaClient.invoke(any(InvokeRequest.class))).thenThrow(new RuntimeException("Lambda invocation failed"));
 
-        // When/Then - should not throw exception outside service
+        // When/Then
         assertDoesNotThrow(() -> pushNotificationService.sendNotification("Test message"));
         verify(lambdaClient).invoke(any(InvokeRequest.class));
     }
