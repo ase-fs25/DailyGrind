@@ -6,7 +6,6 @@ import com.uzh.ase.dailygrind.postservice.post.config.AwsTestCredentialsConfig;
 import com.uzh.ase.dailygrind.postservice.post.config.DynamoDBTestConfig;
 import com.uzh.ase.dailygrind.postservice.post.config.LocalStackTestConfig;
 import com.uzh.ase.dailygrind.postservice.post.controller.dto.PostDto;
-import com.uzh.ase.dailygrind.postservice.post.repository.PostRepository;
 import com.uzh.ase.dailygrind.postservice.post.repository.entity.*;
 import com.uzh.ase.dailygrind.postservice.post.sqs.UserEventConsumer;
 import org.junit.jupiter.api.AfterEach;
