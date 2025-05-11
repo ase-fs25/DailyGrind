@@ -1,5 +1,5 @@
 import { Box, Typography, Card } from '@mui/material';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Header from '../common/Header';
@@ -8,19 +8,24 @@ import { loginUser } from '../../helpers/loginHelpers';
 import { getAuthToken } from '../../helpers/authHelper';
 import { requestNotificationPermission, subscribeUserToPush } from '../../helpers/pushNotificationHelpers';
 
-import { mockPosts } from '../../mockData/mockPosts';
+import { mockPosts as initialMockPosts } from '../../mockData/mockPosts';
 
 import '../../styles/components/screens/screen.css';
 import '../../styles/components/screens/feed.css';
 
+type Comment = { text: string };
+type LocalPost = (typeof initialMockPosts)[0] & { comments: Comment[] };
+
 const Feed = () => {
   const navigate = useNavigate();
   const initialized = useRef(false);
+  const [posts, setPosts] = useState<LocalPost[]>(initialMockPosts.map((p) => ({ ...p, comments: [] })));
+  const [newComments, setNewComments] = useState<{ [key: string]: string }>({});
+
   useEffect(() => {
     if (initialized.current) return;
     initialized.current = true;
 
-    console.log('Service Worker Registration');
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker
         .register('/service-worker.js')
@@ -31,13 +36,11 @@ const Feed = () => {
           return null;
         })
         .then((permission) => {
-          console.log('Permission result: ', permission);
           if (permission === 'granted') {
             return subscribeUserToPush();
           }
           return null;
         })
-        .then(() => {})
         .catch((error) => console.error('Service worker or notification error:', error));
     }
   }, []);
@@ -47,17 +50,13 @@ const Feed = () => {
       (async () => {
         try {
           const authToken = await getAuthToken();
-
           const userInfo = await fetch('http://localhost:8080/users/me', {
             method: 'GET',
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
+            headers: { Authorization: `Bearer ${authToken}` },
           });
 
           if (userInfo.ok && authToken) {
             const userInfoRaw = await userInfo.text();
-
             if (userInfoRaw) {
               loginUser(userInfoRaw, authToken);
             } else {
@@ -71,7 +70,6 @@ const Feed = () => {
     }
   }, [navigate]);
 
-  console.log('Feed component rendered');
   const formatDate = (timestamp: string) => {
     const date = new Date(timestamp);
     return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1)
@@ -79,12 +77,49 @@ const Feed = () => {
       .padStart(2, '0')}-${date.getFullYear()}`;
   };
 
+  const handleLike = (postId: string) => {
+    setPosts((prev) =>
+      prev.map((post) =>
+        post.postId === postId
+          ? {
+              ...post,
+              isLiked: !post.isLiked,
+              likeCount: post.isLiked ? post.likeCount - 1 : post.likeCount + 1,
+            }
+          : post,
+      ),
+    );
+  };
+
+  const handleCommentChange = (postId: string, value: string) => {
+    setNewComments((prev) => ({ ...prev, [postId]: value }));
+  };
+
+  const handleAddComment = (postId: string) => {
+    const text = newComments[postId];
+    if (!text.trim()) return;
+
+    setPosts((prev) =>
+      prev.map((post) =>
+        post.postId === postId
+          ? {
+              ...post,
+              commentCount: post.commentCount + 1,
+              comments: [...post.comments, { text }],
+            }
+          : post,
+      ),
+    );
+
+    setNewComments((prev) => ({ ...prev, [postId]: '' }));
+  };
+
   return (
     <Box className="screen-container">
       <Header />
       <Box className="feed-content">
         <Box className="feed-grid">
-          {mockPosts.map((post) => (
+          {posts.map((post) => (
             <Box key={post.postId} className="feed-item">
               <Card className="post-card">
                 <div className="post-card-header">
@@ -99,6 +134,34 @@ const Feed = () => {
                 <Typography variant="body1" className="post-content">
                   {post.content}
                 </Typography>
+
+                <div className="post-actions">
+                  <button
+                    className={`like-button ${post.isLiked ? 'liked' : ''}`}
+                    onClick={() => handleLike(post.postId)}
+                  >
+                    {post.likeCount}
+                  </button>
+                  <span className="comment-count">{post.commentCount}</span>
+                </div>
+
+                <div className="post-comments">
+                  {post.comments.map((comment, idx) => (
+                    <Typography key={idx} className="comment-text" variant="body2">
+                      {comment.text}
+                    </Typography>
+                  ))}
+                </div>
+
+                <div className="comment-input">
+                  <input
+                    type="text"
+                    placeholder="Add a comment..."
+                    value={newComments[post.postId] || ''}
+                    onChange={(e) => handleCommentChange(post.postId, e.target.value)}
+                  />
+                  <button onClick={() => handleAddComment(post.postId)}>Post</button>
+                </div>
               </Card>
             </Box>
           ))}
