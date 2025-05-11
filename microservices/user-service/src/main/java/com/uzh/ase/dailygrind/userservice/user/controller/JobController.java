@@ -58,8 +58,8 @@ public class JobController {
     @Operation(summary = "Delete a job for the current user", description = "Deletes a job from the authenticated user's profile.")
     @ApiResponse(responseCode = "200", description = "Job deleted successfully")
     @DeleteMapping("/me/jobs/{jobId}")
-    public ResponseEntity<?> deleteUserJob(@PathVariable String jobId, Principal principal) {
+    public ResponseEntity<Void> deleteUserJob(@PathVariable String jobId, Principal principal) {
         userJobService.deleteUserJob(jobId, principal.getName());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }
