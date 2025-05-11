@@ -6,6 +6,7 @@ import com.uzh.ase.dailygrind.userservice.user.config.DynamoDBTestConfig;
 import com.uzh.ase.dailygrind.userservice.user.config.AwsTestCredentialsConfig;
 import com.uzh.ase.dailygrind.userservice.user.config.LocalStackTestConfig;
 import com.uzh.ase.dailygrind.userservice.user.controller.dto.UserCreateDto;
+import com.uzh.ase.dailygrind.userservice.user.repository.entity.FriendshipEntity;
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserEducationEntity;
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserEntity;
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserJobEntity;
@@ -46,6 +47,9 @@ public class UserIntegrationTest {
 
     @Autowired
     private DynamoDbTable<UserEducationEntity> userEducationTable;
+
+    @Autowired
+    private DynamoDbTable<FriendshipEntity> friendRequestEntityDynamoDbTable;
 
     @AfterEach
     void tearDown() {
@@ -215,7 +219,7 @@ public class UserIntegrationTest {
 
         @Test
         @WithMockUser(username = "12345")
-        void getUserDetailsTest() throws Exception {
+        void getUserDetailsTest_jobAndEducation() throws Exception {
             // Given
             UserEntity userEntity = UserEntity.builder()
                 .pk(UserEntity.generatePK("12345"))
@@ -251,6 +255,58 @@ public class UserIntegrationTest {
                 .andExpect(jsonPath("$.educations[0].degree").value("Bachelor's"))
                 .andExpect(jsonPath("$.educations[0].institution").value("Tech University"));
         }
+
+        @Test
+        @WithMockUser(username = "12345")
+        void getUserDetailsTest_noJobAndEducation() throws Exception {
+            // Given
+            UserEntity userEntity = UserEntity.builder()
+                .pk(UserEntity.generatePK("12345"))
+                .sk(UserEntity.generateSK())
+                .email("testuser@gmail.com")
+                .build();
+            userTable.putItem(userEntity);
+
+            // When + Then
+            mockMvc.perform(get("/users/12345/details")
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userInfo.userId").value("12345"))
+                .andExpect(jsonPath("$.userInfo.email").value("testuser@gmail.com"))
+                .andExpect(jsonPath("$.jobs").isEmpty())
+                .andExpect(jsonPath("$.educations").isEmpty())
+                .andExpect(jsonPath("$.numberOfFriends").value("0"));
+        }
+
+//        @Test
+//        @WithMockUser(username = "12345")
+//        void getUserDetailsTest_friend() throws Exception {
+//            // Given
+//            UserEntity userEntity = UserEntity.builder()
+//                .pk(UserEntity.generatePK("12345"))
+//                .sk(UserEntity.generateSK())
+//                .email("testuser@gmail.com")
+//                .build();
+//            userTable.putItem(userEntity);
+//
+//            UserEntity userEntity2 = UserEntity.builder()
+//                .pk(UserEntity.generatePK("22222"))
+//                .sk(UserEntity.generateSK())
+//                .email("testuser2@gmail.com")
+//                .build();
+//            userTable.putItem(userEntity2);
+//
+//            friendRequestEntityDynamoDbTable.putItem();
+//
+//            // When + Then
+//            mockMvc.perform(get("/users/12345/details")
+//                    .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.userInfo.userId").value("12345"))
+//                .andExpect(jsonPath("$.userInfo.email").value("testuser@gmail.com"))
+//                .andExpect(jsonPath("$.jobs").isEmpty())
+//                .andExpect(jsonPath("$.educations").isEmpty());
+//        }
 
     }
 

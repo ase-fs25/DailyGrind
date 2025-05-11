@@ -9,6 +9,5 @@ public record UserInfoDto(
     String location,
     int numberOfFriends,
     String profilePictureUrl,
-    boolean isFriend,
-    String requestId
+    boolean isFriend
 ) {}
