@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TextField, Button, Paper, Typography, Box, Divider } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -25,12 +25,14 @@ const Registration = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const test = async () => {
-    const userEmail = await getUserEmail();
-    setEmail(userEmail);
-  };
+  useEffect(() => {
+    const getEmail = async () => {
+      const userEmail = await getUserEmail();
+      setEmail(userEmail);
+    };
 
-  test();
+    getEmail();
+  }, []);
 
   const handleRegister = async () => {
     if (!firstName || !lastName || !email || !location || !birthday) {
@@ -54,7 +56,7 @@ const Registration = () => {
     setLoading(false);
 
     if (result.success) {
-      navigate('/feed', { replace: true });
+      navigate('/', { replace: true });
     } else {
       setError(result.error ?? 'Registration failed. Please try again.');
     }

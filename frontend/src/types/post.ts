@@ -1,3 +1,5 @@
+import { User } from './user';
+
 export interface Post {
   postId: string;
   title: string;
@@ -13,4 +15,9 @@ export interface Comment {
   commentId: string;
   content: string;
   timestamp: string;
+}
+
+export interface FeedPost {
+  post: Post;
+  user: User;
 }

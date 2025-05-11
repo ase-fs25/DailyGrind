@@ -1,107 +1,95 @@
-import { Box, Typography, Card } from '@mui/material';
-import { useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Box, Typography, Card, CircularProgress } from '@mui/material';
 
 import Header from '../common/Header';
-import userStore from '../../stores/userStore';
-import { loginUser } from '../../helpers/loginHelpers';
-import { getAuthToken } from '../../helpers/authHelper';
-import { requestNotificationPermission, subscribeUserToPush } from '../../helpers/pushNotificationHelpers';
-
-import { mockPosts } from '../../mockData/mockPosts';
 
 import '../../styles/components/screens/screen.css';
 import '../../styles/components/screens/feed.css';
+import postsStore from '../../stores/postsStore';
+import { useEffect, useState } from 'react';
+import { FeedPost } from '../../types/post';
+import userStore from '../../stores/userStore';
 
 const Feed = () => {
-  const navigate = useNavigate();
-  const initialized = useRef(false);
-  useEffect(() => {
-    if (initialized.current) return;
-    initialized.current = true;
+  const [feedPosts, setFeedPosts] = useState<FeedPost[]>(postsStore.getFeedPosts());
+  const [loading, setLoading] = useState(false);
 
-    console.log('Service Worker Registration');
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register('/service-worker.js')
-        .then(() => {
-          if (Notification.permission !== 'denied') {
-            return requestNotificationPermission();
-          }
-          return null;
-        })
-        .then((permission) => {
-          console.log('Permission result: ', permission);
-          if (permission === 'granted') {
-            return subscribeUserToPush();
-          }
-          return null;
-        })
-        .then(() => {})
-        .catch((error) => console.error('Service worker or notification error:', error));
+  useEffect(() => {
+    const fetchPosts = () => {
+      setLoading(true);
+
+      const timeoutId = setTimeout(() => {
+        setFeedPosts(postsStore.getFeedPosts());
+        setLoading(false);
+        userStore.setFeedHasLoaded(true);
+      }, 1500);
+
+      return () => clearTimeout(timeoutId);
+    };
+
+    if (!userStore.getFeedHasLoaded()) {
+      fetchPosts();
     }
   }, []);
 
-  useEffect(() => {
-    if (userStore.getUser().userId === '') {
-      (async () => {
-        try {
-          const authToken = await getAuthToken();
-
-          const userInfo = await fetch('http://localhost:8080/users/me', {
-            method: 'GET',
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          });
-
-          if (userInfo.ok && authToken) {
-            const userInfoRaw = await userInfo.text();
-
-            if (userInfoRaw) {
-              loginUser(userInfoRaw, authToken);
-            } else {
-              navigate('/registration', { replace: true });
-            }
-          }
-        } catch (e) {
-          console.error('post‑auth check failed', e);
-        }
-      })();
-    }
-  }, [navigate]);
-
-  console.log('Feed component rendered');
   const formatDate = (timestamp: string) => {
-    const date = new Date(timestamp);
+    const ts = Number(timestamp);
+    const ms = timestamp.length === 10 ? ts * 1000 : ts;
+
+    const date = new Date(ms);
+    if (isNaN(date.getTime())) {
+      return 'Invalid date';
+    }
     return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1)
       .toString()
       .padStart(2, '0')}-${date.getFullYear()}`;
   };
+
+  if (loading) {
+    return (
+      <Box className="screen-container">
+        <Header />
+        <Box className="feed-content" display="flex" justifyContent="center" alignItems="center" height="100vh">
+          <CircularProgress style={{ color: '#9c27b0' }} />
+        </Box>
+      </Box>
+    );
+  }
 
   return (
     <Box className="screen-container">
       <Header />
       <Box className="feed-content">
         <Box className="feed-grid">
-          {mockPosts.map((post) => (
-            <Box key={post.postId} className="feed-item">
+          {feedPosts.map((post) => (
+            <Box key={post.post.postId} className="feed-item">
               <Card className="post-card">
                 <div className="post-card-header">
-                  <Typography variant="h6" className="post-title">
-                    {post.title}
-                  </Typography>
+                  <div className="post-title-wrapper">
+                    <Typography variant="h6" className="post-title">
+                      {post.post.title}
+                    </Typography>
+                    <Typography className="post-user">by {post.user.firstName + ' ' + post.user.lastName}</Typography>
+                  </div>
+
                   <Typography variant="subtitle2" className="post-timestamp">
-                    {formatDate(post.timestamp)}
+                    {formatDate(post.post.timestamp)}
                   </Typography>
                 </div>
 
                 <Typography variant="body1" className="post-content">
-                  {post.content}
+                  {post.post.content}
                 </Typography>
               </Card>
             </Box>
           ))}
+          {feedPosts.length > 0 && (
+            <Typography className="sub-feed-message">Expand your network to see more posts!</Typography>
+          )}
+          {feedPosts.length === 0 && (
+            <Typography className="sub-feed-message">
+              Oh no, you do not have any friends yet. Expand your network to see more posts!
+            </Typography>
+          )}
         </Box>
       </Box>
     </Box>

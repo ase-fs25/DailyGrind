@@ -109,7 +109,7 @@ const Header = () => {
           </Tabs>
           <Box className="button-row">
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              {leftText && <span style={{ marginRight: 8 }}>{leftText}</span>}
+              {leftText && <span style={{ marginRight: 8, fontSize: '12px' }}>{leftText}</span>}
               <Button
                 variant="contained"
                 startIcon={buttonIcon}

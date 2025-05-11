@@ -1,5 +1,3 @@
-// TODO This should be avoided
-
 import { useEffect, useState } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import { createPost } from '../../helpers/postHelper';
