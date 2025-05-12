@@ -1,61 +1,86 @@
-## Architecture
+# Architecture Overview
 
 ![Architecture](./../img/Architecture.jpeg)
 
-### Microservices
+## Microservices
 
-The microservice is structured in a way that allows for easy development and deployment. The main components are:
-- Post Service
-- User Service
-- Push Notification Service
+Each microservice has its own detailed documentation explaining service-specific functionality as well as motivations for technologies used:
+
+- [Post Service](../microservices/post-service/README.md) - Manages posts, comments, likes, and timelines
+- [User Service](../microservices/user-service/README.md) - Handles user profiles and friendship relationships
+- [Push Notification Service](../microservices/push-notification-service/README.md) - Delivers web push notifications
 
 User Service and Post Service are decoupled and communicate via AWS SNS and SQS. The Post Service consumes events from the User Service to ensure that posts in the timeline and comments always have the most recent user data. The Push Notification Service is responsible for sending web push notifications to users. By separating these services, we can ensure that each service is responsible for a specific task and can be developed and deployed independently. This allows for easier maintenance and scaling of the application.
 
-### AWS Services
-- AWS Cognito: Used for user authentication and authorization.
-- AWS DynamoDB: Used for storing user- and post-data.
-- AWS SNS: Used for sending notifications to users.
-- AWS SQS: Used for decoupling the microservices and ensuring that events are processed asynchronously.
-- AWS Lambda: Used for executing code in response to events, such as sending notifications.
-- AWS EventBridge: Used for scheduling events, such as sending daily notifications.
-- AWS S3: Used for storing static assets, such as images and videos.
-- AWS ECS: Used for deploying and managing the microservices in a containerized environment.
-- AWS API Gateway: Used for exposing the microservices as RESTful APIs.
--
-### AWS Cognito
-We use **AWS Cognito** to handle user authentication and authorization. It allows us to securely manage user sign-up, sign-in, and access control without having to build and maintain our own authentication system. Cognito supports features, that can be implemented in the future, like multi-factor authentication, federated identities (e.g., login with Google or Facebook), and user pool management, making it a powerful solution for user identity management.
+## AWS Infrastructure Components
 
-### AWS DynamoDB
-**AWS DynamoDB** is a fully managed NoSQL database that we use to store both user data, post content and push notification informaion. Its high performance at scale, low-latency access, and flexible schema design make it ideal for our application's evolving data requirements. With built-in support for key-value and document data models, DynamoDB ensures our application remains fast and responsive under heavy load.
+### Storage & Database
 
-### AWS SNS
-We use **AWS Simple Notification Service (SNS)** to send real-time notifications to users and trigger workflows across services. SNS supports both push and fan-out messaging patterns, allowing us to notify users via multiple channels (e.g., email, SMS, Lambda) or inform multiple downstream systems simultaneously when important events occur, like a new post or a system alert.
+- **DynamoDB**:  single-table design per micro-service \
+  (see AWS [best practices for social networks](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/data-modeling-schema-social-network.html)):
+  - **User table** – profiles, credentials, and relationship data
+  - **Post table** – posts, comments, likes, timeline entries
+  - **Push Subscription Table** - Subscription objects for *Web Push* notifications
 
-### AWS SQS
-**AWS Simple Queue Service (SQS)** helps us decouple microservices and process events asynchronously. By using message queues, we can buffer and retry workloads, improve system reliability, and scale individual components independently. This ensures that temporary failures or delays in one service don't impact the others, which is crucial for a robust microservices architecture.
+<details>
+<summary><strong>Show DynamoDB Data Model for User Service </strong></summary>
 
-### AWS Lambda
-**AWS Lambda** enables us to run code in response to events without provisioning or managing servers. We use Lambda for lightweight, on-demand tasks such as sending user notifications or processing SQS messages. Its seamless integration with other AWS services like SNS, S3, and DynamoDB allows us to create powerful, event-driven workflows with minimal infrastructure overhead.
+<div style="text-align: center;">
+  <img src="../img/user_table.jpg" alt="User Table schema" width="420" />
+</div>
 
-### AWS EventBridge
-We use **AWS EventBridge** to schedule and route events within our system. For example, we can configure it to trigger daily notification jobs or monitor custom application events. EventBridge provides a highly scalable and reliable event bus that simplifies building event-driven applications, including recurring tasks and cross-service communication.
+</details>
+<details>
+<summary><strong>Show DynamoDB Data Model for Post Service </strong></summary>
 
-### AWS S3
-**AWS Simple Storage Service (S3)** is our solution for storing static assets like user-uploaded images and videos. S3 offers virtually unlimited storage with high durability, versioning support, and fine-grained access control. It integrates well with services like CloudFront and Lambda, making it a powerful backend for media handling and content delivery.
+<div style="text-align: center;">
+  <img src="../img/post_table.jpg" alt="Post Table schema" width="420" />
+</div>
 
-### AWS ECS
-**AWS Elastic Container Service (ECS)** is used to deploy and manage our containerized microservices. ECS provides deep integration with other AWS services and supports both EC2 and Fargate launch types. It allows us to automate service scaling, monitor performance, and easily roll out new versions, ensuring a robust and flexible deployment pipeline.
+</details>
 
-### AWS API Gateway
-**AWS API Gateway** is responsible for exposing our backend services as secure and scalable RESTful APIs. It manages request routing, input validation, rate limiting, and authentication via Cognito or other identity providers. With built-in support for monitoring and throttling, API Gateway acts as a critical layer for securing and managing access to our microservices.
 
-## Development Setup
+### Messaging & Communication
+- **SNS Topics**: Event publishing for inter-service communication
+- **SQS Queues**: Asynchronous message processing
+  - FIFO queues for ordered event processing
+  - Standard queues for high-throughput scenarios
 
-Run the docker compose with the dev profile with the flag that it should rebuild the images. This is necessary to ensure that the terraform container is rebuilt to include the awslocal cli. This is used to automatically configure the localstack services.
+### Identity & Access Management
+- **Cognito**: User pools and identity providers
+  - JWT token generation and validation
+  - OAuth2 authentication flow
 
-Run the following command in the root directory to start the docker compose, make sure to have your LOCALSTACK_AUTH_TOKEN set as an env var to ensure that localstack pro is running correctly:
-```bash
-  docker compose -p dailygrind --profile dev up -d --build
-```
+<details>
+<summary><strong>Show Authentication Flow </strong></summary>
 
-For frontend development, the prfile `fe-dev` can be used
+<div style="text-align: center;">
+  <img src="../img/authflow.jpg" alt="User Table schema" width="420" />
+</div>
+</details>
+
+### Event Processing
+- **EventBridge**: Configuration for scheduled events
+- **Lambda**: Event-triggered functions for push notifications
+
+### Containerized Services
+- **ECS**: Container orchestration plattform
+  - Dedicated 'dailygrind-cluster' for all microservices
+  - FARGATE launch type for serverless container management
+  - Scalable desired count (currently set to 1 for each service)
+  - Container port mappings for service discovery
+
+### Static Content & Frontend Deployment
+- **S3**: Storage buckets for:
+  - Media assets and user-uploaded files
+  - Frontend application deployment (React/TypeScript bundle)
+  - Static website hosting with website configuration
+  - CloudFront distribution origin
+
+- ### REST APIs
+- **API Gateway**: Central entry point for all microservices (Infrastructure is ready but currently not fully supported through localstack)
+  - Unified endpoint management with authentication integration
+  - Request validation and transformation
+  - Rate limiting and throttling controls
+  - CORS configuration for browser security
+  - Integration with Cognito for JWT validation
