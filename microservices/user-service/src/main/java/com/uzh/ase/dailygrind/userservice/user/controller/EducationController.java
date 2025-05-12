@@ -58,8 +58,8 @@ public class EducationController {
     @Operation(summary = "Delete education for the current user", description = "Deletes an education record from the authenticated user's profile.")
     @ApiResponse(responseCode = "200", description = "Education record deleted successfully")
     @DeleteMapping("/me/education/{educationId}")
-    public ResponseEntity<?> deleteUserEducation(@PathVariable String educationId, Principal principal) {
+    public ResponseEntity<Void> deleteUserEducation(@PathVariable String educationId, Principal principal) {
         userEducationService.deleteUserEducation(principal.getName(), educationId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

@@ -37,7 +37,6 @@ public class DynamoDBConfig {
     }
 
     @Bean
-    @Profile("!test")
     DynamoDbEnhancedClient dynamoDbEnhancedClient(DynamoDbClient dynamoDbClient) {
         return DynamoDbEnhancedClient.builder()
                 .dynamoDbClient(dynamoDbClient)

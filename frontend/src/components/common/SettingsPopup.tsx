@@ -4,14 +4,15 @@ import CloseIcon from '@mui/icons-material/Close';
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
-import { signOut } from 'aws-amplify/auth';
+import { deleteUser, signOut } from 'aws-amplify/auth';
 import '../../styles/components/common/settingsPopup.css';
 import userStore from '../../stores/userStore';
 import { User, UserJob, UserEducation } from '../../types/user';
 import JobsSection from './JobsSection';
 import EducationSection from './EducationSection';
-import { updateUser, deleteUserJob, deleteUserEducation } from '../../helpers/userHelpers';
+import { updateUser, deleteUserJob, deleteUserEducation, deleteUserProfile } from '../../helpers/userHelpers';
 import postsStore from '../../stores/postsStore';
+import DeleteProfilePopup from './DeleteProfilePopup';
 
 interface SettingsPopupProps {
   open: boolean;
@@ -63,6 +64,8 @@ const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
     }
   }, [open]);
 
+
+  const [deleteProfilePopup, setDeleteProfilePopup] = useState<boolean>(false);
 
   const handleUserChange = (field: keyof User, value: string) => {
     setUser((prev) => ({ ...prev, [field]: value }));
@@ -175,13 +178,32 @@ const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
     try {
       await signOut();
       userStore.deleteUser();
+      userStore.setFeedHasLoaded(false);
       postsStore.clearPosts();
       postsStore.clearPinnedPosts();
+      postsStore.clearFeedPosts();
       window.localStorage.clear();
       navigate('/');
     } catch (e) {
       console.error('Error signing out: ', e);
     }
+  };
+
+  const handleDeleteClick = async () => {
+    setDeleteProfilePopup(true);
+  };
+
+  const handleDefiniteDelete = async () => {
+    await deleteUserProfile();
+    await deleteUser();
+    userStore.deleteUser();
+    userStore.setFeedHasLoaded(false);
+    postsStore.clearPosts();
+    postsStore.clearPinnedPosts();
+    postsStore.clearFeedPosts();
+    window.localStorage.clear();
+    setDeleteProfilePopup(false);
+    navigate('/');
   };
 
   return (
@@ -312,9 +334,14 @@ const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
       )}
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }} className="footer-container">
-        <Button variant="contained" color="error" onClick={handleLogout} sx={{ mr: 1 }}>
-          Log Out
-        </Button>
+        <div>
+          <Button variant="contained" color="error" onClick={handleLogout} sx={{ mr: 1 }}>
+            Log Out
+          </Button>
+          <Button variant="outlined" color="error" onClick={handleDeleteClick} sx={{ mr: 1 }}>
+            Delete Profile?
+          </Button>
+        </div>
         <div className="footer-buttons-right">
           <Button onClick={onClose} sx={{ mr: 1, color: '#7b1fa2', '&:hover': { backgroundColor: '#f3e5f5' } }}>
             Cancel
@@ -332,6 +359,11 @@ const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
           </Button>
         </div>
       </Box>
+      <DeleteProfilePopup
+        open={deleteProfilePopup}
+        onClose={() => setDeleteProfilePopup(false)}
+        onDelete={handleDefiniteDelete}
+      />
     </Dialog>
   );
 };

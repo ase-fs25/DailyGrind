@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TextField, Button, Paper, Typography, Box, Divider, Avatar, IconButton } from '@mui/material';
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
@@ -30,12 +30,14 @@ const Registration = () => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const test = async () => {
-    const userEmail = await getUserEmail();
-    setEmail(userEmail);
-  };
+  useEffect(() => {
+    const getEmail = async () => {
+      const userEmail = await getUserEmail();
+      setEmail(userEmail);
+    };
 
-  test();
+    getEmail();
+  }, []);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -97,9 +99,7 @@ const Registration = () => {
       });
 
       if (result.success) {
-        navigate('/feed', { replace: true });
-      } else {
-        setError(result.error ?? 'Registration failed. Please try again.');
+        navigate('/', { replace: true });
       }
     } catch (error) {
       console.error('Error during registration:', error);

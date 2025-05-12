@@ -1,6 +1,5 @@
 package com.uzh.ase.dailygrind.postservice.post.controller;
 
-import com.uzh.ase.dailygrind.postservice.post.controller.dto.CommentDto;
 import com.uzh.ase.dailygrind.postservice.post.controller.dto.PostDto;
 import com.uzh.ase.dailygrind.postservice.post.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,10 +9,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping
@@ -26,14 +25,14 @@ public class PostController {
     @ApiResponse(responseCode = "200", description = "Successfully retrieved daily post")
     @GetMapping("/users/me/daily-post")
     public ResponseEntity<PostDto> getMyDailyPost(Principal principal) {
-        return ResponseEntity.ok(postService.getDailyPostForUser(principal.getName()));
+        return ResponseEntity.ok(postService.getDailyPostForUser(principal.getName(), principal.getName()));
     }
 
     @Operation(summary = "Get today's daily post for a specific user")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved user's daily post")
     @GetMapping("/users/{userId}/daily-post")
-    public ResponseEntity<PostDto> getDailyPostForUser(@PathVariable String userId) {
-        return ResponseEntity.ok(postService.getDailyPostForUser(userId));
+    public ResponseEntity<PostDto> getDailyPostForUser(@PathVariable String userId, Principal principal) {
+        return ResponseEntity.ok(postService.getDailyPostForUser(userId, principal.getName()));
     }
 
     @Operation(summary = "Get all posts by the authenticated user")
@@ -63,12 +62,8 @@ public class PostController {
         @ApiResponse(responseCode = "400", description = "Daily post already exists for today")
     })
     @PostMapping("/posts")
-    public ResponseEntity<?> createPost(@RequestBody PostDto postDto, Principal principal) {
-        try {
-            postDto = postService.createPost(postDto, principal.getName());
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You already have a daily post for today");
-        }
+    public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto, Principal principal) {
+        postDto = postService.createPost(postDto, principal.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(postDto);
     }
 
@@ -78,10 +73,8 @@ public class PostController {
         @ApiResponse(responseCode = "400", description = "Post ID mismatch between URL and body")
     })
     @PutMapping("/posts/{postId}")
-    public ResponseEntity<?> updatePost(@PathVariable String postId, @RequestBody PostDto postDto, Principal principal) {
-        if (!postId.equals(postDto.postId())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Post ID in URL and body do not match");
-        }
+    public ResponseEntity<PostDto> updatePost(@PathVariable String postId, @RequestBody PostDto postDto, Principal principal) {
+        if (!postId.equals(postDto.postId())) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post ID mismatch");
         return ResponseEntity.ok(postService.updatePost(postId, principal.getName(), postDto));
     }
 

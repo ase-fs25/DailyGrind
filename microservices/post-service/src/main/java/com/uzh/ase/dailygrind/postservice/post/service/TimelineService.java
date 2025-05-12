@@ -22,7 +22,7 @@ public class TimelineService {
 
         return friends.stream()
             .map(friend -> {
-                PostDto post = postService.getDailyPostForUser(friend.userId());
+                PostDto post = postService.getDailyPostForUser(friend.userId(), userId);
                 return post != null ? new TimelineEntryDto(post, friend) : null;
             })
             .filter(Objects::nonNull)
