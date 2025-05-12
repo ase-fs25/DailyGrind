@@ -16,7 +16,6 @@ import UploadPictureButton from '../common/UploadPictureButton';
 import '../../styles/components/login/registration.css';
 import { getUserEmail } from '../../helpers/authHelper';
 
-
 const Registration = () => {
   const navigate = useNavigate();
   const [firstName, setFirstName] = useState('');
@@ -76,8 +75,8 @@ const Registration = () => {
           method: 'PUT',
           body: selectedFile,
           headers: {
-            'Content-Type': selectedFile.type
-          }
+            'Content-Type': selectedFile.type,
+          },
         });
 
         if (!response.ok) {

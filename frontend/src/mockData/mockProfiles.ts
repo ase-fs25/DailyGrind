@@ -6,6 +6,7 @@ export const mockProfiles: User[] = [
     email: 'alice@gmail.com',
     firstName: 'Alice',
     lastName: 'All',
+    profilePictureUrl: 'https://example.com/placeholder-profile.jpg',
     birthday: '1990-01-01',
     location: 'New York',
     jobs: [
@@ -46,6 +47,7 @@ export const mockProfiles: User[] = [
     email: 'bob@gmail.com',
     firstName: 'Bob',
     lastName: 'Builder',
+    profilePictureUrl: 'https://example.com/placeholder-profile.jpg',
     birthday: '1985-05-05',
     location: 'Los Angeles',
     jobs: [
@@ -86,6 +88,7 @@ export const mockProfiles: User[] = [
     email: 'charlie@gmail.com',
     firstName: 'Charlie',
     lastName: 'Chaplin',
+    profilePictureUrl: 'https://example.com/placeholder-profile.jpg',
     birthday: '1992-03-03',
     location: 'Chicago',
     jobs: [
@@ -126,6 +129,7 @@ export const mockProfiles: User[] = [
     email: 'diane@gmail.com',
     firstName: 'Diane',
     lastName: 'Davis',
+    profilePictureUrl: 'https://example.com/placeholder-profile.jpg',
     birthday: '1988-07-07',
     location: 'Miami',
     jobs: [
