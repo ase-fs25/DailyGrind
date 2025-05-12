@@ -89,7 +89,6 @@ Pipelines must be green before PR merge; `main`/`develop` are both protected.
 * **Java docs** – accessible for each microservice at (`*/docs/index.html`).
 * **API docs** – Swagger UIs exposed at each service (`/swagger-ui/index.html`).
 
-
 ---
 
 ## 7  How to Reproduce the Board
