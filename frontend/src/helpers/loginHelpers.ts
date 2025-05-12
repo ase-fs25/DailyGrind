@@ -117,7 +117,7 @@ export async function loginUser(userInfoRaw: string, authToken: string) {
     }
   }
 
-  const userFeed = await fetch(getApiUrl('users/me/timeline'), {
+  const userFeed = await fetch(getApiUrl('posts/users/me/timeline'), {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${authToken}`,
