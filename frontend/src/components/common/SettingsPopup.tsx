@@ -1,5 +1,5 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {Dialog, DialogTitle, TextField, Button, Box, Typography, Avatar, IconButton} from '@mui/material';
+import React, { useEffect, useRef, useState } from 'react';
+import { Dialog, DialogTitle, TextField, Button, Box, Typography, Avatar, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import { useNavigate } from 'react-router-dom';
@@ -48,7 +48,6 @@ const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
       setPreviewUrl(null);
     }
   }, [open]);
-
 
   const [deleteProfilePopup, setDeleteProfilePopup] = useState<boolean>(false);
 
@@ -124,8 +123,8 @@ const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
           method: 'PUT',
           body: selectedFile,
           headers: {
-            'Content-Type': selectedFile.type
-          }
+            'Content-Type': selectedFile.type,
+          },
         });
 
         if (response.ok) {
@@ -141,7 +140,7 @@ const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
 
       const updatedUser = {
         ...user,
-        profilePictureUrl: profilePictureUrl
+        profilePictureUrl: profilePictureUrl,
       };
 
       await updateUser(updatedUser);
