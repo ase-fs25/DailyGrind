@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Dialog, DialogTitle, TextField, IconButton, Button, Box, Typography } from '@mui/material';
+import { Box, Button, Dialog, DialogTitle, IconButton, TextField, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useNavigate } from 'react-router-dom';
 import { deleteUser, signOut } from 'aws-amplify/auth';
 import '../../styles/components/common/settingsPopup.css';
 import userStore from '../../stores/userStore';
-import { User, UserJob, UserEducation } from '../../types/user';
+import { User, UserEducation, UserJob } from '../../types/user';
 import JobsSection from './JobsSection';
 import EducationSection from './EducationSection';
-import { updateUser, deleteUserJob, deleteUserEducation, deleteUserProfile } from '../../helpers/userHelpers';
+import { deleteUserEducation, deleteUserJob, deleteUserProfile, updateUser } from '../../helpers/userHelpers';
 import postsStore from '../../stores/postsStore';
 import DeleteProfilePopup from './DeleteProfilePopup';
 
@@ -73,8 +73,8 @@ const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
   useEffect(() => {
     if (open) {
       setUser(userStore.getUser());
-      setJobs(userStore.getJobs());
-      setEducation(userStore.getEducation());
+      setJobs(userStore.getJobs() || []);
+      setEducation(userStore.getEducation() || []);
     }
   }, [open]);
 
