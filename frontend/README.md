@@ -19,17 +19,9 @@ Built with **React**, **TypeScript**, and **Vite**, the application is styled us
 ---
 
 
-# Getting Started with Create React App
+# Getting Started
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm install`
-
-Do this first to install all the necessary dependencies.
 
 ### Set ENV variables
 
