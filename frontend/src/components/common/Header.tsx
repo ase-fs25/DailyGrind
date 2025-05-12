@@ -100,7 +100,7 @@ const Header = () => {
       <AppBar position="static" className="header-container">
         <Toolbar className="toolbar">
           <Box className="logo">
-            <span>Logo</span>
+            <div>DailyGrind</div>
           </Box>
           <Tabs value={tabIndex >= 0 ? tabIndex : 0} onChange={handleTabChange} className="header-tabs" centered>
             <Tab label="Feed" className="header-tab" />

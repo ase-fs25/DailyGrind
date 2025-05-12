@@ -13,11 +13,21 @@ export interface Post {
 
 export interface Comment {
   commentId: string;
+  userId: string;
   content: string;
   timestamp: string;
 }
 
+export interface CommentForBackend {
+  content: string;
+}
+
 export interface FeedPost {
   post: Post;
+  user: User;
+}
+
+export interface PostComments {
+  comment: Comment;
   user: User;
 }

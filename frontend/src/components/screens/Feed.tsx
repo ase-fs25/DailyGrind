@@ -1,6 +1,7 @@
 import { Box, Typography, Card, CircularProgress, IconButton } from '@mui/material';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import CommentIcon from '@mui/icons-material/Comment';
 
 import Header from '../common/Header';
 
@@ -8,13 +9,16 @@ import '../../styles/components/screens/screen.css';
 import '../../styles/components/screens/feed.css';
 import postsStore from '../../stores/postsStore';
 import { useEffect, useState } from 'react';
-import { FeedPost, Post } from '../../types/post';
+import { FeedPost, Post, PostComments } from '../../types/post';
 import userStore from '../../stores/userStore';
-import { likePost, unlikePost } from '../../helpers/postHelper';
+import { formatDate, getCommentsForPost, likePost, unlikePost } from '../../helpers/postHelper';
+import CommentsPopup from '../common/CommentsPopup';
 
 const Feed = () => {
   const [feedPosts, setFeedPosts] = useState<FeedPost[]>(postsStore.getFeedPosts());
   const [loading, setLoading] = useState(false);
+  const [openComments, setOpenComments] = useState(false);
+  const [currentComments, setCurrentComments] = useState<PostComments[]>([]);
 
   useEffect(() => {
     const fetchPosts = () => {
@@ -33,19 +37,6 @@ const Feed = () => {
       fetchPosts();
     }
   }, []);
-
-  const formatDate = (timestamp: string) => {
-    const ts = Number(timestamp);
-    const ms = timestamp.length === 10 ? ts * 1000 : ts;
-
-    const date = new Date(ms);
-    if (isNaN(date.getTime())) {
-      return 'Invalid date';
-    }
-    return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1)
-      .toString()
-      .padStart(2, '0')}-${date.getFullYear()}`;
-  };
 
   const handleLike = async (post: FeedPost) => {
     try {
@@ -70,6 +61,16 @@ const Feed = () => {
     } catch (err) {
       console.error('Error toggling like:', err);
     }
+  };
+
+  const handleCommentsClick = async (postId: string) => {
+    const fetchedComments = await getCommentsForPost(postId);
+
+    if (fetchedComments) {
+      setCurrentComments(fetchedComments);
+    }
+
+    setOpenComments(true);
   };
 
   if (loading) {
@@ -120,8 +121,23 @@ const Feed = () => {
                   >
                     {post.post.isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
                   </IconButton>
+                  <IconButton
+                    edge="end"
+                    onClick={() => handleCommentsClick(post.post.postId)}
+                    aria-label="comment"
+                    sx={{ width: '36px', height: '36px', marginLeft: '12px;', marginTop: '2px' }}
+                    color="secondary"
+                  >
+                    <CommentIcon />
+                  </IconButton>
                 </div>
               </Card>
+              <CommentsPopup
+                open={openComments}
+                onClose={() => setOpenComments(false)}
+                post={post}
+                comments={currentComments}
+              />
             </Box>
           ))}
           {feedPosts.length > 0 && (

@@ -21,6 +21,8 @@
   font-weight: bold;
   width: 33%;
   justify-content: flex-start;
+  font-family: 'Gill Sans', sans-serif;
+  font-size: 30px;
 }
 
 .header-tabs {
