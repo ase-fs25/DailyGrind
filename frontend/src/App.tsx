@@ -56,7 +56,7 @@ function AppContent() {
       if (authStatus === 'authenticated' && user && !userStore.getUser().userId) {
         try {
           const authToken = await getAuthToken();
-          const response = await fetch(getApiUrl('users/me/details'), {
+          const response = await fetch(getApiUrl('users/me'), {
             headers: {
               Authorization: `Bearer ${authToken}`,
             },

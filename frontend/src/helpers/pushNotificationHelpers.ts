@@ -10,7 +10,7 @@ export const registerUserForSubscription = async (): Promise<any> => {
   console.log('Service Worker Registration');
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker
-      .register('/service-worker.js')
+      .register((import.meta.env.PROD ? '/dailygrind' : '') + '/service-worker.js')
       .then(() => {
         if (Notification.permission !== 'denied') {
           return requestNotificationPermission();

@@ -82,5 +82,7 @@ services:
       - localstack
     volumes:
       - ./microservices:/microservices
+      - ./frontend:/app/frontend
+      - /app/frontend/node_modules
       - /var/run/docker.sock:/var/run/docker.sock
     restart: "no"

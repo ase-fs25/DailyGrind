@@ -7,7 +7,7 @@ resource "aws_apigatewayv2_api" "http_api" {
       "http://localhost:3000", "http://localhost:30001", "http://localhost:4566", "http://localstack:4566", "https://oauth.pstmn.io/v1/callback"
     ]
     allow_methods = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
-    allow_headers = ["Authorization", "Content-Type"]
+    allow_headers = ["Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin"]
     expose_headers = ["Authorization", "Content-Type"]
     max_age           = 3600
     allow_credentials = true

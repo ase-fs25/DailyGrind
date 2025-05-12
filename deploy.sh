@@ -1,6 +1,18 @@
 #!/usr/bin/env bash
 set -e
 
+echo "🌍 Waiting for Terraform to finish..."
+sleep 5
+while docker ps | grep terraform > /dev/null 2>&1; do
+  echo "⏳ Terraform not finished yet. Sleeping 5 seconds..."
+  sleep 5;
+done;
+
+echo "✅ Terraform is done. Proceeding with deploy."
+
+npm install --prefix /app/frontend
+npm run build --prefix /app/frontend
+
 echo "📦 Waiting for S3 bucket $BUCKET_NAME..."
 
 until aws --endpoint-url=http://localstack:4566 s3 ls "s3://$BUCKET_NAME" 2>/dev/null; do
