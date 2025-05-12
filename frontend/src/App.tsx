@@ -1,4 +1,4 @@
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import { Authenticator, useAuthenticator } from '@aws-amplify/ui-react';
 import { Amplify } from 'aws-amplify';
 import '@aws-amplify/ui-react/styles.css';
@@ -12,6 +12,7 @@ import { loginUser } from './helpers/loginHelpers';
 import { getAuthToken } from './helpers/authHelper';
 import { registerUserForSubscription } from './helpers/pushNotificationHelpers';
 import userStore from './stores/userStore';
+import { getApiUrl } from './helpers/apiHelper';
 
 Amplify.configure({
   Auth: {
@@ -52,7 +53,7 @@ function AppContent() {
     if (authStatus === 'authenticated' && user) {
       try {
         const authToken = await getAuthToken();
-        const userInfo = await fetch('http://localhost:8080/users/me', {
+        const userInfo = await fetch(getApiUrl('users/me'), {
           headers: {
             Authorization: `Bearer ${authToken}`,
           },

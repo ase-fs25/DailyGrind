@@ -2,6 +2,7 @@ import postsStore from '../stores/postsStore';
 import userStore from '../stores/userStore';
 import { UserEducation, UserJob } from '../types/user';
 import { getAuthToken } from './authHelper';
+import { getApiUrl } from './apiHelper';
 
 export async function registerUser(userData: {
   firstName: string;
@@ -16,7 +17,7 @@ export async function registerUser(userData: {
     const authToken = await getAuthToken();
 
     // Create user Info
-    const createUserInfo = await fetch('http://localhost:8080/users/me', {
+    const createUserInfo = await fetch(getApiUrl('users/me'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -33,7 +34,7 @@ export async function registerUser(userData: {
 
     // Store User Jobs in backend
     for (const job of userData.jobs) {
-      const createUserJobs = await fetch('http://localhost:8080/users/me/jobs', {
+      const createUserJobs = await fetch(getApiUrl('users/me/jobs'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -49,7 +50,7 @@ export async function registerUser(userData: {
 
     // Store User Education in backend
     for (const education of userData.education) {
-      const createUserEducation = await fetch('http://localhost:8080/users/me/education', {
+      const createUserEducation = await fetch(getApiUrl('users/me/education'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -86,7 +87,7 @@ export async function loginUser(userInfoRaw: string, authToken: string) {
     education: userData.education || [],
   });
 
-  const userJobInfo = await fetch('http://localhost:8080/users/me/jobs', {
+  const userJobInfo = await fetch(getApiUrl('users/me/jobs'), {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${authToken}`,
@@ -101,7 +102,7 @@ export async function loginUser(userInfoRaw: string, authToken: string) {
     }
   }
 
-  const userEducationInfo = await fetch('http://localhost:8080/users/me/education', {
+  const userEducationInfo = await fetch(getApiUrl('users/me/education'), {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${authToken}`,
@@ -116,7 +117,7 @@ export async function loginUser(userInfoRaw: string, authToken: string) {
     }
   }
 
-  const userFeed = await fetch('http://localhost:8081/users/me/timeline', {
+  const userFeed = await fetch(getApiUrl('users/me/timeline'), {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${authToken}`,

@@ -1,8 +1,7 @@
 import { UserEducation, UserJob } from '../types/user';
 import userStore from '../stores/userStore';
 import { getAuthToken } from './authHelper';
-
-const API_URL = 'http://localhost:8080';
+import { getApiUrl } from './apiHelper';
 
 export async function updateUser(userData: {
   firstName: string;
@@ -16,7 +15,7 @@ export async function updateUser(userData: {
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(`${API_URL}/users/me`, {
+    const response = await fetch(getApiUrl(`users/me`), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -48,7 +47,7 @@ export async function updateUser(userData: {
 export async function updateUserJob(jobId: string, jobData: UserJob) {
   try {
     const authToken = await getAuthToken();
-    const response = await fetch(`${API_URL}/users/me/jobs/${jobId}`, {
+    const response = await fetch(getApiUrl(`users/me/jobs/${jobId}`), {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -78,7 +77,7 @@ export async function updateUserJob(jobId: string, jobData: UserJob) {
 export async function updateUserEducation(educationId: string, educationData: UserEducation) {
   try {
     const authToken = await getAuthToken();
-    const response = await fetch(`${API_URL}/users/me/education/${educationId}`, {
+    const response = await fetch(getApiUrl(`users/me/education/${educationId}`), {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -108,7 +107,7 @@ export async function updateUserEducation(educationId: string, educationData: Us
 export async function addUserJob(job: UserJob) {
   try {
     const authToken = await getAuthToken();
-    const response = await fetch(`${API_URL}/users/me/jobs`, {
+    const response = await fetch(getApiUrl(`users/me/jobs`), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -136,7 +135,7 @@ export async function addUserJob(job: UserJob) {
 export async function addUserEducation(education: UserEducation) {
   try {
     const authToken = await getAuthToken();
-    const response = await fetch(`${API_URL}/users/me/education`, {
+    const response = await fetch(getApiUrl(`users/me/education`), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -168,7 +167,7 @@ export async function deleteUserJob(jobId: string) {
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(`${API_URL}/users/me/jobs/${jobId}`, {
+    const response = await fetch(getApiUrl(`users/me/jobs/${jobId}`), {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -193,7 +192,7 @@ export async function deleteUserEducation(educationId: string) {
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(`${API_URL}/users/me/education/${educationId}`, {
+    const response = await fetch(getApiUrl(`users/me/education/${educationId}`), {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -218,7 +217,7 @@ export async function deleteUserProfile() {
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(`${API_URL}/users/me`, {
+    const response = await fetch(getApiUrl(`users/me`), {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
