@@ -37,6 +37,8 @@ jobs:
     strategy:
       matrix:
         service: ${{ fromJson(needs.discover-services.outputs.services) }}
+    env:
+      AWS_HOSTNAME: localhost
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

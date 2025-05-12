@@ -1,5 +1,3 @@
-# File: modules/secrets/main.tf
-
 resource "aws_secretsmanager_secret" "cognito_client_secret" {
   name = "cognito_client_secret"
 }
