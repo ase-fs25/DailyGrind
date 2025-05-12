@@ -1,4 +1,4 @@
-import { Box, Typography, Card, CircularProgress } from '@mui/material';
+import { Box, Typography, Card, CircularProgress, Avatar } from '@mui/material';
 
 import Header from '../common/Header';
 
@@ -65,6 +65,11 @@ const Feed = () => {
               <Card className="post-card">
                 <div className="post-card-header">
                   <div className="post-title-wrapper">
+                    <Avatar
+                      src={post.user.profilePictureUrl}
+                      alt={`${post.user.firstName} ${post.user.lastName}`}
+                      sx={{ width: 50, height: 50, boxShadow: '0 4px 8px rgba(0,0,0,0.1)', mr: '8px' }}
+                    />
                     <Typography variant="h6" className="post-title">
                       {post.post.title}
                     </Typography>
