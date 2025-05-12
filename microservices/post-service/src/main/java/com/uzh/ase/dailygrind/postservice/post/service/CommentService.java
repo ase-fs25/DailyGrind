@@ -8,7 +8,9 @@ import com.uzh.ase.dailygrind.postservice.post.repository.PostRepository;
 import com.uzh.ase.dailygrind.postservice.post.repository.entity.CommentEntity;
 import com.uzh.ase.dailygrind.postservice.post.repository.entity.PostEntity;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -22,7 +24,9 @@ public class CommentService {
     private final PostRepository postRepository;
 
     public List<CommentEntryDto> getComments(String postId) {
-        String userId = postRepository.findPostById(postId).getUserId();
+        PostEntity postEntity = postRepository.findPostById(postId);
+        if (postEntity == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post not found");
+        String userId = postEntity.getUserId();
         List<CommentEntity> commentEntities = commentRepository.findAllCommentsForPost(userId, postId);
         return commentEntities.stream()
             .map(commentEntity -> new CommentEntryDto(
