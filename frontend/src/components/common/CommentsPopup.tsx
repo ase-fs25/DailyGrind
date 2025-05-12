@@ -49,19 +49,19 @@ const CommentsPopup = ({ open, onClose, post, comments }: CommentsPopupProps) =>
 
   const createAuthorPost = () => {
     if (user.userId === post.user.userId) {
-      return 'by me'
+      return 'by me';
     } else {
-      return `by ${post.user.firstName + ' ' + post.user.lastName}`
+      return `by ${post.user.firstName + ' ' + post.user.lastName}`;
     }
-  }
+  };
 
   const createAuthorComment = (comment: PostComments) => {
     if (user.userId === comment.comment.userId) {
-      return 'From me'
+      return 'From me';
     } else {
-      return `From ${comment.user.firstName} ${comment.user.lastName}`
+      return `From ${comment.user.firstName} ${comment.user.lastName}`;
     }
-  }
+  };
 
   return (
     <Dialog
@@ -109,9 +109,7 @@ const CommentsPopup = ({ open, onClose, post, comments }: CommentsPopupProps) =>
               <div key={comment.comment.commentId} className="single-comment-wrapper">
                 <div className="single-comment-content-wrapper">
                   <div>
-                    <div className="comment-author">
-                      {createAuthorComment(comment)}
-                    </div>
+                    <div className="comment-author">{createAuthorComment(comment)}</div>
                     <div>{comment.comment.content}</div>
                   </div>
                   {user.userId === comment.comment.userId && (
@@ -132,32 +130,32 @@ const CommentsPopup = ({ open, onClose, post, comments }: CommentsPopupProps) =>
         )}
       </DialogContent>
       <div className="add-comment-wrapper">
-          <TextField
-            label="Add Comment"
-            variant="outlined"
+        <TextField
+          label="Add Comment"
+          variant="outlined"
+          fullWidth
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+          className="add-comment-input"
+          color="secondary"
+        />
+        <div>
+          <Button
+            variant="contained"
+            color="primary"
             fullWidth
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            className="add-comment-input"
-            color="secondary"
-          />
-          <div>
-            <Button
-              variant="contained"
-              color="primary"
-              fullWidth
-              disabled={newComment.length === 0}
-              onClick={addComment}
-              sx={{
-                backgroundColor: '#7b1fa2',
-                '&:hover': { backgroundColor: '#9c27b0' },
-                fontSize: '10px',
-              }}
-            >
-              Add Comment
-            </Button>
-          </div>
+            disabled={newComment.length === 0}
+            onClick={addComment}
+            sx={{
+              backgroundColor: '#7b1fa2',
+              '&:hover': { backgroundColor: '#9c27b0' },
+              fontSize: '10px',
+            }}
+          >
+            Add Comment
+          </Button>
         </div>
+      </div>
     </Dialog>
   );
 };
