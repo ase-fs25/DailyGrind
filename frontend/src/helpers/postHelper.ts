@@ -210,3 +210,43 @@ export async function unpinPost(postId: string): Promise<void> {
     throw error;
   }
 }
+
+export async function likePost(postId: string): Promise<void> {
+  try {
+    const authToken = await getAuthToken();
+
+    const response = await fetch(`${API_URL}/posts/${postId}/likes`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to like post: ${response.status}`);
+    }
+  } catch (error) {
+    console.error('Error liking post:', error);
+    throw error;
+  }
+}
+
+export async function unlikePost(postId: string): Promise<void> {
+  try {
+    const authToken = await getAuthToken();
+
+    const response = await fetch(`${API_URL}/posts/${postId}/likes`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to like post: ${response.status}`);
+    }
+  } catch (error) {
+    console.error('Error liking post:', error);
+    throw error;
+  }
+}

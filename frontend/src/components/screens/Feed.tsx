@@ -1,4 +1,6 @@
-import { Box, Typography, Card, CircularProgress } from '@mui/material';
+import { Box, Typography, Card, CircularProgress, IconButton } from '@mui/material';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 import Header from '../common/Header';
 
@@ -6,8 +8,9 @@ import '../../styles/components/screens/screen.css';
 import '../../styles/components/screens/feed.css';
 import postsStore from '../../stores/postsStore';
 import { useEffect, useState } from 'react';
-import { FeedPost } from '../../types/post';
+import { FeedPost, Post } from '../../types/post';
 import userStore from '../../stores/userStore';
+import { likePost, unlikePost } from '../../helpers/postHelper';
 
 const Feed = () => {
   const [feedPosts, setFeedPosts] = useState<FeedPost[]>(postsStore.getFeedPosts());
@@ -42,6 +45,31 @@ const Feed = () => {
     return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1)
       .toString()
       .padStart(2, '0')}-${date.getFullYear()}`;
+  };
+
+  const handleLike = async (post: FeedPost) => {
+    try {
+      if (post.post.isLiked) {
+        await unlikePost(post.post.postId);
+      } else {
+        await likePost(post.post.postId);
+      }
+
+      const existing = feedPosts.find((fp) => fp.post.postId === post.post.postId);
+      if (!existing) return;
+
+      const updatedPost: Post = {
+        ...existing.post,
+        isLiked: !existing.post.isLiked,
+        likeCount: existing.post.likeCount + (existing.post.isLiked ? -1 : 1),
+      };
+
+      postsStore.updateFeedPost(post.post.postId, { ...post, post: updatedPost });
+
+      setFeedPosts((fps) => fps.map((fp) => (fp.post.postId === post.post.postId ? { ...fp, post: updatedPost } : fp)));
+    } catch (err) {
+      console.error('Error toggling like:', err);
+    }
   };
 
   if (loading) {
@@ -79,6 +107,20 @@ const Feed = () => {
                 <Typography variant="body1" className="post-content">
                   {post.post.content}
                 </Typography>
+                <div className="like-wrapper">
+                  <Typography variant="body1" className="like-count">
+                    {post.post.likeCount}
+                  </Typography>
+                  <IconButton
+                    edge="end"
+                    onClick={() => handleLike(post)}
+                    aria-label="like"
+                    sx={{ width: '36px', height: '36px' }}
+                    color="secondary"
+                  >
+                    {post.post.isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                  </IconButton>
+                </div>
               </Card>
             </Box>
           ))}
