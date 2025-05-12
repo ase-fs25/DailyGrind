@@ -7,7 +7,7 @@
 - Jonas Gebel: Main frontend developer
 - Tim Vorburger: Frontend and backend developer
 - Toni Krstic: Frontend and backend developer
-- Mete Polat: Devops
+- Mete Polat: Main Devops
 - Leonard Wagner: Main backend developer and devops
 
 ## Documentation
