@@ -122,7 +122,8 @@ const CommentsPopup = ({ open, onClose, post, comments }: CommentsPopupProps) =>
             ))}
           </div>
         )}
-        <div className="add-comment-wrapper">
+      </DialogContent>
+      <div className="add-comment-wrapper">
           <TextField
             label="Add Comment"
             variant="outlined"
@@ -149,7 +150,6 @@ const CommentsPopup = ({ open, onClose, post, comments }: CommentsPopupProps) =>
             </Button>
           </div>
         </div>
-      </DialogContent>
     </Dialog>
   );
 };
