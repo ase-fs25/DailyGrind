@@ -98,7 +98,7 @@ public class TimelineIntegrationTest {
         friendTable.putItem(friendEntity);
 
         // When
-        mockMvc.perform(get("/users/me/timeline"))
+        mockMvc.perform(get("/posts/users/me/timeline"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$[0].post.postId").value("1"))
             .andExpect(jsonPath("$[0].user.userId").value("11111"));
@@ -127,7 +127,7 @@ public class TimelineIntegrationTest {
         friendTable.putItem(friendEntity);
 
         // When
-        mockMvc.perform(get("/users/me/timeline"))
+        mockMvc.perform(get("/posts/users/me/timeline"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.length()").value(0));
     }
@@ -143,7 +143,7 @@ public class TimelineIntegrationTest {
         userTable.putItem(user);
 
         // When
-        mockMvc.perform(get("/users/me/timeline"))
+        mockMvc.perform(get("/posts/users/me/timeline"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.length()").value(0));
     }
