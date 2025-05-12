@@ -1,17 +1,17 @@
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { Authenticator, useAuthenticator } from '@aws-amplify/ui-react';
 import { Amplify } from 'aws-amplify';
-
-import './styles/app.css';
 import '@aws-amplify/ui-react/styles.css';
 
 import Feed from './components/screens/Feed';
 import Posts from './components/screens/Posts';
 import Friends from './components/screens/Friends';
 import Registration from './components/login/Registration';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { loginUser } from './helpers/loginHelpers';
 import { getAuthToken } from './helpers/authHelper';
+import { registerUserForSubscription } from './helpers/pushNotificationHelpers';
+import userStore from './stores/userStore';
 
 Amplify.configure({
   Auth: {
@@ -48,45 +48,47 @@ function AppContent() {
   const [appReady, setAppReady] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const init = async () => {
-      if (authStatus === 'authenticated' && user) {
-        try {
-          const authToken = await getAuthToken();
-          const userInfo = await fetch('http://localhost:8080/users/me', {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          });
+  const init = async () => {
+    if (authStatus === 'authenticated' && user) {
+      try {
+        const authToken = await getAuthToken();
+        const userInfo = await fetch('http://localhost:8080/users/me', {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
 
-          if (userInfo.ok && authToken) {
-            const userInfoRaw = await userInfo.text();
+        if (userInfo.ok && authToken) {
+          const userInfoRaw = await userInfo.text();
 
-            if (userInfoRaw) {
-              loginUser(userInfoRaw, authToken);
-            } else {
-              navigate('/registration', { replace: true });
-            }
+          await registerUserForSubscription();
+
+          if (userInfoRaw) {
+            loginUser(userInfoRaw, authToken);
+            navigate('/', { replace: true });
+          } else {
+            navigate('/registration', { replace: true });
           }
-        } catch (e) {
-          console.error('User bootstrap failed', e);
-        } finally {
-          setAppReady(true);
         }
+      } catch (e) {
+        console.error('User bootstrap failed', e);
+      } finally {
+        setAppReady(true);
       }
-    };
+    }
+  };
 
+  if (userStore.getUser().userId.length === 0) {
     init();
-  }, [user, authStatus, navigate]);
+  }
 
   if (authStatus !== 'authenticated' || !appReady) {
-    return <div className="app-loading">Loading...</div>;
+    return <div></div>;
   }
 
   return (
     <Routes>
       <Route path="/" element={<Feed />} />
-      <Route path="/feed" element={<Feed />} />
       <Route path="/posts" element={<Posts />} />
       <Route path="/friends" element={<Friends />} />
       <Route path="/registration" element={<Registration />} />

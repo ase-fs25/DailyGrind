@@ -1,6 +1,6 @@
 package com.uzh.ase.dailygrind.postservice.post.repository;
 
-import com.uzh.ase.dailygrind.postservice.post.repository.entity.CommentEntity;
+import com.uzh.ase.dailygrind.postservice.post.repository.entity.LikeEntity;
 import com.uzh.ase.dailygrind.postservice.post.repository.entity.PostEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -16,7 +16,7 @@ public class PostRepository {
 
     private final DynamoDbTable<PostEntity> postTable;
 
-    private final DynamoDbTable<CommentEntity> commentTable;
+    private final DynamoDbTable<LikeEntity> likeTable;
 
     public void savePost(PostEntity post) {
         postTable.putItem(post);
@@ -43,30 +43,20 @@ public class PostRepository {
         String pk = PostEntity.generatePK(userId);
         String sk = PostEntity.generateSK(postId);
         postTable.deleteItem(PostEntity.builder().pk(pk).sk(sk).build());
-        deleteAllCommentsForPost(postId, userId);
-        deleteLikesForPost(postId);
     }
 
-    public void likePost(String postId, String userId) {
-        PostEntity postEntity = PostEntity.builder()
-                .pk(PostEntity.POSTFIX + "#" + postId + "LIKELIST")
-                .sk(PostEntity.PREFIX + "#" + userId)
-                .build();
-        postTable.putItem(postEntity);
+    public void likePost(LikeEntity likeEntity) {
+        likeTable.putItem(likeEntity);
 
-        PostEntity postToLike = findPostById(postId);
+        PostEntity postToLike = findPostById(likeEntity.getPostId());
         postToLike.setLikeCount(postToLike.getLikeCount() + 1);
         postTable.putItem(postToLike);
     }
 
-    public void unlikePost(String postId, String userId) {
-        PostEntity postEntity = PostEntity.builder()
-                .pk(PostEntity.POSTFIX + "#" + postId + "LIKELIST")
-                .sk(PostEntity.PREFIX + "#" + userId)
-                .build();
-        postTable.deleteItem(postEntity);
+    public void unlikePost(LikeEntity likeEntity) {
+        likeTable.deleteItem(likeEntity);
 
-        PostEntity postToUnlike = findPostById(postId);
+        PostEntity postToUnlike = findPostById(likeEntity.getPostId());
         postToUnlike.setLikeCount(postToUnlike.getLikeCount() - 1);
         postTable.putItem(postToUnlike);
     }
@@ -83,59 +73,34 @@ public class PostRepository {
         }
     }
 
-    public void deleteAllCommentsForPost(String postId, String userId) {
-        QueryConditional queryConditional = QueryConditional
-                .keyEqualTo(Key.builder()
-                        .partitionValue(CommentEntity.generatePK(userId, postId))
-                        .build());
-
-        List<CommentEntity> comments = commentTable.query(queryConditional).items().stream().toList();
-        for (CommentEntity comment : comments) {
-            commentTable.deleteItem(comment);
+    public void deleteAllPosts(String userId) {
+        List<PostEntity> posts = findAllPostsForUser(userId);
+        for (PostEntity post : posts) {
+            deletePostById(post.getPostId(), userId);
         }
     }
 
-    public void saveComment(CommentEntity commentEntity) {
-        commentTable.putItem(commentEntity);
-        PostEntity postToComment = findPostById(commentEntity.getPostId());
-
-        postToComment.setCommentCount(postToComment.getCommentCount() + 1);
-        postTable.putItem(postToComment);
-    }
-
-    public void deleteComment(String postId, String commentId, String userId) {
-        CommentEntity commentEntity = CommentEntity.builder()
-                .pk(CommentEntity.generatePK(userId, postId))
-                .sk(CommentEntity.generateSK(commentId))
-                .build();
-        commentTable.deleteItem(commentEntity);
-
-        PostEntity postToDeleteComment = findPostById(postId);
-        postToDeleteComment.setCommentCount(postToDeleteComment.getCommentCount() - 1);
-        postTable.putItem(postToDeleteComment);
-    }
-
-    public List<String> getTimelineForUser(String userId) {
-        return postTable.scan().items().stream()
-                .filter(item -> item.getPk().equals(PostEntity.PREFIX + "#" + userId + "#" + "TIMELINE"))
-                .map(PostEntity::getSk)
+    public void deleteAllLikes(String userId) {
+        List<PostEntity> likes = postTable.scan().items().stream()
+                .filter(item -> item.getPk().endsWith(userId))
                 .toList();
+        for (PostEntity like : likes) {
+            LikeEntity likeEntity = LikeEntity.builder()
+                    .pk(LikeEntity.generatePK(like.getPostId()))
+                    .sk(LikeEntity.generateSK(userId))
+                    .build();
+            unlikePost(likeEntity);
+        }
     }
 
-    public void saveTimelineEntity(String friendId, String sk) {
-        PostEntity postEntity = PostEntity.builder()
-                .pk(PostEntity.PREFIX + "#" + friendId + "#" + "TIMELINE")
-                .sk(sk)
-                .build();
-        postTable.putItem(postEntity);
-    }
-
-    public List<CommentEntity> findAllCommentsForPost(String userId, String postId) {
+    public List<String> findAllUsersWhoLikedPost(String postId) {
         QueryConditional queryConditional = QueryConditional
                 .keyEqualTo(Key.builder()
-                        .partitionValue(CommentEntity.generatePK(userId, postId))
+                        .partitionValue(LikeEntity.generatePK(postId))
                         .build());
 
-        return commentTable.query(queryConditional).items().stream().toList();
+        return likeTable.query(queryConditional).items().stream()
+                .map(LikeEntity::getUserId)
+                .toList();
     }
 }

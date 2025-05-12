@@ -36,8 +36,6 @@ export async function createPost(title: string, content: string): Promise<Post> 
       content: content,
     };
 
-    console.log('Sending post request:', postRequest);
-
     const response = await fetch(`${API_URL}/posts`, {
       method: 'POST',
       headers: {
@@ -54,7 +52,6 @@ export async function createPost(title: string, content: string): Promise<Post> 
     }
 
     const createdPost = await response.json();
-    console.log('Created post response:', createdPost);
     return createdPost;
   } catch (error) {
     console.error('Error creating post:', error);
@@ -109,10 +106,14 @@ export async function userHasPostedAlready(): Promise<boolean> {
         Authorization: `Bearer ${authToken}`,
       },
     });
-    console.log(response);
+
     if (response.ok) {
-      const data = await response.json();
-      return !!data && !!data.postId;
+      try {
+        const data = await response.json();
+        return !!data && !!data.postId;
+      } catch {
+        console.log('User has not posted yet!');
+      }
     }
 
     return false;
@@ -126,11 +127,12 @@ export function validPostingTime(currentTime: moment.Moment): boolean {
   const { startTime, endTime } = getPostingTimeRange(currentTime);
   return currentTime.isBetween(startTime, endTime, null, '[]');
 }
-export async function getPostsByUserId(userId: string): Promise<Post[]> {
+
+export async function getPinnedPostsByUserId(userId: string): Promise<Post[]> {
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(`http://localhost:8081/users/${userId}/posts`, {
+    const response = await fetch(`http://localhost:8081/users/${userId}/pinned-posts`, {
       headers: {
         Authorization: `Bearer ${authToken}`,
       },
@@ -144,5 +146,67 @@ export async function getPostsByUserId(userId: string): Promise<Post[]> {
   } catch (error) {
     console.error(`Error fetching posts for user ${userId}:`, error);
     return [];
+  }
+}
+
+export async function getUserPinnedPosts(): Promise<Post[]> {
+  try {
+    const authToken = await getAuthToken();
+
+    const response = await fetch(`${API_URL}/users/me/pinned-posts`, {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch posts: ${response.status}`);
+    }
+
+    const pinnedPosts = await response.json();
+    return pinnedPosts;
+  } catch (error) {
+    console.error('Error fetching users pinned posts:', error);
+    throw error;
+  }
+}
+
+export async function pinPost(postId: string): Promise<void> {
+  try {
+    const authToken = await getAuthToken();
+
+    const response = await fetch(`${API_URL}/users/me/pinned-posts/${postId}`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to pin post: ${response.status}`);
+    }
+  } catch (error) {
+    console.error('Error pinning post:', error);
+    throw error;
+  }
+}
+
+export async function unpinPost(postId: string): Promise<void> {
+  try {
+    const authToken = await getAuthToken();
+
+    const response = await fetch(`${API_URL}/users/me/pinned-posts/${postId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to unpin post: ${response.status}`);
+    }
+  } catch (error) {
+    console.error('Error unpinning post:', error);
+    throw error;
   }
 }

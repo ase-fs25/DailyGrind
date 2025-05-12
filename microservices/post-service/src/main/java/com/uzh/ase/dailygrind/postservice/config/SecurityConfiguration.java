@@ -1,4 +1,4 @@
-package com.uzh.ase.dailygrind.userservice.config;
+package com.uzh.ase.dailygrind.postservice.config;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +28,7 @@ public class SecurityConfiguration {
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(r ->
                 r.requestMatchers("/users/**").authenticated()
+                    .requestMatchers("/posts/**").authenticated()
                     .requestMatchers("swagger-ui/**", "/v3/api-docs/**").permitAll())
             .oauth2ResourceServer(s -> s.jwt(Customizer.withDefaults()));
 

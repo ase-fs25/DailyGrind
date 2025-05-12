@@ -15,7 +15,6 @@ public class UserEducationMapperTest {
 
     UserEducationMapper userEducationMapper = Mappers.getMapper(UserEducationMapper.class);
 
-
     @Test
     void toUserEducationEntity_withId() {
         // given

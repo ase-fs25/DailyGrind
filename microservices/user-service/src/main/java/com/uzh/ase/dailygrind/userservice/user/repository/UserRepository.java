@@ -4,8 +4,6 @@ import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
-import software.amazon.awssdk.enhanced.dynamodb.Key;
-import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 
 import java.util.List;
 
@@ -38,18 +36,7 @@ public class UserRepository {
         userTable.updateItem(userEntity);
     }
 
-    public List<String> findAllFollowing(String userId) {
-        QueryConditional queryConditional = QueryConditional.keyEqualTo(
-                Key.builder()
-                        .partitionValue("USER#" + userId + "#FOLLOWING")
-                        .build()
-        );
-        return userTable.query(r -> r.queryConditional(queryConditional))
-                .items()
-                .stream()
-                .map(UserEntity::getSk)
-                .map(sk -> sk.split("#")[1])
-                .toList();
+    public void deleteUser(UserEntity userEntity) {
+        userTable.deleteItem(userEntity);
     }
-
 }

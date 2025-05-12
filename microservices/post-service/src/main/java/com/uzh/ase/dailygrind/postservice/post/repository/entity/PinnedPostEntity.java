@@ -24,6 +24,7 @@ public class PinnedPostEntity {
 
     @Getter(onMethod_ =  {@DynamoDbPartitionKey, @DynamoDbAttribute("PK")})
     private String pk;
+
     @Getter(onMethod_ =  {@DynamoDbSortKey, @DynamoDbAttribute("SK")})
     private String sk;
 
