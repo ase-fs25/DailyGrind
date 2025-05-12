@@ -1,7 +1,8 @@
 resource "aws_cognito_user_pool" "user_pool" {
-  name = var.name
+  name              = var.name
   username_attributes = ["email"]
   auto_verified_attributes = ["email"]
+  mfa_configuration = "OFF"
 
   verification_message_template {
     default_email_option = "CONFIRM_WITH_CODE"

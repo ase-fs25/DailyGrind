@@ -49,3 +49,11 @@ module "apigateway" {
   depends_on = [module.lambda, module.cognito]
   alb_dns_name  = module.alb.alb_dns_name
 }
+
+module "user_events" {
+  source                 = "./modules/sns-sqs"
+  user_events_topic_name = "user-events-topic"
+  user_events_queue_name = "user-events-consumer-queue"
+  filter_event_types = ["USER_CREATED", "USER_UPDATED", "FRIENDSHIP_CREATED", "FRIENDSHIP_DELETED"]
+}
+
