@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TextField, Button, Paper, Typography, Box, Divider, Avatar, IconButton } from '@mui/material';
+import { TextField, Button, Paper, Typography, Box, Divider, Avatar } from '@mui/material';
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
@@ -11,9 +11,11 @@ import { UserJob, UserEducation } from '../../types/user';
 import JobsSection from '../common/JobsSection';
 import EducationSection from '../common/EducationSection';
 import { registerUser } from '../../helpers/loginHelpers';
+import UploadPictureButton from '../common/UploadPictureButton';
 
 import '../../styles/components/login/registration.css';
 import { getUserEmail } from '../../helpers/authHelper';
+
 
 const Registration = () => {
   const navigate = useNavigate();
@@ -119,7 +121,10 @@ const Registration = () => {
             Complete your Profile
           </Typography>
 
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', my: 2 }}>
+          <Box
+            className="profile-picture-container"
+            sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', my: 2 }}
+          >
             <Avatar
               src={previewUrl ?? undefined}
               sx={{ width: 120, height: 120, boxShadow: '0 4px 8px rgba(0,0,0,0.1)', mb: 1 }}
@@ -132,16 +137,9 @@ const Registration = () => {
                 ref={fileInputRef}
                 onChange={handleFileChange}
               />
-              <IconButton
-                onClick={handleUploadClick}
-                size="small"
-                sx={{
-                  color: '#7b1fa2',
-                  '&:hover': { backgroundColor: '#f3e5f5' }
-                }}
-              >
+              <UploadPictureButton onClick={handleUploadClick} size="small">
                 <AddAPhotoIcon fontSize="small" />
-              </IconButton>
+              </UploadPictureButton>
             </Box>
             <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
               {selectedFile ? selectedFile.name : 'Click the camera icon to add a profile picture'}

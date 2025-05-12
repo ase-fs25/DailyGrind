@@ -1,8 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
-import { Dialog, DialogTitle, TextField, IconButton, Button, Box, Typography, Avatar } from '@mui/material';
+import {Dialog, DialogTitle, TextField, Button, Box, Typography, Avatar, IconButton} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
-import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { deleteUser, signOut } from 'aws-amplify/auth';
 import '../../styles/components/common/settingsPopup.css';
@@ -13,23 +12,12 @@ import EducationSection from './EducationSection';
 import { updateUser, deleteUserJob, deleteUserEducation, deleteUserProfile } from '../../helpers/userHelpers';
 import postsStore from '../../stores/postsStore';
 import DeleteProfilePopup from './DeleteProfilePopup';
+import UploadPictureButton from '../common/UploadPictureButton';
 
 interface SettingsPopupProps {
   open: boolean;
   onClose: () => void;
 }
-
-const UploadPictureButton = styled(IconButton)(({ theme }) => ({
-  position: 'absolute',
-  bottom: 0,
-  right: 0,
-  backgroundColor: theme.palette.primary.main,
-  color: 'white',
-  '&:hover': {
-    backgroundColor: theme.palette.primary.dark,
-  },
-  padding: '8px',
-}));
 
 const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
   const navigate = useNavigate();
@@ -53,9 +41,6 @@ const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
   useEffect(() => {
     if (open) {
       const currentUser = userStore.getUser();
-      console.log("Opening settings popup with user:", currentUser);
-      console.log("Profile picture URL:", currentUser.profilePictureUrl);
-
       setUser(currentUser);
       setJobs(userStore.getJobs() || []);
       setEducation(userStore.getEducation() || []);
