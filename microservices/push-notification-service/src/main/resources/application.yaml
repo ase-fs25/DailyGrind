@@ -8,7 +8,7 @@ dg:
       port: ${LOCALSTACK_PORT:4566}
       access-key: ${AWS_DYNAMODB_ACCESS_KEY_ID:test}
       secret-key: ${AWS_DYNAMODB_SECRET_ACCESS_KEY:test}
-      base-url: http://localhost:${dg.us.aws.port}
+      base-url: http://${AWS_HOSTNAME:localstack}:${dg.us.aws.port}
       cognito:
         user-pool-id: ${AWS_COGNITO_USER_POOL_ID}
         issuer-uri: http://localstack:${dg.us.aws.port}/${dg.us.aws.cognito.user-pool-id}

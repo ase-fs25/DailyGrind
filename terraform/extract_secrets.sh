@@ -22,13 +22,14 @@ EOF
 
 cat <<EOF > /microservices/.env
 AWS_COGNITO_USER_POOL_ID=$USER_POOL_ID
+AWS_HOSTNAME=localhost
 EOF
 
 echo ".env files written successfully."
 
 # Push to AWS Secrets Manager
 SECRET_NAME="dailygrind/cognito"
-SECRET_STRING="{\"COGNITO_APP_CLIENT_ID\":\"$APP_CLIENT_ID\",\"COGNITO_CLIENT_SECRET\":\"$CLIENT_SECRET\",\"COGNITO_USER_POOL_ID\":\"$USER_POOL_ID\"}"
+SECRET_STRING="{\"AWS_COGNITO_USER_POOL_ID\":\"$USER_POOL_ID\"}"
 
 # Try to create the secret (will fail if it exists)
 aws secretsmanager create-secret \

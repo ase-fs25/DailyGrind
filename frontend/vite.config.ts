@@ -20,9 +20,7 @@ export default defineConfig(({ mode }) => ({
     },
   },
   server: {
-    // this ensures that the browser opens upon server start
-    open: true,
-    // this sets a default port to 3000
+    open: true,  // this ensures that the browser opens upon server start
     port: 3000,
     allowedHosts: ['frontend'],
   },

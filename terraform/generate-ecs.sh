@@ -13,9 +13,7 @@ VARIABLES_TF="$BASE_DIR/variables.tf"
 mkdir -p "$BASE_DIR"
 
 # Clean old files
-rm -f "$MAIN_TF"
-rm -f "$OUTPUTS_TF"
-rm -f "$VARIABLES_TF"
+rm -f "$MAIN_TF" "$OUTPUTS_TF" "$VARIABLES_TF"
 
 # Start main.tf with ECS cluster definition
 cat > "$MAIN_TF" <<EOF
@@ -33,16 +31,19 @@ variable "subnet_ids" {
 variable "security_group_ids" {
   type = list(string)
 }
-
 EOF
 
 # Prepare outputs.tf
 touch "$OUTPUTS_TF"
 
 # Generate ECS resources and append to main.tf
+port=8080
 for dir in /microservices/*/; do
   service_name=$(basename "$dir")
-  tf_var_name="tg_${service_name//-/_}_arn"
+  service_name="${service_name//-/_}"
+  tf_var_name="tg_${service_name}_arn"
+  host_port=$port
+  ((port++))
 
   cat >> "$MAIN_TF" <<EOF
 
@@ -58,7 +59,7 @@ resource "aws_ecs_task_definition" "${service_name}" {
     image = "${service_name}:latest",
     portMappings = [{
       containerPort = 8080,
-      hostPort      = 8080,
+      hostPort      = ${host_port},
       protocol      = "tcp"
     }],
     environment = [
@@ -109,7 +110,6 @@ EOF
 variable "${tf_var_name}" {
   type = string
 }
-
 EOF
 
   echo "✅ Generated ECS config and outputs for: $service_name"

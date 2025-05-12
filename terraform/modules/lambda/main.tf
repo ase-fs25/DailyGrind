@@ -77,8 +77,8 @@ resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
 resource "aws_cloudwatch_event_rule" "daily_notification_trigger" {
   name                = "DailyNotificationTrigger"
   description         = "Triggers daily push notifications"
-  schedule_expression = "cron(0 12 * * ? *)" #for production
-  #schedule_expression = "rate(1 minute)" #for testing
+  schedule_expression = "cron(0 12 * * ? *)"  # for production
+  # schedule_expression = "rate(1 minute)"  # for testing
   state               = "ENABLED"
 }
 

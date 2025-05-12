@@ -21,19 +21,10 @@ module "lambda" {
   source = "./modules/lambda"
 }
 
-module "apigateway" {
-  source        = "./modules/apigateway"
-  app_client_id = module.cognito.app_client_id
-  user_pool_id  = module.cognito.user_pool_id
-  depends_on = [module.lambda, module.cognito]
-  alb_dns_name  = module.alb.alb_dns_name
-}
-
 module "secrets" {
   source                = "./modules/secrets"
   cognito_client_secret = var.cognito_client_secret
 }
-
 
 module "ecs" {
   source                           = "./modules/ecs"
@@ -44,12 +35,17 @@ module "ecs" {
   tg_push_notification_service_arn = module.alb.tg_push_notification_service_arn
 }
 
-
 module "alb" {
   source            = "./modules/alb"
   vpc_id            = module.network.vpc_id
   subnet_id         = module.network.subnet_id
   security_group_id = module.network.security_group_id
-
 }
 
+module "apigateway" {
+  source        = "./modules/apigateway"
+  app_client_id = module.cognito.app_client_id
+  user_pool_id  = module.cognito.user_pool_id
+  depends_on = [module.lambda, module.cognito]
+  alb_dns_name  = module.alb.alb_dns_name
+}

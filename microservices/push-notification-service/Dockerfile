@@ -15,14 +15,17 @@ RUN mvn package -DskipTests
 FROM eclipse-temurin:17-jdk
 WORKDIR /app
 
+RUN apt-get update && \
+    apt-get install -y python3 python3-pip jq && \
+    pip3 install --break-system-packages awscli && \
+    rm -rf /var/lib/apt/lists/*
+
+
 # Copy the built JAR from the previous stage
 COPY --from=builder /app/target/*.jar app.jar
 
-# Set the PORT environment variable
-ENV PORT=8080
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
-# Expose the port Spring Boot runs on
-EXPOSE 8080
 
-# Run the application
-CMD ["java", "-jar", "app.jar"]
+ENTRYPOINT ["/app/entrypoint.sh"]

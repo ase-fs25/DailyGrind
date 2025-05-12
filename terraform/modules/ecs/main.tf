@@ -2,8 +2,8 @@ resource "aws_ecs_cluster" "main" {
   name = "dailygrind-cluster"
 }
 
-resource "aws_ecs_task_definition" "post-service" {
-  family       = "post-service"
+resource "aws_ecs_task_definition" "post_service" {
+  family       = "post_service"
   requires_compatibilities = ["FARGATE"]
   network_mode = "awsvpc"
   cpu          = "256"
@@ -11,8 +11,8 @@ resource "aws_ecs_task_definition" "post-service" {
 
   container_definitions = jsonencode([
     {
-      name  = "post-service",
-      image = "post-service:latest",
+      name  = "post_service",
+      image = "post_service:latest",
       portMappings = [
         {
           containerPort = 8080,
@@ -27,10 +27,10 @@ resource "aws_ecs_task_definition" "post-service" {
   ])
 }
 
-resource "aws_ecs_service" "post-service" {
-  name            = "post-service"
+resource "aws_ecs_service" "post_service" {
+  name            = "post_service"
   cluster         = aws_ecs_cluster.main.id
-  task_definition = aws_ecs_task_definition.post-service.arn
+  task_definition = aws_ecs_task_definition.post_service.arn
   desired_count   = 1
   launch_type     = "FARGATE"
 
@@ -42,17 +42,17 @@ resource "aws_ecs_service" "post-service" {
 
   load_balancer {
     target_group_arn = var.tg_post_service_arn
-    container_name   = "post-service"
+    container_name   = "post_service"
     container_port   = 8080
   }
 
   depends_on = [
-    aws_ecs_task_definition.post-service
+    aws_ecs_task_definition.post_service
   ]
 }
 
-resource "aws_ecs_task_definition" "push-notification-service" {
-  family       = "push-notification-service"
+resource "aws_ecs_task_definition" "push_notification_service" {
+  family       = "push_notification_service"
   requires_compatibilities = ["FARGATE"]
   network_mode = "awsvpc"
   cpu          = "256"
@@ -60,12 +60,12 @@ resource "aws_ecs_task_definition" "push-notification-service" {
 
   container_definitions = jsonencode([
     {
-      name  = "push-notification-service",
-      image = "push-notification-service:latest",
+      name  = "push_notification_service",
+      image = "push_notification_service:latest",
       portMappings = [
         {
           containerPort = 8080,
-          hostPort      = 8080,
+          hostPort      = 8081,
           protocol      = "tcp"
         }
       ],
@@ -76,10 +76,10 @@ resource "aws_ecs_task_definition" "push-notification-service" {
   ])
 }
 
-resource "aws_ecs_service" "push-notification-service" {
-  name            = "push-notification-service"
+resource "aws_ecs_service" "push_notification_service" {
+  name            = "push_notification_service"
   cluster         = aws_ecs_cluster.main.id
-  task_definition = aws_ecs_task_definition.push-notification-service.arn
+  task_definition = aws_ecs_task_definition.push_notification_service.arn
   desired_count   = 1
   launch_type     = "FARGATE"
 
@@ -91,17 +91,17 @@ resource "aws_ecs_service" "push-notification-service" {
 
   load_balancer {
     target_group_arn = var.tg_push_notification_service_arn
-    container_name   = "push-notification-service"
+    container_name   = "push_notification_service"
     container_port   = 8080
   }
 
   depends_on = [
-    aws_ecs_task_definition.push-notification-service
+    aws_ecs_task_definition.push_notification_service
   ]
 }
 
-resource "aws_ecs_task_definition" "user-service" {
-  family       = "user-service"
+resource "aws_ecs_task_definition" "user_service" {
+  family       = "user_service"
   requires_compatibilities = ["FARGATE"]
   network_mode = "awsvpc"
   cpu          = "256"
@@ -109,12 +109,12 @@ resource "aws_ecs_task_definition" "user-service" {
 
   container_definitions = jsonencode([
     {
-      name  = "user-service",
-      image = "user-service:latest",
+      name  = "user_service",
+      image = "user_service:latest",
       portMappings = [
         {
           containerPort = 8080,
-          hostPort      = 8080,
+          hostPort      = 8082,
           protocol      = "tcp"
         }
       ],
@@ -125,10 +125,10 @@ resource "aws_ecs_task_definition" "user-service" {
   ])
 }
 
-resource "aws_ecs_service" "user-service" {
-  name            = "user-service"
+resource "aws_ecs_service" "user_service" {
+  name            = "user_service"
   cluster         = aws_ecs_cluster.main.id
-  task_definition = aws_ecs_task_definition.user-service.arn
+  task_definition = aws_ecs_task_definition.user_service.arn
   desired_count   = 1
   launch_type     = "FARGATE"
 
@@ -140,11 +140,11 @@ resource "aws_ecs_service" "user-service" {
 
   load_balancer {
     target_group_arn = var.tg_user_service_arn
-    container_name   = "user-service"
+    container_name   = "user_service"
     container_port   = 8080
   }
 
   depends_on = [
-    aws_ecs_task_definition.user-service
+    aws_ecs_task_definition.user_service
   ]
 }

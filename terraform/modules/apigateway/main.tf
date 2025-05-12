@@ -5,22 +5,25 @@ resource "aws_apigatewayv2_api" "http_api" {
 
 resource "aws_apigatewayv2_integration" "ms_user" {
   api_id             = aws_apigatewayv2_api.http_api.id
-  integration_type   = "HTTP_PROXY"
-  integration_uri    = "http://${var.alb_dns_name}/user"
+  integration_type = "HTTP_PROXY"
+  # integration_uri = "http://${var.alb_dns_name}/users"
+  integration_uri    = "http://host.docker.internal:8082/users"
   integration_method = "ANY"
 }
 
 resource "aws_apigatewayv2_integration" "ms_post" {
   api_id             = aws_apigatewayv2_api.http_api.id
-  integration_type   = "HTTP_PROXY"
-  integration_uri    = "http://${var.alb_dns_name}/post"
+  integration_type = "HTTP_PROXY"
+  # integration_uri = "http://${var.alb_dns_name}/posts"
+  integration_uri    = "http://host.docker.internal:8080/posts"
   integration_method = "ANY"
 }
 
 resource "aws_apigatewayv2_integration" "ms_push" {
   api_id             = aws_apigatewayv2_api.http_api.id
-  integration_type   = "HTTP_PROXY"
-  integration_uri    = "http://${var.alb_dns_name}/push"
+  integration_type = "HTTP_PROXY"
+  # integration_uri = "http://${var.alb_dns_name}/push-notifications"
+  integration_uri    = "http://host.docker.internal:8081/push-notifications"
   integration_method = "ANY"
 }
 
@@ -39,7 +42,7 @@ resource "aws_apigatewayv2_authorizer" "jwt_authorizer" {
 
   jwt_configuration {
     audience = [var.app_client_id]
-    issuer = "http://localhost:4566/${var.user_pool_id}"
+    issuer = "http://localstack:4566/${var.user_pool_id}"
   }
 }
 
@@ -61,7 +64,7 @@ resource "aws_apigatewayv2_route" "posts_route" {
 
 resource "aws_apigatewayv2_route" "push_route" {
   api_id             = aws_apigatewayv2_api.http_api.id
-  route_key          = "ANY /push/{proxy+}"
+  route_key          = "ANY /push-notifications/{proxy+}"
   target             = "integrations/${aws_apigatewayv2_integration.ms_push.id}"
   authorization_type = "JWT"
   authorizer_id      = aws_apigatewayv2_authorizer.jwt_authorizer.id

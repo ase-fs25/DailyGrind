@@ -7,7 +7,7 @@ services:
     image: localstack/localstack-pro
     container_name: localstack
     hostname: localstack
-    profiles: [ dev, prod ]
+    profiles: [ dev, deploy, prod ]
     networks:
       - localstack_network
     environment:

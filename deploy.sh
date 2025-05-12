@@ -21,12 +21,25 @@ echo "✅ Frontend deployed to S3."
 
 ### 🐳 Deploy Microservices to ECS
 
+echo "📡 Waiting for ECS cluster to become available..."
+
+until aws --endpoint-url=http://localstack:4566 ecs describe-clusters \
+    --clusters dailygrind-cluster \
+    --query 'clusters[0].status' \
+    --output text 2>/dev/null | grep -q "ACTIVE"; do
+  echo "⏳ ECS cluster not ready yet. Sleeping 5 seconds..."
+  sleep 5
+done
+
+echo "✅ ECS cluster is active."
+
 for dir in /microservices/*/; do
   service_name=$(basename "$dir")
+  service_name="${service_name//-/_}"
   image_name="$service_name:latest"
 
   echo "🚧 Building Docker image for $service_name..."
-  docker build -t $image_name "$dir"
+  docker build --no-cache -t $image_name "$dir"
 
   echo "📦 Registering task definition update for $service_name..."
 
