@@ -1,7 +1,7 @@
-export const isProd = !import.meta.env.PROD;
+export const isProd = import.meta.env.PROD;
 
 // Only used in production
-export const prodGatewayUrl = import.meta.env.VITE_API_URL.replace('localstack', 'localhost').slice(0, -1);
+export const prodGatewayUrl = import.meta.env.VITE_API_URL.replace('localstack', 'localhost').slice(0, -1) + '$default/';
 
 // Dev ports per microservice
 const devServiceMap: Record<string, string> = {

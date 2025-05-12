@@ -4,7 +4,7 @@ resource "aws_apigatewayv2_api" "http_api" {
 
   cors_configuration {
     allow_origins = [
-      "http://localhost:3000", "http://localhost:4566", "http://localstack:4566", "https://oauth.pstmn.io/v1/callback"
+      "http://localhost:3000", "http://localhost:30001", "http://localhost:4566", "http://localstack:4566", "https://oauth.pstmn.io/v1/callback"
     ]
     allow_methods = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
     allow_headers = ["Authorization", "Content-Type"]
