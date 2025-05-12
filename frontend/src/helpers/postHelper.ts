@@ -214,7 +214,7 @@ export async function likePost(postId: string): Promise<void> {
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(`${API_URL}/posts/${postId}/likes`, {
+    const response = await fetch(getApiUrl(`posts/${postId}/likes`), {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -234,7 +234,7 @@ export async function unlikePost(postId: string): Promise<void> {
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(`${API_URL}/posts/${postId}/likes`, {
+    const response = await fetch(getApiUrl(`posts/${postId}/likes`), {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -254,7 +254,7 @@ export async function getCommentsForPost(postId: string): Promise<PostComments[]
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(`${API_URL}/posts/${postId}/comments`, {
+    const response = await fetch(getApiUrl(`posts/${postId}/comments`), {
       headers: {
         Authorization: `Bearer ${authToken}`,
       },
@@ -280,7 +280,7 @@ export async function addCommentForPost(postId: string, newComment: string): Pro
       content: newComment,
     };
 
-    const response = await fetch(`${API_URL}/posts/${postId}/comments`, {
+    const response = await fetch(getApiUrl(`posts/${postId}/comments`), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -302,7 +302,7 @@ export async function deleteCommentForPost(postId: string, commentId: string): P
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(`${API_URL}/posts/${postId}/comments/${commentId}`, {
+    const response = await fetch(getApiUrl(`posts/${postId}/comments/${commentId}`), {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${authToken}`,
