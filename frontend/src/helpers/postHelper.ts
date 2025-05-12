@@ -8,7 +8,7 @@ export async function getUserPosts(): Promise<Post[]> {
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(getApiUrl(`users/me/posts`), {
+    const response = await fetch(getApiUrl(`posts/users/me/posts`), {
       headers: {
         Authorization: `Bearer ${authToken}`,
       },
@@ -100,7 +100,7 @@ export async function userHasPostedAlready(): Promise<boolean> {
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(getApiUrl(`users/me/daily-post`), {
+    const response = await fetch(getApiUrl(`posts/users/me/daily-post`), {
       headers: {
         Authorization: `Bearer ${authToken}`,
       },
@@ -131,7 +131,7 @@ export async function getPinnedPostsByUserId(userId: string): Promise<Post[]> {
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(getApiUrl(`users/${userId}/pinned-posts`), {
+    const response = await fetch(getApiUrl(`posts/users/${userId}/pinned-posts`), {
       headers: {
         Authorization: `Bearer ${authToken}`,
       },
@@ -152,7 +152,7 @@ export async function getUserPinnedPosts(): Promise<Post[]> {
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(getApiUrl(`users/me/pinned-posts`), {
+    const response = await fetch(getApiUrl(`posts/users/me/pinned-posts`), {
       headers: {
         Authorization: `Bearer ${authToken}`,
       },
@@ -174,7 +174,7 @@ export async function pinPost(postId: string): Promise<void> {
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(getApiUrl(`users/me/pinned-posts/${postId}`), {
+    const response = await fetch(getApiUrl(`posts/users/me/pinned-posts/${postId}`), {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -194,7 +194,7 @@ export async function unpinPost(postId: string): Promise<void> {
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(getApiUrl(`users/me/pinned-posts/${postId}`), {
+    const response = await fetch(getApiUrl(`posts/users/me/pinned-posts/${postId}`), {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${authToken}`,

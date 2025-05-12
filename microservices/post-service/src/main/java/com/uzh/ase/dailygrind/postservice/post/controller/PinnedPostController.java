@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping
+@RequestMapping("${api.base-path}")
 @RequiredArgsConstructor
 public class PinnedPostController {
 

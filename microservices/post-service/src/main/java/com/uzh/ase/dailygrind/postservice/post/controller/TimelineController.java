@@ -15,7 +15,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping
+@RequestMapping("${api.base-path}")
 @RequiredArgsConstructor
 public class TimelineController {
 
