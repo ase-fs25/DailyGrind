@@ -27,7 +27,7 @@ public class CommentService {
         PostEntity postEntity = postRepository.findPostById(postId);
         if (postEntity == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post not found");
         String userId = postEntity.getUserId();
-        List<CommentEntity> commentEntities = commentRepository.findAllCommentsForPost(userId, postId);
+        List<CommentEntity> commentEntities = commentRepository.findAllCommentsForPost(postId);
         return commentEntities.stream()
             .map(commentEntity -> new CommentEntryDto(
                 commentMapper.toCommentDto(commentEntity),

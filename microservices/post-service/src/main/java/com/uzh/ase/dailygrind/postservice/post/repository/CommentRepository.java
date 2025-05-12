@@ -27,13 +27,10 @@ public class CommentRepository {
         commentTable.deleteItem(commentEntity);
     }
 
-    public List<CommentEntity> findAllCommentsForPost(String userId, String postId) {
-        QueryConditional queryConditional = QueryConditional
-            .keyEqualTo(Key.builder()
-                .partitionValue(CommentEntity.generatePK(userId, postId))
-                .build());
-
-        return commentTable.query(queryConditional).items().stream().toList();
+    public List<CommentEntity> findAllCommentsForPost(String postId) {
+        return commentTable.scan().items().stream()
+            .filter(item -> item.getPk().endsWith(postId + "#COMMENT"))
+            .toList();
     }
 
     public void deleteAllCommentsForPost(String postId, String userId) {
