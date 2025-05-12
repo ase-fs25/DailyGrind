@@ -51,7 +51,7 @@ export async function sendFriendRequest(targetUserId: string): Promise<void> {
 }
 
 // --- Fetch Friend List ---
-export async function fetchFriends(): Promise<UserProfile[]> {
+export async function fetchFriends(): Promise<User[]> {
   const authToken = await getAuthToken();
 
   const response = await fetch(`${API_URL}/users/me/friends`, {

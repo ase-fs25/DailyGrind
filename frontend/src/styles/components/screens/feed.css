@@ -31,6 +31,7 @@
 }
 
 .post-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   padding: 16px;
@@ -73,6 +74,16 @@
 
 .sub-feed-message {
   text-align: center;
+}
+
+.like-wrapper {
+  position: absolute;
+  bottom: 4px;
+  right: 16px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0px;
 }
 
 /* Responsive Design */

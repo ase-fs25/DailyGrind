@@ -1,4 +1,7 @@
-import { Box, Typography, Card, CircularProgress } from '@mui/material';
+import { Box, Typography, Card, CircularProgress, Avatar, IconButton } from '@mui/material';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import CommentIcon from '@mui/icons-material/Comment';
 
 import Header from '../common/Header';
 
@@ -6,12 +9,39 @@ import '../../styles/components/screens/screen.css';
 import '../../styles/components/screens/feed.css';
 import postsStore from '../../stores/postsStore';
 import { useEffect, useState } from 'react';
-import { FeedPost } from '../../types/post';
+import { FeedPost, Post, PostComments } from '../../types/post';
 import userStore from '../../stores/userStore';
+import { formatDate, getCommentsForPost, likePost, unlikePost } from '../../helpers/postHelper';
+import CommentsPopup from '../common/CommentsPopup';
 
 const Feed = () => {
   const [feedPosts, setFeedPosts] = useState<FeedPost[]>(postsStore.getFeedPosts());
   const [loading, setLoading] = useState(false);
+  const [openComments, setOpenComments] = useState(false);
+  const [currentComments, setCurrentComments] = useState<PostComments[]>([]);
+  const [currentPost, setCurrentPost] = useState<FeedPost>({
+    post: {
+      postId: '',
+      title: '',
+      content: '',
+      timestamp: '',
+      commentCount: 0,
+      isLiked: false,
+      isPinned: false,
+      likeCount: 0,
+    },
+    user: {
+      userId: '',
+      email: '',
+      firstName: '',
+      lastName: '',
+      profilePictureUrl: '',
+      birthday: '',
+      location: '',
+      jobs: [],
+      education: [],
+    },
+  });
 
   useEffect(() => {
     const fetchPosts = () => {
@@ -31,17 +61,40 @@ const Feed = () => {
     }
   }, []);
 
-  const formatDate = (timestamp: string) => {
-    const ts = Number(timestamp);
-    const ms = timestamp.length === 10 ? ts * 1000 : ts;
+  const handleLike = async (post: FeedPost) => {
+    try {
+      if (post.post.isLiked) {
+        await unlikePost(post.post.postId);
+      } else {
+        await likePost(post.post.postId);
+      }
 
-    const date = new Date(ms);
-    if (isNaN(date.getTime())) {
-      return 'Invalid date';
+      const existing = feedPosts.find((fp) => fp.post.postId === post.post.postId);
+      if (!existing) return;
+
+      const updatedPost: Post = {
+        ...existing.post,
+        isLiked: !existing.post.isLiked,
+        likeCount: existing.post.likeCount + (existing.post.isLiked ? -1 : 1),
+      };
+
+      postsStore.updateFeedPost(post.post.postId, { ...post, post: updatedPost });
+
+      setFeedPosts((fps) => fps.map((fp) => (fp.post.postId === post.post.postId ? { ...fp, post: updatedPost } : fp)));
+    } catch (err) {
+      console.error('Error toggling like:', err);
     }
-    return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1)
-      .toString()
-      .padStart(2, '0')}-${date.getFullYear()}`;
+  };
+
+  const handleCommentsClick = async (post: FeedPost) => {
+    const fetchedComments = await getCommentsForPost(post.post.postId);
+
+    if (fetchedComments) {
+      setCurrentComments(fetchedComments);
+    }
+
+    setCurrentPost(post);
+    setOpenComments(true);
   };
 
   if (loading) {
@@ -65,6 +118,11 @@ const Feed = () => {
               <Card className="post-card">
                 <div className="post-card-header">
                   <div className="post-title-wrapper">
+                    <Avatar
+                      src={post.user.profilePictureUrl}
+                      alt={`${post.user.firstName} ${post.user.lastName}`}
+                      sx={{ width: 50, height: 50, boxShadow: '0 4px 8px rgba(0,0,0,0.1)', mr: '8px' }}
+                    />
                     <Typography variant="h6" className="post-title">
                       {post.post.title}
                     </Typography>
@@ -79,6 +137,29 @@ const Feed = () => {
                 <Typography variant="body1" className="post-content">
                   {post.post.content}
                 </Typography>
+                <div className="like-wrapper">
+                  <Typography variant="body1" className="like-count">
+                    {post.post.likeCount}
+                  </Typography>
+                  <IconButton
+                    edge="end"
+                    onClick={() => handleLike(post)}
+                    aria-label="like"
+                    sx={{ width: '36px', height: '36px' }}
+                    color="secondary"
+                  >
+                    {post.post.isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                  </IconButton>
+                  <IconButton
+                    edge="end"
+                    onClick={() => handleCommentsClick(post)}
+                    aria-label="comment"
+                    sx={{ width: '36px', height: '36px', marginLeft: '12px;', marginTop: '2px' }}
+                    color="secondary"
+                  >
+                    <CommentIcon />
+                  </IconButton>
+                </div>
               </Card>
             </Box>
           ))}
@@ -90,6 +171,12 @@ const Feed = () => {
               Oh no, you do not have any friends yet. Expand your network to see more posts!
             </Typography>
           )}
+          <CommentsPopup
+            open={openComments}
+            onClose={() => setOpenComments(false)}
+            post={currentPost}
+            comments={currentComments}
+          />
         </Box>
       </Box>
     </Box>

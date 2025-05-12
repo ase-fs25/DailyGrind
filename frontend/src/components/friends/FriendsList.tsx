@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Card, CardContent, Typography } from '@mui/material';
+import { Avatar, Box, Card, CardContent, Typography } from '@mui/material';
 import { Post } from '../../types/post';
 import FriendPopup from '../common/FriendPopup';
-import { fetchFriends, getEducationByUserId, getJobsByUserId, UserProfile } from '../../helpers/friendsHelper';
+import { fetchFriends, getEducationByUserId, getJobsByUserId } from '../../helpers/friendsHelper';
 import { getPinnedPostsByUserId } from '../../helpers/postHelper';
-import { UserEducation, UserJob } from '../../types/user';
+import { User, UserEducation, UserJob } from '../../types/user';
 import '../../styles/components/friends/friendList.css';
 
 const FriendsList = () => {
-  const [friends, setFriends] = useState<UserProfile[]>([]);
-  const [selectedProfile, setSelectedProfile] = useState<UserProfile | null>(null);
+  const [friends, setFriends] = useState<User[]>([]);
+  const [selectedProfile, setSelectedProfile] = useState<User | null>(null);
   const [userPosts, setUserPosts] = useState<Post[]>([]);
   const [userJobs, setUserJobs] = useState<UserJob[]>([]);
   const [userEducation, setUserEducation] = useState<UserEducation[]>([]);
@@ -28,7 +28,7 @@ const FriendsList = () => {
     loadFriends();
   }, []);
 
-  const handleOpen = async (user: UserProfile) => {
+  const handleOpen = async (user: User) => {
     setSelectedProfile(user);
     setOpen(true);
 
@@ -65,15 +65,22 @@ const FriendsList = () => {
           Add some friends to see them here
         </Typography>
       )}
-      {friends.map((user) => (
-        <Card key={user.userId} className="friend-card" onClick={() => handleOpen(user)}>
-          <CardContent className="friend-card-content">
-            <Typography variant="h6" className="friend-username">
-              {user.firstName} {user.lastName}
-            </Typography>
-          </CardContent>
-        </Card>
-      ))}
+      <div className="friends-list">
+        {friends.map((user) => (
+          <Card key={user.userId} className="friend-card" onClick={() => handleOpen(user)}>
+            <CardContent className="friend-card-content">
+              <Avatar
+                src={user.profilePictureUrl}
+                alt={`${user.firstName} ${user.lastName}`}
+                sx={{ width: 50, height: 50, boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }}
+              />
+              <Typography variant="h6" className="friend-username">
+                {user.firstName} {user.lastName}
+              </Typography>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
       {selectedProfile && (
         <FriendPopup
