@@ -7,14 +7,23 @@ import com.uzh.ase.dailygrind.userservice.user.sns.events.UserDataEvent;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+/**
+ * Mapper interface for converting between User-related DTOs, entities, and events.
+ * <p>
+ * This interface defines the mappings from {@link UserCreateDto} to {@link UserEntity},
+ * from {@link UserEntity} to {@link UserInfoDto}, and from {@link UserEntity} to {@link UserDataEvent}.
+ * MapStruct automatically generates the implementation for these conversions.
+ * </p>
+ */
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
     /**
-     * Maps a UserCreateDto to a UserEntity.
+     * Converts a {@link UserCreateDto} to a {@link UserEntity}.
      *
-     * @param user the UserCreateDto to map
-     * @return the mapped UserEntity
+     * @param user the {@link UserCreateDto} to be mapped
+     * @param userId the user ID to associate with the entity
+     * @return the mapped {@link UserEntity}
      */
     @Mapping(target = "pk", expression = "java(UserEntity.generatePK(userId))")
     @Mapping(target = "sk", expression = "java(UserEntity.generateSK())")
@@ -22,11 +31,11 @@ public interface UserMapper {
     UserEntity toUserEntity(UserCreateDto user, String userId);
 
     /**
-     * Maps a UserEntity to a UserInfoDto.
+     * Converts a {@link UserEntity} to a {@link UserInfoDto}.
      *
-     * @param user the UserEntity to map
-     * @param isFriend a boolean that indicates whether the requesting user follows or not
-     * @return the mapped UserInfoDto
+     * @param user the {@link UserEntity} to be mapped
+     * @param isFriend boolean indicating whether the requesting user is a friend or not
+     * @return the mapped {@link UserInfoDto}
      */
     @Mapping(target = "userId", expression = "java(user.getId())")
     @Mapping(target = "numberOfFriends", source = "user.numFriends")
@@ -39,12 +48,11 @@ public interface UserMapper {
     @Mapping(target = "isFriend", source = "isFriend")
     UserInfoDto toUserInfoDto(UserEntity user, boolean isFriend);
 
-
     /**
-     * Maps a UserEntity to a UserDataEvent.
+     * Converts a {@link UserEntity} to a {@link UserDataEvent}.
      *
-     * @param userEntity the UserEntity to map
-     * @return the mapped UserDataEvent
+     * @param userEntity the {@link UserEntity} to be mapped
+     * @return the mapped {@link UserDataEvent}
      */
     @Mapping(target = "userId", expression = "java(userEntity.getId())")
     @Mapping(target = "email", source = "userEntity.email")
@@ -52,5 +60,4 @@ public interface UserMapper {
     @Mapping(target = "lastName", source = "userEntity.lastName")
     @Mapping(target = "profilePictureUrl", source = "userEntity.profilePictureUrl")
     UserDataEvent toUserDataEvent(UserEntity userEntity);
-
 }

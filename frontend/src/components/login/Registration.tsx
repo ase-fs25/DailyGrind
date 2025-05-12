@@ -1,14 +1,17 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TextField, Button, Paper, Typography, Box, Divider } from '@mui/material';
+import { TextField, Button, Paper, Typography, Box, Divider, Avatar } from '@mui/material';
+import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { Dayjs } from 'dayjs';
+import { v4 as uuidv4 } from 'uuid';
 
 import { UserJob, UserEducation } from '../../types/user';
 import JobsSection from '../common/JobsSection';
 import EducationSection from '../common/EducationSection';
 import { registerUser } from '../../helpers/loginHelpers';
+import UploadPictureButton from '../common/UploadPictureButton';
 
 import '../../styles/components/login/registration.css';
 import { getUserEmail } from '../../helpers/authHelper';
@@ -24,6 +27,9 @@ const Registration = () => {
   const [education, setEducation] = useState<UserEducation[]>([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const getEmail = async () => {
@@ -34,6 +40,20 @@ const Registration = () => {
     getEmail();
   }, []);
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      setSelectedFile(file);
+
+      const fileUrl = URL.createObjectURL(file);
+      setPreviewUrl(fileUrl);
+    }
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
   const handleRegister = async () => {
     if (!firstName || !lastName || !email || !location || !birthday) {
       setError('Please fill in all required fields');
@@ -42,23 +62,51 @@ const Registration = () => {
 
     setLoading(true);
     const formattedBirthday = birthday.format('YYYY-MM-DD');
+    let profilePictureUrl = '';
 
-    const result = await registerUser({
-      firstName,
-      lastName,
-      email,
-      location,
-      birthday: formattedBirthday,
-      jobs,
-      education,
-    });
+    try {
+      if (selectedFile) {
+        const fileUuid = uuidv4();
+        const fileName = `users/${fileUuid}/${selectedFile.name}`;
+        const bucketUrl = 'http://localhost:4566/dailygrind-profile-pictures';
+        profilePictureUrl = `${bucketUrl}/${fileName}`;
 
-    setLoading(false);
+        const response = await fetch(profilePictureUrl, {
+          method: 'PUT',
+          body: selectedFile,
+          headers: {
+            'Content-Type': selectedFile.type,
+          },
+        });
 
-    if (result.success) {
-      navigate('/', { replace: true });
-    } else {
-      setError(result.error ?? 'Registration failed. Please try again.');
+        if (!response.ok) {
+          throw new Error('Failed to upload profile picture');
+        }
+
+        if (previewUrl) {
+          URL.revokeObjectURL(previewUrl);
+        }
+      }
+
+      const result = await registerUser({
+        firstName,
+        lastName,
+        profilePictureUrl,
+        email,
+        location,
+        birthday: formattedBirthday,
+        jobs,
+        education,
+      });
+
+      if (result.success) {
+        navigate('/', { replace: true });
+      }
+    } catch (error) {
+      console.error('Error during registration:', error);
+      setError('Registration failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -71,6 +119,32 @@ const Registration = () => {
           <Typography variant="h5" textAlign="center" gutterBottom>
             Complete your Profile
           </Typography>
+
+          <Box
+            className="profile-picture-container"
+            sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', my: 2 }}
+          >
+            <Avatar
+              src={previewUrl ?? undefined}
+              sx={{ width: 120, height: 120, boxShadow: '0 4px 8px rgba(0,0,0,0.1)', mb: 1 }}
+            />
+            <Box sx={{ position: 'relative' }}>
+              <input
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                ref={fileInputRef}
+                onChange={handleFileChange}
+              />
+              <UploadPictureButton onClick={handleUploadClick} size="small">
+                <AddAPhotoIcon fontSize="small" />
+              </UploadPictureButton>
+            </Box>
+            <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+              {selectedFile ? selectedFile.name : 'Click the camera icon to add a profile picture'}
+            </Typography>
+          </Box>
+
           <TextField
             label="First Name"
             variant="outlined"

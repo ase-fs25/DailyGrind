@@ -6,6 +6,7 @@ import { getApiUrl } from './apiHelper';
 export async function updateUser(userData: {
   firstName: string;
   lastName: string;
+  profilePictureUrl: string;
   email: string;
   location: string;
   birthday: string;

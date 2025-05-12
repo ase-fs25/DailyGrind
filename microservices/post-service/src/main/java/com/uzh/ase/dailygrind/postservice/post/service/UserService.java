@@ -14,6 +14,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Service layer responsible for handling user-related business logic.
+ * This includes managing user profiles, adding/removing friends, and handling user data.
+ */
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -23,6 +27,13 @@ public class UserService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
 
+    /**
+     * Retrieves a user by their user ID.
+     *
+     * @param userId  The ID of the user to be retrieved.
+     * @return        The UserDto representing the user.
+     * @throws IllegalArgumentException if the user is not found.
+     */
     public UserDto getUser(String userId) {
         UserEntity userEntity = userRepository.getUser(userId);
         if (userEntity == null) {
@@ -31,16 +42,31 @@ public class UserService {
         return userMapper.toUserDto(userEntity);
     }
 
+    /**
+     * Adds a new user to the system.
+     *
+     * @param userDataEvent  The event containing user data.
+     */
     public void addNewUser(UserDataEvent userDataEvent) {
         UserEntity userEntity = userMapper.toUserEntity(userDataEvent);
         userRepository.addNewUser(userEntity);
     }
 
+    /**
+     * Updates an existing user's data.
+     *
+     * @param userDataEvent  The event containing updated user data.
+     */
     public void updateUser(UserDataEvent userDataEvent) {
         UserEntity userEntity = userMapper.toUserEntity(userDataEvent);
         userRepository.updateUser(userEntity);
     }
 
+    /**
+     * Deletes a user from the system, including their posts, likes, and comments.
+     *
+     * @param userId  The ID of the user to be deleted.
+     */
     public void deleteUser(String userId) {
         userRepository.deleteUser(userId);
         postRepository.deleteAllPosts(userId);
@@ -48,29 +74,46 @@ public class UserService {
         commentRepository.deleteAllCommentsForUser(userId);
     }
 
+    /**
+     * Adds a new friend for a user.
+     *
+     * @param friendshipEvent  The event containing the friendship data between two users.
+     */
     public void addFriend(FriendshipEvent friendshipEvent) {
         FriendEntity friendEntity = userMapper.toFriendEntity(friendshipEvent);
         userRepository.addFriend(friendEntity);
 
-        // Add also the inverse direction
+        // Add also the inverse direction (userB -> userA as a friend)
         friendshipEvent = new FriendshipEvent(friendshipEvent.userBId(), friendshipEvent.userAId());
         friendEntity = userMapper.toFriendEntity(friendshipEvent);
         userRepository.addFriend(friendEntity);
     }
 
+    /**
+     * Removes a friend for a user.
+     *
+     * @param friendshipEvent  The event containing the friendship data to be removed.
+     */
     public void removeFriend(FriendshipEvent friendshipEvent) {
         FriendEntity friendEntity = userMapper.toFriendEntity(friendshipEvent);
         userRepository.removeFriend(friendEntity);
 
-        // Remove also the inverse direction
+        // Remove also the inverse direction (userB -> userA as a friend)
         friendshipEvent = new FriendshipEvent(friendshipEvent.userBId(), friendshipEvent.userAId());
         friendEntity = userMapper.toFriendEntity(friendshipEvent);
         userRepository.removeFriend(friendEntity);
     }
 
+    /**
+     * Retrieves a list of friends for a specific user.
+     *
+     * @param userId  The ID of the user whose friends are to be retrieved.
+     * @return        A list of UserDto objects representing the user's friends.
+     */
     public List<UserDto> getFriends(String userId) {
         List<FriendEntity> friendEntities = userRepository.getFriends(userId);
         return friendEntities.stream()
+            // Map each friendEntity to a UserDto
             .map(friendEntity -> userMapper.toUserDto(userRepository.getUser(friendEntity.getFriendId())))
             .toList();
     }

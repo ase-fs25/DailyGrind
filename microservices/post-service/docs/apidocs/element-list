@@ -1,0 +1,11 @@
+com.uzh.ase.dailygrind.postservice
+com.uzh.ase.dailygrind.postservice.config
+com.uzh.ase.dailygrind.postservice.post.controller
+com.uzh.ase.dailygrind.postservice.post.controller.dto
+com.uzh.ase.dailygrind.postservice.post.mapper
+com.uzh.ase.dailygrind.postservice.post.repository
+com.uzh.ase.dailygrind.postservice.post.repository.entity
+com.uzh.ase.dailygrind.postservice.post.service
+com.uzh.ase.dailygrind.postservice.post.sqs
+com.uzh.ase.dailygrind.postservice.post.sqs.events
+com.uzh.ase.dailygrind.postservice.post.util

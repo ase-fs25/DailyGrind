@@ -11,17 +11,21 @@ import java.time.ZoneOffset;
 @Service
 public class TimeToLiveHelper {
 
+    /**
+     * Determines whether the TTL is in minutes or until tomorrow at 1 PM UTC.
+     * This value is injected from the application properties.
+     */
     @Value("${post.ttlMinutes:false}")
     private static boolean ttlMinutes;
 
     public static long getTimeToLive() {
         if (ttlMinutes) {
+            // Return TTL as 1 minute from the current time
             return Instant.now()
                 .plus(Duration.ofMinutes(1))
                 .getEpochSecond();
         } else {
-            // Tomorrow 1pm
-            // Tomorrow 1 PM UTC
+            // Set TTL to tomorrow at 1 PM UTC
             return LocalDateTime.now(ZoneOffset.UTC)
                 .plusDays(1)
                 .withHour(13)
@@ -31,5 +35,4 @@ public class TimeToLiveHelper {
                 .toEpochSecond(ZoneOffset.UTC);
         }
     }
-
 }

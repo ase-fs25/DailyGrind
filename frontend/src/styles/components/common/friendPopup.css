@@ -26,7 +26,7 @@
   display: flex;
   justify-content: flex-end;
   width: 30%;
-  font-size: 1.25rem;
+  font-size: 20px !important;
   font-weight: bold;
 }
 
@@ -66,9 +66,17 @@
   background-clip: content-box;
 }
 
+.popup-first-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
 .location {
-  padding-bottom: 16px;
   word-break: break-word;
+  font-size: 20px !important;
 }
 
 .section-labels {

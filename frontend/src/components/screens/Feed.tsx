@@ -1,4 +1,4 @@
-import { Box, Typography, Card, CircularProgress, IconButton } from '@mui/material';
+import { Box, Typography, Card, CircularProgress, Avatar, IconButton } from '@mui/material';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import CommentIcon from '@mui/icons-material/Comment';
@@ -19,6 +19,29 @@ const Feed = () => {
   const [loading, setLoading] = useState(false);
   const [openComments, setOpenComments] = useState(false);
   const [currentComments, setCurrentComments] = useState<PostComments[]>([]);
+  const [currentPost, setCurrentPost] = useState<FeedPost>({
+    post: {
+      postId: '',
+      title: '',
+      content: '',
+      timestamp: '',
+      commentCount: 0,
+      isLiked: false,
+      isPinned: false,
+      likeCount: 0,
+    },
+    user: {
+      userId: '',
+      email: '',
+      firstName: '',
+      lastName: '',
+      profilePictureUrl: '',
+      birthday: '',
+      location: '',
+      jobs: [],
+      education: [],
+    },
+  });
 
   useEffect(() => {
     const fetchPosts = () => {
@@ -63,13 +86,14 @@ const Feed = () => {
     }
   };
 
-  const handleCommentsClick = async (postId: string) => {
-    const fetchedComments = await getCommentsForPost(postId);
+  const handleCommentsClick = async (post: FeedPost) => {
+    const fetchedComments = await getCommentsForPost(post.post.postId);
 
     if (fetchedComments) {
       setCurrentComments(fetchedComments);
     }
 
+    setCurrentPost(post);
     setOpenComments(true);
   };
 
@@ -94,6 +118,11 @@ const Feed = () => {
               <Card className="post-card">
                 <div className="post-card-header">
                   <div className="post-title-wrapper">
+                    <Avatar
+                      src={post.user.profilePictureUrl}
+                      alt={`${post.user.firstName} ${post.user.lastName}`}
+                      sx={{ width: 50, height: 50, boxShadow: '0 4px 8px rgba(0,0,0,0.1)', mr: '8px' }}
+                    />
                     <Typography variant="h6" className="post-title">
                       {post.post.title}
                     </Typography>
@@ -123,7 +152,7 @@ const Feed = () => {
                   </IconButton>
                   <IconButton
                     edge="end"
-                    onClick={() => handleCommentsClick(post.post.postId)}
+                    onClick={() => handleCommentsClick(post)}
                     aria-label="comment"
                     sx={{ width: '36px', height: '36px', marginLeft: '12px;', marginTop: '2px' }}
                     color="secondary"
@@ -132,12 +161,6 @@ const Feed = () => {
                   </IconButton>
                 </div>
               </Card>
-              <CommentsPopup
-                open={openComments}
-                onClose={() => setOpenComments(false)}
-                post={post}
-                comments={currentComments}
-              />
             </Box>
           ))}
           {feedPosts.length > 0 && (
@@ -148,6 +171,12 @@ const Feed = () => {
               Oh no, you do not have any friends yet. Expand your network to see more posts!
             </Typography>
           )}
+          <CommentsPopup
+            open={openComments}
+            onClose={() => setOpenComments(false)}
+            post={currentPost}
+            comments={currentComments}
+          />
         </Box>
       </Box>
     </Box>

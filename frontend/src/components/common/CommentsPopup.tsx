@@ -1,4 +1,4 @@
-import { Button, Card, Dialog, DialogContent, IconButton, TextField, Typography } from '@mui/material';
+import { Avatar, Button, Card, Dialog, DialogContent, IconButton, TextField, Typography } from '@mui/material';
 import { addCommentForPost, deleteCommentForPost, formatDate } from '../../helpers/postHelper';
 import '../../styles/components/common/commentsPopup.css';
 import { FeedPost, PostComments } from '../../types/post';
@@ -83,6 +83,11 @@ const CommentsPopup = ({ open, onClose, post, comments }: CommentsPopupProps) =>
       <Card className="comment-post-card">
         <div className="comment-post-card-header">
           <div className="comment-post-title-wrapper">
+            <Avatar
+              src={post.user.profilePictureUrl}
+              alt={`${post.user.firstName} ${post.user.lastName}`}
+              sx={{ width: 40, height: 40, boxShadow: '0 4px 8px rgba(0,0,0,0.1)', mr: '8px' }}
+            />
             <Typography variant="h6" className="comment-post-title">
               {post.post.title}
             </Typography>
@@ -109,7 +114,14 @@ const CommentsPopup = ({ open, onClose, post, comments }: CommentsPopupProps) =>
               <div key={comment.comment.commentId} className="single-comment-wrapper">
                 <div className="single-comment-content-wrapper">
                   <div>
-                    <div className="comment-author">{createAuthorComment(comment)}</div>
+                    <div className="comment-header-wrapper">
+                      <Avatar
+                        src={comment.user.profilePictureUrl}
+                        alt={`${post.user.firstName} ${post.user.lastName}`}
+                        sx={{ width: 20, height: 20, boxShadow: '0 4px 8px rgba(0,0,0,0.1)', mr: '8px' }}
+                      />
+                      <div className="comment-author">{createAuthorComment(comment)}</div>
+                    </div>
                     <div>{comment.comment.content}</div>
                   </div>
                   {user.userId === comment.comment.userId && (

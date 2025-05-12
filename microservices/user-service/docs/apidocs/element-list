@@ -1,0 +1,10 @@
+com.uzh.ase.dailygrind.userservice
+com.uzh.ase.dailygrind.userservice.config
+com.uzh.ase.dailygrind.userservice.user.controller
+com.uzh.ase.dailygrind.userservice.user.controller.dto
+com.uzh.ase.dailygrind.userservice.user.mapper
+com.uzh.ase.dailygrind.userservice.user.repository
+com.uzh.ase.dailygrind.userservice.user.repository.entity
+com.uzh.ase.dailygrind.userservice.user.service
+com.uzh.ase.dailygrind.userservice.user.sns
+com.uzh.ase.dailygrind.userservice.user.sns.events
