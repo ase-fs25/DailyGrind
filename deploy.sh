@@ -39,7 +39,7 @@ for dir in /microservices/*/; do
   image_name="$service_name:latest"
 
   echo "🚧 Building Docker image for $service_name..."
-  docker build --no-cache -t $image_name "$dir"
+  docker build --no-cache -t "$image_name" "$dir"
 
   echo "📦 Registering task definition update for $service_name..."
 

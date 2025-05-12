@@ -38,7 +38,7 @@ jobs:
       matrix:
         service: ${{ fromJson(needs.discover-services.outputs.services) }}
     env:
-      AWS_HOSTNAME: localhost
+      AWS_COGNITO_USER_POOL_ID: us-east-1_XXXXXXXX
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
