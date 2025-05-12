@@ -1,9 +1,11 @@
 # Builder for frontend
-FROM node:alpine AS builder
+FROM node:22-slim AS builder
 WORKDIR /app/frontend
-COPY frontend/package*.json ./
-RUN npm install
 COPY frontend ./
+RUN rm -rf node_modules
+COPY frontend/package.json ./
+RUN npm install
+# After installing dependencies
 RUN npm run build
 
 # Deploy image
