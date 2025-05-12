@@ -22,8 +22,9 @@ import java.util.UUID;
 @Builder
 public class CommentEntity {
 
-    // Constants for partition key (PK) and sort key (SK) prefixes and suffixes
+    // SK has the following format: COMMENT#<commentId>
     public static final String SK_PREFIX = "COMMENT";
+    // PK has the following format: USER#<userId>#POST#<postId>#COMMENT
     public static final String PK_PREFIX = "USER";
     public static final String PK_SUFFIX = "POST";
 

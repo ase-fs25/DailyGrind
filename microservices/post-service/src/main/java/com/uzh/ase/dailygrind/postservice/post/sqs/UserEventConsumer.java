@@ -91,23 +91,12 @@ public class UserEventConsumer {
 
         // Handle different event types based on the eventType value
         switch (eventType) {
-            case "USER_CREATED":
-                handleUserCreated(payload);
-                break;
-            case "USER_UPDATED":
-                handleUserUpdated(payload);
-                break;
-            case "USER_DELETED":
-                handleUserDeleted(payload);
-                break;
-            case "FRIENDSHIP_CREATED":
-                handleFriendshipCreated(payload);
-                break;
-            case "FRIENDSHIP_DELETED":
-                handleFriendshipDeleted(payload);
-                break;
-            default:
-                log.error("Unknown event type: {}", eventType);
+            case "USER_CREATED" -> handleUserCreated(payload);
+            case "USER_UPDATED" -> handleUserUpdated(payload);
+            case "USER_DELETED" -> handleUserDeleted(payload);
+            case "FRIENDSHIP_CREATED" -> handleFriendshipCreated(payload);
+            case "FRIENDSHIP_DELETED" -> handleFriendshipDeleted(payload);
+            default -> log.error("Unknown event type: {}", eventType);
         }
     }
 

@@ -91,11 +91,16 @@ public class CommentRepository {
      * @param userId the ID of the user whose comments should be deleted
      */
     public void deleteAllCommentsForUser(String userId) {
-        List<CommentEntity> comments = commentTable.scan().items().stream()
-            .filter(item -> item.getPk().endsWith(userId))
-            .toList();
-        for (CommentEntity comment : comments) {
-            deleteComment(comment.getPostId(), comment.getCommentId(), userId);
-        }
+        commentTable.scan().items().stream()
+            .filter(item -> item.getPk().startsWith("USER#" + userId))
+            .forEach(commentTable::deleteItem);
+    }
+
+    public CommentEntity findCommentById(String commentId) {
+        return commentTable.scan().items().stream()
+            .filter(item -> item.getSk().startsWith("COMMENT#"))
+            .filter(item -> item.getCommentId().equals(commentId))
+            .findFirst()
+            .orElse(null);
     }
 }

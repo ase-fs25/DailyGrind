@@ -2,8 +2,6 @@ package com.uzh.ase.dailygrind.postservice.post.integrationtest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uzh.ase.dailygrind.postservice.config.DynamoDBConfig;
-import com.uzh.ase.dailygrind.postservice.post.config.AwsTestCredentialsConfig;
-import com.uzh.ase.dailygrind.postservice.post.config.DynamoDBTestConfig;
 import com.uzh.ase.dailygrind.postservice.post.config.LocalStackTestConfig;
 import com.uzh.ase.dailygrind.postservice.post.controller.dto.PostDto;
 import com.uzh.ase.dailygrind.postservice.post.repository.entity.*;
@@ -31,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-@Import({LocalStackTestConfig.class, AwsTestCredentialsConfig.class, DynamoDBTestConfig.class, DynamoDBConfig.class})
+@Import({LocalStackTestConfig.class, DynamoDBConfig.class})
 public class PostIntegrationTest {
 
     @Autowired
