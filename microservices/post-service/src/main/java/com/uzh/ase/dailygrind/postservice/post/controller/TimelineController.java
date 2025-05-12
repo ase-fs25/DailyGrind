@@ -1,6 +1,5 @@
 package com.uzh.ase.dailygrind.postservice.post.controller;
 
-import com.uzh.ase.dailygrind.postservice.post.controller.dto.PostDto;
 import com.uzh.ase.dailygrind.postservice.post.controller.dto.TimelineEntryDto;
 import com.uzh.ase.dailygrind.postservice.post.service.TimelineService;
 import io.swagger.v3.oas.annotations.Operation;

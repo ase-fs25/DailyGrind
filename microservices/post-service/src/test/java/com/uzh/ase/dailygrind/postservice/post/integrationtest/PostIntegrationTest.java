@@ -589,7 +589,6 @@ public class PostIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.isLiked").value(false))
                 .andExpect(jsonPath("$.likeCount").value(0));
-
         }
 
     }

@@ -25,14 +25,14 @@ public class PostController {
     @ApiResponse(responseCode = "200", description = "Successfully retrieved daily post")
     @GetMapping("/users/me/daily-post")
     public ResponseEntity<PostDto> getMyDailyPost(Principal principal) {
-        return ResponseEntity.ok(postService.getDailyPostForUser(principal.getName()));
+        return ResponseEntity.ok(postService.getDailyPostForUser(principal.getName(), principal.getName()));
     }
 
     @Operation(summary = "Get today's daily post for a specific user")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved user's daily post")
     @GetMapping("/users/{userId}/daily-post")
-    public ResponseEntity<PostDto> getDailyPostForUser(@PathVariable String userId) {
-        return ResponseEntity.ok(postService.getDailyPostForUser(userId));
+    public ResponseEntity<PostDto> getDailyPostForUser(@PathVariable String userId, Principal principal) {
+        return ResponseEntity.ok(postService.getDailyPostForUser(userId, principal.getName()));
     }
 
     @Operation(summary = "Get all posts by the authenticated user")

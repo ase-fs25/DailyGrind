@@ -93,10 +93,10 @@ public class PostService {
         postRepository.unlikePost(likeEntity);
     }
 
-    public PostDto getDailyPostForUser(String userId) {
+    public PostDto getDailyPostForUser(String userId, String requestingUserId) {
         String postId = dailyPostRepository.findDailyPostForUser(userId);
         PostEntity postEntity = postRepository.findPostById(postId);
-        return addIsLikedAndIsPinnedToPostDto(postEntity, userId);
+        return addIsLikedAndIsPinnedToPostDto(postEntity, requestingUserId);
     }
 
     public List<PostDto> getPinnedPostsByUserId(String userId) {
