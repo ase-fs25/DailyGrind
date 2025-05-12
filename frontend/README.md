@@ -1,3 +1,24 @@
+# DailyGrind Frontend
+
+This is the frontend application for the **DailyGrind** platform — a social productivity web app combining professional growth features with real-time daily check-ins.
+
+Built with **React**, **TypeScript**, and **Vite**, the application is styled using **Material UI** and integrated with a backend microservices architecture via secure JWT-authenticated APIs. It also includes support for **Progressive Web App (PWA)** functionality and **Web Push notifications**.
+
+---
+
+## Tech Stack
+
+- React with TypeScript
+- Vite for fast builds and dev server
+- Material UI (MUI) for component styling
+- JWT-based authentication (OAuth2 Resource Server)
+- Web Push API (integrated with AWS Lambda + EventBridge backend)
+- PWA support via custom `service-worker.js`
+- Dockerized deployment using Nginx
+
+---
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
