@@ -24,8 +24,7 @@ export const registerUserForSubscription = async (): Promise<any> => {
         }
         return null;
       })
-      .then(() => {
-      })
+      .then(() => {})
       .catch((error) => console.error('Service worker or notification error:', error));
   }
 };
@@ -34,7 +33,7 @@ export const requestNotificationPermission = async (): Promise<string> => {
   try {
     const permissionResult = await Notification.requestPermission();
     if (permissionResult !== 'granted') {
-      throw new Error('We weren\'t granted permission.');
+      throw new Error("We weren't granted permission.");
     }
     return permissionResult;
   } catch (error) {
