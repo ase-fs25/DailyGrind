@@ -58,7 +58,7 @@ public class UserEntity {
 
     /**
      * Generates the partition key (PK) for a given user ID.
-     * The PK format is "USER#<userId>".
+     * The PK format is "USER#userId".
      *
      * @param id the user ID to generate the PK.
      * @return the generated PK.

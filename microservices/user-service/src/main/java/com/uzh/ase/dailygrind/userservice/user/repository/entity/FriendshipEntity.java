@@ -82,7 +82,7 @@ public class FriendshipEntity {
 
     /**
      * Generates the partition key (PK) for a given user ID.
-     * The PK format is "USER#<userId>#FRIEND".
+     * The PK format is "USER#userId#FRIEND".
      *
      * @param userid the user ID to generate the PK.
      * @return the generated PK.
@@ -93,7 +93,7 @@ public class FriendshipEntity {
 
     /**
      * Generates the sort key (SK) for a given user ID.
-     * The SK format is "USER#<userId>".
+     * The SK format is "USER#userId".
      *
      * @param userId the user ID to generate the SK.
      * @return the generated SK.

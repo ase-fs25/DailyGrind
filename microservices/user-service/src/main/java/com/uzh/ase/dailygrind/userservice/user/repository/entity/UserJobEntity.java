@@ -61,7 +61,7 @@ public class UserJobEntity {
 
     /**
      * Generates the partition key (PK) for a given user ID and job suffix.
-     * The PK format is "USER#<userId>#JOB".
+     * The PK format is "USER#userId#JOB".
      *
      * @param userId the user ID to generate the PK.
      * @return the generated PK.
@@ -72,7 +72,7 @@ public class UserJobEntity {
 
     /**
      * Generates the sort key (SK) for the user job entity.
-     * The SK format is "JOB#<jobId>".
+     * The SK format is "JOB#jobId".
      * If no job ID is provided, a new random UUID will be generated.
      *
      * @param jobId the job ID to generate the SK.

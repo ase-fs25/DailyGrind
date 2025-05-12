@@ -63,7 +63,7 @@ public class UserEducationEntity {
 
     /**
      * Generates the partition key (PK) for a given user ID.
-     * The PK format is "USER#<userId>#EDUCATION".
+     * The PK format is "USER#userId#EDUCATION".
      *
      * @param id the user ID to generate the PK.
      * @return the generated PK.
@@ -74,7 +74,7 @@ public class UserEducationEntity {
 
     /**
      * Generates the sort key (SK) for a given education ID.
-     * The SK format is "EDUCATION#<educationId>". If the educationId is null or empty, a random UUID is generated.
+     * The SK format is "EDUCATION#educationId". If the educationId is null or empty, a random UUID is generated.
      *
      * @param educationId the education ID to generate the SK.
      * @return the generated SK.
