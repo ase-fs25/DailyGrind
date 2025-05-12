@@ -5,6 +5,7 @@ import { getAuthToken } from './authHelper';
 export async function registerUser(userData: {
   firstName: string;
   lastName: string;
+  profilePictureUrl: string;
   email: string;
   location: string;
   birthday: string;
@@ -79,6 +80,7 @@ export async function loginUser(userInfoRaw: string, authToken: string) {
     email: userData.email,
     firstName: userData.firstName,
     lastName: userData.lastName,
+    profilePictureUrl: userData.profilePictureUrl || '',
     birthday: userData.birthday,
     location: userData.location,
     jobs: userData.jobs || [],

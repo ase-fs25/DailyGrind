@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { Dialog, DialogTitle, TextField, IconButton, Button, Box, Typography } from '@mui/material';
+import React, {useEffect, useRef, useState} from 'react';
+import { Dialog, DialogTitle, TextField, IconButton, Button, Box, Typography, Avatar } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
+import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { signOut } from 'aws-amplify/auth';
 import '../../styles/components/common/settingsPopup.css';
@@ -16,6 +18,18 @@ interface SettingsPopupProps {
   onClose: () => void;
 }
 
+const UploadPictureButton = styled(IconButton)(({ theme }) => ({
+  position: 'absolute',
+  bottom: 0,
+  right: 0,
+  backgroundColor: theme.palette.primary.main,
+  color: 'white',
+  '&:hover': {
+    backgroundColor: theme.palette.primary.dark,
+  },
+  padding: '8px',
+}));
+
 const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
   const navigate = useNavigate();
   const [user, setUser] = useState<User>(userStore.getUser());
@@ -23,9 +37,48 @@ const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [jobs, setJobs] = useState<UserJob[]>(userStore.getJobs());
   const [education, setEducation] = useState<UserEducation[]>(userStore.getEducation());
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
+
+  useEffect(() => {
+    if (open) {
+      const currentUser = userStore.getUser();
+      console.log("Opening settings popup with user:", currentUser);
+      console.log("Profile picture URL:", currentUser.profilePictureUrl);
+
+      setUser(currentUser);
+      setJobs(userStore.getJobs() || []);
+      setEducation(userStore.getEducation() || []);
+      setSelectedFile(null);
+      setPreviewUrl(null);
+    }
+  }, [open]);
+
 
   const handleUserChange = (field: keyof User, value: string) => {
     setUser((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      setSelectedFile(file);
+      const objectUrl = URL.createObjectURL(file);
+      setPreviewUrl(objectUrl);
+    }
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
   };
 
   const handleDeleteJob = async (jobId: string) => {
@@ -67,25 +120,44 @@ const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
     }
   };
 
-  useEffect(() => {
-    if (open) {
-      setUser(userStore.getUser());
-      setJobs(userStore.getJobs());
-      setEducation(userStore.getEducation());
-    }
-  }, [open]);
-
   const handleSaveProfile = async () => {
     setLoading(true);
     setStatusMessage(null);
 
     try {
+      let profilePictureUrl = user.profilePictureUrl;
+
+      if (selectedFile) {
+        const fileName = `users/${user.userId}/${Date.now()}-${selectedFile.name}`;
+        const bucketUrl = 'http://localhost:4566/dailygrind-profile-pictures';
+        const fileUrl = `${bucketUrl}/${fileName}`;
+
+        const response = await fetch(fileUrl, {
+          method: 'PUT',
+          body: selectedFile,
+          headers: {
+            'Content-Type': selectedFile.type
+          }
+        });
+
+        if (response.ok) {
+          if (user.profilePictureUrl?.startsWith('blob:')) {
+            URL.revokeObjectURL(user.profilePictureUrl);
+          }
+
+          profilePictureUrl = fileUrl;
+        } else {
+          throw new Error('Failed to upload profile picture');
+        }
+      }
+
       const updatedUser = {
         ...user,
+        profilePictureUrl: profilePictureUrl
       };
 
-      userStore.setUser(updatedUser);
       await updateUser(updatedUser);
+      userStore.setUser(updatedUser);
 
       setStatusMessage('Profile updated successfully');
       setTimeout(() => {
@@ -135,6 +207,32 @@ const SettingsPopup = ({ open, onClose }: SettingsPopupProps) => {
           <CloseIcon />
         </IconButton>
       </DialogTitle>
+
+      <Box
+        className="profile-picture-container"
+        sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', my: 2 }}
+      >
+        <Avatar
+          src={previewUrl ?? user.profilePictureUrl ?? undefined}
+          alt={`${user.firstName} ${user.lastName}`}
+          sx={{ width: 120, height: 120, boxShadow: '0 4px 8px rgba(0,0,0,0.1)', mb: 1 }}
+        />
+        <Box sx={{ position: 'relative' }}>
+          <input
+            type="file"
+            accept="image/*"
+            style={{ display: 'none' }}
+            ref={fileInputRef}
+            onChange={handleFileChange}
+          />
+          <UploadPictureButton onClick={handleUploadClick} size="small">
+            <AddAPhotoIcon fontSize="small" />
+          </UploadPictureButton>
+        </Box>
+        <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+          {selectedFile ? selectedFile.name : 'Click the camera icon to update your profile picture'}
+        </Typography>
+      </Box>
 
       <div className="settings-content">
         <Box className="settings-field">
