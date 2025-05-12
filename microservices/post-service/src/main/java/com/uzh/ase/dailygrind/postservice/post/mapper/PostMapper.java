@@ -6,15 +6,21 @@ import com.uzh.ase.dailygrind.postservice.post.repository.entity.PostEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+/**
+ * Mapper interface for mapping between {@link PostDto} and {@link PostEntity}.
+ * <p>
+ * This interface uses MapStruct to automatically generate the implementation for converting
+ * between the data transfer object (DTO) and entity representations of a post and its likes.
+ */
 @Mapper(componentModel = "spring")
 public interface PostMapper {
 
     /**
-     * Maps a PostDto to a PostEntity.
+     * Maps a {@link PostDto} to a {@link PostEntity}.
      *
      * @param userId the user ID
-     * @param postDto the PostDto to map
-     * @return the mapped PostEntity
+     * @param postDto the {@link PostDto} to map
+     * @return the mapped {@link PostEntity}
      */
     @Mapping(target = "pk", expression = "java(PostEntity.generatePK(userId))")
     @Mapping(target = "sk", expression = "java(PostEntity.generateSK(postDto.postId()))")
@@ -26,21 +32,25 @@ public interface PostMapper {
     PostEntity toPostEntity(String userId, PostDto postDto);
 
     /**
-     * Maps a LikeEntity to a PostDto.
+     * Maps a {@link LikeEntity} to a {@link PostDto}.
+     * <p>
+     * This method creates a {@link LikeEntity} based on the post ID and user ID.
      *
      * @param postId the post ID
      * @param userId the user ID
-     * @return the mapped LikeEntity
+     * @return the mapped {@link LikeEntity}
      */
     @Mapping(target = "pk", expression = "java(LikeEntity.generatePK(postId))")
     @Mapping(target = "sk", expression = "java(LikeEntity.generateSK(userId))")
     LikeEntity toLikeEntity(String postId, String userId);
 
     /**
-     * Maps a PostEntity to a PostDto.
+     * Maps a {@link PostEntity} to a {@link PostDto}.
      *
-     * @param postEntity the PostEntity to map
-     * @return the mapped PostDto
+     * @param postEntity the {@link PostEntity} to map
+     * @param isLiked whether the post is liked by the authenticated user
+     * @param isPinned whether the post is pinned
+     * @return the mapped {@link PostDto}
      */
     @Mapping(target = "postId", expression = "java(postEntity.getPostId())")
     @Mapping(target = "title", source = "postEntity.postTitle")
@@ -51,5 +61,4 @@ public interface PostMapper {
     @Mapping(target = "isLiked", source = "isLiked")
     @Mapping(target = "isPinned", source = "isPinned")
     PostDto toPostDto(PostEntity postEntity, boolean isLiked, boolean isPinned);
-
 }
