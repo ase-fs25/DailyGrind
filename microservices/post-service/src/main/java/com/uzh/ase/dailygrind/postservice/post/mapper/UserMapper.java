@@ -8,14 +8,21 @@ import com.uzh.ase.dailygrind.postservice.post.sqs.events.UserDataEvent;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+/**
+ * Mapper interface for mapping between {@link UserDto}, {@link UserEntity}, {@link FriendEntity},
+ * {@link UserDataEvent}, and {@link FriendshipEvent}.
+ * <p>
+ * This interface uses MapStruct to automatically generate the implementation for converting between
+ * user data events, friendship events, and the corresponding entities and DTOs.
+ */
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
     /**
-     * Maps a UserDataEvent to a UserEntity.
+     * Maps a {@link UserDataEvent} to a {@link UserEntity}.
      *
-     * @param userDataEvent the UserDataEvent to map
-     * @return the mapped UserEntity
+     * @param userDataEvent the {@link UserDataEvent} to map
+     * @return the mapped {@link UserEntity}
      */
     @Mapping(target = "pk", expression = "java(UserEntity.generatePK(userDataEvent.userId()))")
     @Mapping(target = "sk", expression = "java(UserEntity.generateSK())")
@@ -26,20 +33,20 @@ public interface UserMapper {
     UserEntity toUserEntity(UserDataEvent userDataEvent);
 
     /**
-     * Maps a FriendshipEvent to a FriendEntity.
+     * Maps a {@link FriendshipEvent} to a {@link FriendEntity}.
      *
-     * @param friendshipEvent the FriendshipEvent to map
-     * @return the mapped FriendEntity
+     * @param friendshipEvent the {@link FriendshipEvent} to map
+     * @return the mapped {@link FriendEntity}
      */
     @Mapping(target = "pk", expression = "java(FriendEntity.generatePK(friendshipEvent.userAId()))")
     @Mapping(target = "sk", expression = "java(FriendEntity.generateSK(friendshipEvent.userBId()))")
     FriendEntity toFriendEntity(FriendshipEvent friendshipEvent);
 
     /**
-     * Maps a UserEntity to a UserDto.
+     * Maps a {@link UserEntity} to a {@link UserDto}.
      *
-     * @param userEntity the UserEntity to map
-     * @return the mapped UserDto
+     * @param userEntity the {@link UserEntity} to map
+     * @return the mapped {@link UserDto}
      */
     @Mapping(target = "userId", expression = "java(userEntity.getUserId())")
     @Mapping(target = "email", source = "userEntity.email")

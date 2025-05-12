@@ -1,0 +1,7 @@
+com.uzh.ase.dailygrind.pushnotificationsservice
+com.uzh.ase.dailygrind.pushnotificationsservice.config
+com.uzh.ase.dailygrind.pushnotificationsservice.pushNotification.controller
+com.uzh.ase.dailygrind.pushnotificationsservice.pushNotification.controller.dto
+com.uzh.ase.dailygrind.pushnotificationsservice.pushNotification.repository
+com.uzh.ase.dailygrind.pushnotificationsservice.pushNotification.repository.entity
+com.uzh.ase.dailygrind.pushnotificationsservice.pushNotification.service

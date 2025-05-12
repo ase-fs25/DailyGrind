@@ -12,8 +12,10 @@ This microservice is responsible for managing and sending web push notifications
 ## Technical Stack
 - Java Spring Boot
 - Spring Security with OAuth2/JWT authentication
+- AWS DynamoDB with dynamoDB enhanced client
 - AWS Lambda integration for notification delivery
-- Web Push protocol implementation
+- AWS EventBridge Scheduler for managing the timely based push notifications
+- Web Push protocol implementation adhering to the PushAPI standard
 
 ## Technology Choices & Motivation
 
@@ -44,17 +46,24 @@ We implemented the Web Push standard because:
 - Provides end-to-end encryption for user privacy
 - Doesn't require keeping persistent connections open to each client
 
-## API Endpoints
+### Profiles
 
-### Push Notifications
-- `POST /push-notifications/send` - Send push notifications to subscribers
-- `POST /push-notifications/subscribe` - Subscribe a user to push notifications
+By running the application with the `dev` profile, the application will provide extensive logging, will disable the security filter. This is useful for local development and testing. It's best to run the application using IntelliJ run configurations.
 
-## Configuration
+## Documentation
 
-### Security
-The service is configured with Spring Security:
-- JWT-based authentication for protected endpoints
+The microservice is also documented using JavaDoc. The JavaDoc can be generated using Maven and can be found in the `docs` directory. Open the `index.html` file in the `docs` directory to view the documentation.
+
+### Environment Variables
+- `AWS_REGION`: The AWS region to use for Cognito, DynamoDB and SQS.
+- `LOCALSTACK_PORT`: The port to use for LocalStack. Default is `4566`.
+- `AWS_ACCESS_KEY_ID`: The AWS access key ID to use for LocalStack. Default is `test`.
+- `AWS_SECRET_ACCESS_KEY`: The AWS secret access key to use for LocalStack. Default is `test`.
+- `AWS_COGNITO_USER_POOL_ID`: The Cognito user pool ID to use for LocalStack. Check the terraform container to see the user pool id.
+- `LAMBDA_FUNCTION_NAME`: Name of the lambda function that handles the web push notifications.
+
+### Tests
+This service is extensively tested. It includes unit tests for the controller and service layers as well as for the lambda functions. Furthermore, endpoints and different scenarios are covered by integration tests using a dynamodb that gets started in a localstack instance using testcontainers.
 
 ## Development Setup
 
@@ -63,9 +72,8 @@ The service is configured with Spring Security:
 - Maven 3.x
 - Docker and Docker Compose
 
-### Running Locally
-1. Build the service
-2. Start the service with dependencies using Docker Compose
-3. From Terraform folder output get the daily_grind_user_pool_id and set it in the application.yaml file
+### Run the Service locally in dev mode
+1. Start the docker compose with the dev profile according to the [README](../../terraform/README.md)
+2. Start the microservice with the dev profile
 
 
