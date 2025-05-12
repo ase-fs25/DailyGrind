@@ -64,8 +64,19 @@ class PostsStore {
     return this.feedPosts;
   }
 
+  getFeedPostById(postId: string): FeedPost | undefined {
+    return this.feedPosts.find((post) => post.post.postId === postId);
+  }
+
   setFeedPosts(feedPosts: FeedPost[]) {
     this.feedPosts = feedPosts;
+  }
+
+  updateFeedPost(postId: string, updatedPost: FeedPost) {
+    const index = this.feedPosts.findIndex((post) => post.post.postId === postId);
+    if (index !== -1) {
+      this.feedPosts[index] = updatedPost;
+    }
   }
 
   clearFeedPosts(): void {

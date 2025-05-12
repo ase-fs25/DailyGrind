@@ -26,18 +26,18 @@ either `http://localhost:4566/_aws/cognito-idp/login` or `http://localhost.local
 
 Try out the third and fourth one. We haven't figured out why it is different for some machines.
 
-### `npm start`
+### Start the frontend
 
-Runs the app in the development mode.\
+Make sure that the backend is running properly, as well as the containers
+
+First: `npm install`
+
+Then: `npm run dev`
+
+This runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
 
-### TODO:
-
-- Connect to backend
-- Fully build the different pages
-- Create login/registration flow (also with use profile in settings)
-- Change Logo
-- Change Color scheme?
+Run `npm run prettier` to format the code correctly.
