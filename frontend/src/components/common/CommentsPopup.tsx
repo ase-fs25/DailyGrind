@@ -47,11 +47,19 @@ const CommentsPopup = ({ open, onClose, post, comments }: CommentsPopupProps) =>
     setPostComments((prev) => prev.filter((comment) => comment.comment.commentId !== commentId));
   };
 
-  const createAuthor = () => {
+  const createAuthorPost = () => {
     if (user.userId === post.user.userId) {
       return 'by me'
     } else {
       return `by ${post.user.firstName + ' ' + post.user.lastName}`
+    }
+  }
+
+  const createAuthorComment = (comment: PostComments) => {
+    if (user.userId === comment.comment.userId) {
+      return 'From me'
+    } else {
+      return `From ${comment.user.firstName} ${comment.user.lastName}`
     }
   }
 
@@ -78,7 +86,7 @@ const CommentsPopup = ({ open, onClose, post, comments }: CommentsPopupProps) =>
             <Typography variant="h6" className="comment-post-title">
               {post.post.title}
             </Typography>
-            <Typography className="comment-post-user">{createAuthor()}</Typography>
+            <Typography className="comment-post-user">{createAuthorPost()}</Typography>
           </div>
 
           <Typography variant="subtitle2" className="post-timestamp">
@@ -102,11 +110,11 @@ const CommentsPopup = ({ open, onClose, post, comments }: CommentsPopupProps) =>
                 <div className="single-comment-content-wrapper">
                   <div>
                     <div className="comment-author">
-                      From {comment.user.firstName} {comment.user.lastName}
+                      {createAuthorComment(comment)}
                     </div>
                     <div>{comment.comment.content}</div>
                   </div>
-                  {user.userId === comment.user.userId && (
+                  {user.userId === comment.comment.userId && (
                     <IconButton
                       edge="end"
                       onClick={() => deleteComment(post.post.postId, comment.comment.commentId)}
