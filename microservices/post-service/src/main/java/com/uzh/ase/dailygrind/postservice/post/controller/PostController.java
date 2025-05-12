@@ -14,12 +14,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.security.Principal;
 import java.util.List;
 
-/**
- * Controller class for managing posts.
- * <p>
- * This class provides endpoints for creating, retrieving, updating, deleting, and interacting with posts,
- * such as liking or unliking a post. It also allows users to view their own posts or those of other users.
- */
 @RestController
 @RequestMapping
 @RequiredArgsConstructor
@@ -27,12 +21,6 @@ public class PostController {
 
     private final PostService postService;
 
-    /**
-     * Retrieves today's daily post for the authenticated user.
-     *
-     * @param principal the authenticated user
-     * @return the daily post for the authenticated user
-     */
     @Operation(summary = "Get today's daily post for the authenticated user")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved daily post")
     @GetMapping("/users/me/daily-post")
@@ -40,13 +28,6 @@ public class PostController {
         return ResponseEntity.ok(postService.getDailyPostForUser(principal.getName(), principal.getName()));
     }
 
-    /**
-     * Retrieves today's daily post for a specific user.
-     *
-     * @param userId the unique identifier of the user
-     * @param principal the authenticated user
-     * @return the daily post for the specified user
-     */
     @Operation(summary = "Get today's daily post for a specific user")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved user's daily post")
     @GetMapping("/users/{userId}/daily-post")
@@ -54,12 +35,6 @@ public class PostController {
         return ResponseEntity.ok(postService.getDailyPostForUser(userId, principal.getName()));
     }
 
-    /**
-     * Retrieves all posts for the authenticated user.
-     *
-     * @param principal the authenticated user
-     * @return a list of posts for the authenticated user
-     */
     @Operation(summary = "Get all posts by the authenticated user")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved posts")
     @GetMapping("/users/me/posts")
@@ -67,12 +42,6 @@ public class PostController {
         return ResponseEntity.ok(postService.getPostsForUser(principal.getName()));
     }
 
-    /**
-     * Retrieves all posts for a specific user.
-     *
-     * @param userId the unique identifier of the user
-     * @return a list of posts for the specified user
-     */
     @Operation(summary = "Get all posts by a specific user")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved user's posts")
     @GetMapping("/users/{userId}/posts")
@@ -80,13 +49,6 @@ public class PostController {
         return ResponseEntity.ok(postService.getPostsForUser(userId));
     }
 
-    /**
-     * Retrieves a post by its ID.
-     *
-     * @param postId the unique identifier of the post
-     * @param principal the authenticated user
-     * @return the post with the specified ID
-     */
     @Operation(summary = "Get a post by ID")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved post")
     @GetMapping("/posts/{postId}")
@@ -94,13 +56,6 @@ public class PostController {
         return ResponseEntity.ok(postService.getPostById(postId, principal.getName()));
     }
 
-    /**
-     * Creates a new post for the authenticated user.
-     *
-     * @param postDto the post data to create
-     * @param principal the authenticated user creating the post
-     * @return the created post
-     */
     @Operation(summary = "Create a new post for the authenticated user")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Post created successfully"),
@@ -112,15 +67,6 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.CREATED).body(postDto);
     }
 
-    /**
-     * Updates a post by its ID.
-     *
-     * @param postId the unique identifier of the post to update
-     * @param postDto the updated post data
-     * @param principal the authenticated user updating the post
-     * @return the updated post
-     * @throws ResponseStatusException if there is a mismatch between the URL post ID and the post data ID
-     */
     @Operation(summary = "Update a post by ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Post updated successfully"),
@@ -132,13 +78,6 @@ public class PostController {
         return ResponseEntity.ok(postService.updatePost(postId, principal.getName(), postDto));
     }
 
-    /**
-     * Deletes a post by its ID.
-     *
-     * @param postId the unique identifier of the post to delete
-     * @param principal the authenticated user deleting the post
-     * @return a response indicating the post has been deleted
-     */
     @Operation(summary = "Delete a post by ID")
     @ApiResponse(responseCode = "204", description = "Post deleted successfully")
     @DeleteMapping("/posts/{postId}")
@@ -147,13 +86,6 @@ public class PostController {
         return ResponseEntity.noContent().build();
     }
 
-    /**
-     * Likes a post.
-     *
-     * @param postId the unique identifier of the post to like
-     * @param principal the authenticated user liking the post
-     * @return a response indicating the post has been liked
-     */
     @Operation(summary = "Like a post")
     @ApiResponse(responseCode = "201", description = "Post liked successfully")
     @PostMapping("/posts/{postId}/likes")
@@ -162,13 +94,6 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    /**
-     * Unlikes a post.
-     *
-     * @param postId the unique identifier of the post to unlike
-     * @param principal the authenticated user unliking the post
-     * @return a response indicating the post has been unliked
-     */
     @Operation(summary = "Unlike a post")
     @ApiResponse(responseCode = "204", description = "Post unliked successfully")
     @DeleteMapping("/posts/{postId}/likes")
