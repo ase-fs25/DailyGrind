@@ -13,6 +13,12 @@ import java.security.Principal;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+/**
+ * Controller class for managing pinned posts.
+ * <p>
+ * This class exposes endpoints to get, pin, and unpin posts for a user.
+ * Pinned posts are posts that the user has marked for easy access.
+ */
 @RestController
 @RequestMapping
 @RequiredArgsConstructor
@@ -20,6 +26,12 @@ public class PinnedPostController {
 
     private final PostService postService;
 
+    /**
+     * Retrieves all pinned posts for the authenticated user.
+     *
+     * @param principal the authenticated user
+     * @return a list of pinned posts for the authenticated user
+     */
     @Operation(summary = "Getting all of my pinned posts")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved pinned posts")
     @GetMapping("/users/me/pinned-posts")
@@ -28,6 +40,12 @@ public class PinnedPostController {
         return ResponseEntity.ok(pinnedPosts);
     }
 
+    /**
+     * Retrieves all pinned posts for a specific user.
+     *
+     * @param userId the unique identifier of the user
+     * @return a list of pinned posts for the specified user
+     */
     @Operation(summary = "Getting all pinned posts for user")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved pinned posts")
     @GetMapping("/users/{userId}/pinned-posts")
@@ -36,6 +54,13 @@ public class PinnedPostController {
         return ResponseEntity.ok(pinnedPosts);
     }
 
+    /**
+     * Pins a post for the authenticated user.
+     *
+     * @param postId the unique identifier of the post to pin
+     * @param principal the authenticated user performing the action
+     * @return the pinned post data if successful, or a bad request response if the post is already pinned
+     */
     @Operation(summary = "Adding new pinned post")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Post pinned successfully"),
@@ -51,6 +76,13 @@ public class PinnedPostController {
         }
     }
 
+    /**
+     * Unpins a post for the authenticated user.
+     *
+     * @param postId the unique identifier of the post to unpin
+     * @param principal the authenticated user performing the action
+     * @return a response indicating the post has been unpinned
+     */
     @Operation(summary = "Removing pinned post")
     @ApiResponse(responseCode = "204", description = "Post unpinned successfully")
     @DeleteMapping("/users/me/pinned-posts/{postId}")
