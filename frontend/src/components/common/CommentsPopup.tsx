@@ -2,7 +2,7 @@ import { Button, Card, Dialog, DialogContent, IconButton, TextField, Typography 
 import { addCommentForPost, deleteCommentForPost, formatDate } from '../../helpers/postHelper';
 import '../../styles/components/common/commentsPopup.css';
 import { FeedPost, PostComments } from '../../types/post';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import userStore from '../../stores/userStore';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -17,6 +17,10 @@ const CommentsPopup = ({ open, onClose, post, comments }: CommentsPopupProps) =>
   const [newComment, setNewComment] = useState('');
   const [postComments, setPostComments] = useState<PostComments[]>(comments);
   const user = userStore.getUser();
+
+  useEffect(() => {
+    setPostComments(comments);
+  }, [comments]);
 
   const handleClose = () => {
     onClose();
@@ -43,6 +47,14 @@ const CommentsPopup = ({ open, onClose, post, comments }: CommentsPopupProps) =>
     setPostComments((prev) => prev.filter((comment) => comment.comment.commentId !== commentId));
   };
 
+  const createAuthor = () => {
+    if (user.userId === post.user.userId) {
+      return 'by me'
+    } else {
+      return `by ${post.user.firstName + ' ' + post.user.lastName}`
+    }
+  }
+
   return (
     <Dialog
       open={open}
@@ -66,7 +78,7 @@ const CommentsPopup = ({ open, onClose, post, comments }: CommentsPopupProps) =>
             <Typography variant="h6" className="comment-post-title">
               {post.post.title}
             </Typography>
-            <Typography className="comment-post-user">by {post.user.firstName + ' ' + post.user.lastName}</Typography>
+            <Typography className="comment-post-user">{createAuthor()}</Typography>
           </div>
 
           <Typography variant="subtitle2" className="post-timestamp">

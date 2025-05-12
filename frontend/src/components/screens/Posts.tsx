@@ -4,17 +4,43 @@ import Header from '../common/Header';
 import DeleteIcon from '@mui/icons-material/Delete';
 import TurnedInIcon from '@mui/icons-material/TurnedIn';
 import TurnedInNotIcon from '@mui/icons-material/TurnedInNot';
-import { getUserPosts, deletePost, getUserPinnedPosts, unpinPost, pinPost } from '../../helpers/postHelper';
+import {
+  getUserPosts,
+  deletePost,
+  getUserPinnedPosts,
+  unpinPost,
+  pinPost,
+  getCommentsForPost,
+} from '../../helpers/postHelper';
 import postsStore from '../../stores/postsStore';
 import '../../styles/components/screens/screen.css';
 import '../../styles/components/screens/posts.css';
-import { Post } from '../../types/post';
+import { FeedPost, Post, PostComments } from '../../types/post';
+import CommentIcon from '@mui/icons-material/Comment';
+import CommentsPopup from '../common/CommentsPopup';
+import userStore from '../../stores/userStore';
 
 const Posts = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [personalPosts, setPersonalPosts] = useState<Post[]>(postsStore.getPosts());
   const [pinnedPosts, setPinnedPosts] = useState<Post[]>([]);
+  const [openComments, setOpenComments] = useState(false);
+  const [currentComments, setCurrentComments] = useState<PostComments[]>([]);
+  const user = userStore.getUser();
+  const [tempFeedPost, setTempFeedPost] = useState<FeedPost>({
+    post: {
+      postId: '',
+      title: '',
+      content: '',
+      timestamp: '',
+      commentCount: 0,
+      isLiked: false,
+      isPinned: false,
+      likeCount: 0,
+    },
+    user: user,
+  });
 
   useEffect(() => {
     if (postsStore.getPosts().length > 0) {
@@ -111,6 +137,21 @@ const Posts = () => {
     }
   };
 
+  const handleCommentsClick = async (post: Post) => {
+    const fetchedComments = await getCommentsForPost(post.postId);
+
+    if (fetchedComments) {
+      setCurrentComments(fetchedComments);
+    }
+
+    const postObject: FeedPost = {
+      post: post,
+      user: user,
+    };
+    setTempFeedPost(postObject);
+    setOpenComments(true);
+  };
+
   const formatDate = (timestamp: string) => {
     const date = new Date(Number(timestamp));
     return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1)
@@ -153,6 +194,20 @@ const Posts = () => {
                     <Typography variant="body1" className="post-content">
                       {pinnedPost.content}
                     </Typography>
+                    <div className="post-like-wrapper">
+                      <Typography variant="body1" className="post-like-count">
+                        {pinnedPost.likeCount} Likes
+                      </Typography>
+                      <IconButton
+                        edge="end"
+                        onClick={() => handleCommentsClick(pinnedPost)}
+                        aria-label="comment"
+                        sx={{ width: '36px', height: '36px', marginLeft: '12px;', marginTop: '2px' }}
+                        color="secondary"
+                      >
+                        <CommentIcon />
+                      </IconButton>
+                    </div>
                   </Card>
                   <div className="pin-icon-wrapper">
                     <IconButton
@@ -186,6 +241,20 @@ const Posts = () => {
                     <Typography variant="body1" className="post-content">
                       {post.content}
                     </Typography>
+                    <div className="post-like-wrapper">
+                      <Typography variant="body1" className="post-like-count">
+                        {post.likeCount} Likes
+                      </Typography>
+                      <IconButton
+                        edge="end"
+                        onClick={() => handleCommentsClick(post)}
+                        aria-label="comment"
+                        sx={{ width: '36px', height: '36px', marginLeft: '12px;', marginTop: '2px' }}
+                        color="secondary"
+                      >
+                        <CommentIcon />
+                      </IconButton>
+                    </div>
                   </Card>
                   <div className="delete-icon-wrapper">
                     <IconButton
@@ -220,6 +289,12 @@ const Posts = () => {
                       </IconButton>
                     )}
                   </div>
+                  <CommentsPopup
+                    open={openComments}
+                    onClose={() => setOpenComments(false)}
+                    post={tempFeedPost}
+                    comments={currentComments}
+                  />
                 </Box>
               ))}
             </Box>

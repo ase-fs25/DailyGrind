@@ -266,9 +266,6 @@ export async function getCommentsForPost(postId: string): Promise<PostComments[]
     }
 
     const commentsForPost = await response.json();
-
-    console.log('commentsForPost: ' + postId)
-    console.log(commentsForPost)
     return commentsForPost;
   } catch (error) {
     console.error('Error fetching comments:', error);
@@ -283,8 +280,6 @@ export async function addCommentForPost(postId: string, newComment: string): Pro
     const postRequest = {
       content: newComment,
     };
-
-    console.log('Add: ' + postId)
 
     const response = await fetch(`${API_URL}/posts/${postId}/comments`, {
       method: 'POST',
