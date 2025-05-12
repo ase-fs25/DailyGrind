@@ -9,21 +9,40 @@ import software.amazon.awssdk.services.sqs.SqsClient;
 
 import java.net.URI;
 
+/**
+ * Configuration class for setting up the Amazon Simple Queue Service (SQS) client.
+ * It uses AWS credentials and region configuration from application properties
+ * and creates an instance of the SQS client for interacting with SQS services.
+ */
 @Configuration
 public class SqsConfig {
 
+    /**
+     * AWS region where the SQS service is hosted.
+     * This value is injected from the application properties.
+     */
     @Value("${dg.us.aws.region}")
     private String awsRegion;
 
+    /**
+     * The base URL for AWS services, typically used for LocalStack or custom endpoint URLs.
+     * This value is injected from the application properties.
+     */
     @Value("${dg.us.aws.base-url}")
     private String awsBaseUrl;
 
+    /**
+     * Creates an instance of the SQS client with configured credentials provider, region, and endpoint.
+     *
+     * @param awsCredentialsProvider The AWS credentials provider to be used by the SQS client.
+     * @return The configured SQS client.
+     */
     @Bean
     public SqsClient sqsClient(AwsCredentialsProvider awsCredentialsProvider) {
         return SqsClient.builder()
-            .endpointOverride(URI.create(awsBaseUrl))
-            .credentialsProvider(awsCredentialsProvider)
-            .region(Region.of(awsRegion))
+            .endpointOverride(URI.create(awsBaseUrl))  // Set the custom AWS service endpoint URL
+            .credentialsProvider(awsCredentialsProvider)  // Provide AWS credentials
+            .region(Region.of(awsRegion))  // Specify the AWS region
             .build();
     }
 
