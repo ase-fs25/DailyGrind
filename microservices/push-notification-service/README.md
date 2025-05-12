@@ -50,6 +50,10 @@ We implemented the Web Push standard because:
 - `POST /push-notifications/send` - Send push notifications to subscribers
 - `POST /push-notifications/subscribe` - Subscribe a user to push notifications
 
+## Documentation
+
+The microservice is also documented using JavaDoc. The JavaDoc can be generated using Maven and can be found in the `docs` directory. Open the `index.html` file in the `docs` directory to view the documentation.
+
 ## Configuration
 
 ### Security

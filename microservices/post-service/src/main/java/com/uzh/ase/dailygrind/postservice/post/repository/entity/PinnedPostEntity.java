@@ -22,11 +22,20 @@ public class PinnedPostEntity {
     public static final String PK_SUFFIX = "PINNED";
     public static final String SK_PREFIX = "POST";
 
-    @Getter(onMethod_ =  {@DynamoDbPartitionKey, @DynamoDbAttribute("PK")})
     private String pk;
-
-    @Getter(onMethod_ =  {@DynamoDbSortKey, @DynamoDbAttribute("SK")})
     private String sk;
+
+    @DynamoDbPartitionKey
+    @DynamoDbAttribute("PK")
+    public String getPk() {
+        return pk;
+    }
+
+    @DynamoDbSortKey
+    @DynamoDbAttribute("SK")
+    public String getSk() {
+        return sk;
+    }
 
     public PinnedPostEntity(String userId, String postId) {
         this.pk = generatePK(userId);

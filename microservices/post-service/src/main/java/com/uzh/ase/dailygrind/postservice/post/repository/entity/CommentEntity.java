@@ -22,11 +22,20 @@ public class CommentEntity {
 
     public static final String PK_SUFFIX = "POST";
 
-    @Getter(onMethod_ =  {@DynamoDbPartitionKey, @DynamoDbAttribute("PK")})
     private String pk;
-
-    @Getter(onMethod_ =  {@DynamoDbSortKey, @DynamoDbAttribute("SK")})
     private String sk;
+
+    @DynamoDbPartitionKey
+    @DynamoDbAttribute("PK")
+    public String getPk() {
+        return pk;
+    }
+
+    @DynamoDbSortKey
+    @DynamoDbAttribute("SK")
+    public String getSk() {
+        return sk;
+    }
 
     private String commentContent;
     private String commentTimestamp;

@@ -20,11 +20,20 @@ public class PostEntity {
 
     public static String POSTFIX = "POST";
 
-    @Getter(onMethod_ =  {@DynamoDbPartitionKey, @DynamoDbAttribute("PK")})
     private String pk;
-
-    @Getter(onMethod_ =  {@DynamoDbSortKey, @DynamoDbAttribute("SK")})
     private String sk;
+
+    @DynamoDbPartitionKey
+    @DynamoDbAttribute("PK")
+    public String getPk() {
+        return pk;
+    }
+
+    @DynamoDbSortKey
+    @DynamoDbAttribute("SK")
+    public String getSk() {
+        return sk;
+    }
 
     private String postTitle;
     private String postContent;

@@ -17,11 +17,20 @@ public class FriendshipEntity {
     public static final String PK_PREFIX = "USER";
     public static final String PK_POSTFIX = "FRIEND";
 
-    @Getter(onMethod_ = {@DynamoDbPartitionKey, @DynamoDbAttribute("PK")})
     private String pk;
-
-    @Getter(onMethod_ = {@DynamoDbSortKey, @DynamoDbAttribute("SK")})
     private String sk;
+
+    @DynamoDbPartitionKey
+    @DynamoDbAttribute("PK")
+    public String getPk() {
+        return pk;
+    }
+
+    @DynamoDbSortKey
+    @DynamoDbAttribute("SK")
+    public String getSk() {
+        return sk;
+    }
 
     private boolean incoming; // incoming or outgoing request
     private boolean friendshipAccepted; // true for friends and false for pending requests

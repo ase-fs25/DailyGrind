@@ -17,8 +17,13 @@ import java.util.UUID;
 public class PushSubscription {
 
 
-    @Getter(onMethod_ = {@DynamoDbPartitionKey, @DynamoDbAttribute("subscription_id")})
     private String subscriptionId;
+
+    @DynamoDbPartitionKey
+    @DynamoDbAttribute("subscription_id")
+    public String getSubscriptionId() {
+        return subscriptionId;
+    }
 
     private String userId;
 
