@@ -6,6 +6,7 @@ class UserStore {
     email: '',
     firstName: '',
     lastName: '',
+    profilePictureUrl: '',
     birthday: '',
     location: '',
     jobs: [],
@@ -29,6 +30,7 @@ class UserStore {
       email: '',
       firstName: '',
       lastName: '',
+      profilePictureUrl: '',
       birthday: '',
       location: '',
       jobs: [],
@@ -51,6 +53,10 @@ class UserStore {
 
   get lastName(): string {
     return this.user.lastName;
+  }
+
+  get profilePictureUrl(): string {
+    return this.user.profilePictureUrl;
   }
 
   get birthday(): string {
@@ -76,6 +82,10 @@ class UserStore {
 
   setLastName(value: string) {
     this.user.lastName = value;
+  }
+
+  setProfilePictureUrl(value: string) {
+    this.user.profilePictureUrl = value;
   }
 
   setBirthday(value: string) {

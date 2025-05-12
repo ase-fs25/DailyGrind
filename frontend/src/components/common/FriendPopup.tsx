@@ -1,9 +1,8 @@
-import { Dialog, DialogTitle, DialogContent, IconButton, Box, Typography, Button } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, IconButton, Box, Typography, Button, Avatar } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { Post } from '../../types/post';
-import { UserProfile } from '../../helpers/friendsHelper';
 import { removeFriend } from '../../helpers/friendsHelper';
-import { UserJob, UserEducation } from '../../types/user';
+import { UserJob, UserEducation, User } from '../../types/user';
 import JobsSection from './JobsSection';
 import EducationSection from './EducationSection';
 import '../../styles/components/common/friendPopup.css';
@@ -11,7 +10,7 @@ import '../../styles/components/common/friendPopup.css';
 interface FriendPopupProps {
   open: boolean;
   onClose: () => void;
-  user: UserProfile | null;
+  user: User | null;
   posts: Post[];
   education: UserEducation[];
   jobs: UserJob[];
@@ -43,7 +42,7 @@ const FriendPopup = ({ open, onClose, user, posts, education, jobs }: FriendPopu
         <Button className="remove-btn" onClick={handleRemoveFriend}>
           Remove
         </Button>
-        <Typography variant="h6" className="popup-title">
+        <Typography className="popup-title">
           {user.firstName} {user.lastName}
         </Typography>
         <div className="profile-close-button-wrapper">
@@ -54,16 +53,21 @@ const FriendPopup = ({ open, onClose, user, posts, education, jobs }: FriendPopu
       </DialogTitle>
 
       <DialogContent className="popup-content">
-        <Typography variant="h6" className="location">
-          Location: {user.location || 'N/A'}
-        </Typography>
+        <div className="popup-first-row">
+          <Avatar
+            src={user.profilePictureUrl}
+            alt={`${user.firstName} ${user.lastName}`}
+            sx={{ width: 50, height: 50, boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }}
+          />
+          <Typography className="location">Location: {user.location || 'N/A'}</Typography>
+        </div>
 
         <EducationSection education={education} onChange={() => {}} readOnly />
 
         <JobsSection jobs={jobs} onChange={() => {}} readOnly />
 
         <Box className="posts-heading">
-          <Typography variant="h6">Posts</Typography>
+          <Typography>Posts</Typography>
           {posts.length > 0 ? (
             posts.map((post) => (
               <Box key={post.postId} className="post-box">
