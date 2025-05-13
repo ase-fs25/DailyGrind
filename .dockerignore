@@ -20,6 +20,7 @@ yarn-error.log*
 
 # additional ignores
 frontend/node_modules
+frontend/dist
 volume/cache
 *.tsbuildinfo
 .cache

@@ -84,5 +84,6 @@ services:
       - ./microservices:/microservices
       - ./frontend:/app/frontend
       - /app/frontend/node_modules
+      - /app/frontend/dist
       - /var/run/docker.sock:/var/run/docker.sock
     restart: "no"
