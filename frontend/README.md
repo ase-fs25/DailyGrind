@@ -15,7 +15,9 @@ Built with **React**, **TypeScript**, and **Vite**, the application is styled us
 ## Technology Choices & Motivation
 
 ### React with TypeScript
+
 We chose React with TypeScript for the following reasons:
+
 - Type Safety: Brings static typing to React, catching errors at compile time and improving developer confidence.
 - Developer Productivity: Autocomplete, refactoring tools, and clear interfaces speed up development.
 - Maintainability: Strong typing makes large codebases easier to navigate and refactor.
@@ -24,7 +26,9 @@ We chose React with TypeScript for the following reasons:
 - Integration: Seamlessly works with modern React features (hooks, context, suspense).
 
 ### Vite
+
 We chose Vite for the following reasons:
+
 - Super-fast Cold Starts: Leverages native ES modules to avoid bundling on every change, yielding near-instant dev server startup.
 - Hot Module Replacement (HMR): Blazing-fast updates during development without full page reloads.
 - Out-of-the-box Optimization: Built-in support for code splitting, asset handling, and pre-bundling.
@@ -33,7 +37,9 @@ We chose Vite for the following reasons:
 - Future-proof: Designed around the latest browser capabilities and standards.
 
 ### Material UI (MUI)
+
 We chose Material UI (MUI) for the following reasons:
+
 - Pre-built Components: Rich library of accessible, theme-ready React components out of the box.
 - Theming & Customization: Deep theming API allows you to match your brand’s design language across all components.
 - Responsiveness: Built-in grid system and style utilities adapt seamlessly to different screen sizes.
@@ -43,7 +49,9 @@ We chose Material UI (MUI) for the following reasons:
 - Integration: Plays nicely with React Router, Formik, and other popular React libraries.
 
 ### JWT-based Authentication (OAuth2 Resource Server)
+
 We chose JWT-based Authentication for the following reasons:
+
 - Standards-compliant: Built on OAuth2 and JWT, widely adopted specifications that interoperate across platforms.
 - Stateless Sessions: Tokens carry their own claims, eliminating the need for server-side session storage and simplifying horizontal scaling.
 - Performance: No database lookup required on each request—authentication is as simple as signature verification.
@@ -51,7 +59,9 @@ We chose JWT-based Authentication for the following reasons:
 - Decoupling: Resource servers only need the public key to verify tokens, keeping authentication logic centralized.
 
 ### Web Push Library (integrated with AWS Lambda + EventBridge backend)
+
 We chose Web Push Library for the following reasons:
+
 - Real-time Engagement: Enables push notifications directly to the browser or device, driving user engagement.
 - Serverless Scalability: AWS Lambda handlers scale automatically to match event volume without provisioning servers.
 - Event-driven Architecture: EventBridge decouples producers and consumers, allowing other microservices to subscribe to the same events in the future.
