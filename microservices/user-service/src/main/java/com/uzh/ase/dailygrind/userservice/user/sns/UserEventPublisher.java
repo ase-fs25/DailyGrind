@@ -5,6 +5,7 @@ import com.uzh.ase.dailygrind.userservice.user.sns.events.EventType;
 import com.uzh.ase.dailygrind.userservice.user.sns.events.FriendshipEvent;
 import com.uzh.ase.dailygrind.userservice.user.sns.events.UserDataEvent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;  // Import the logging annotation
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.sns.SnsClient;
@@ -20,6 +21,7 @@ import java.util.Map;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j  // Add this annotation for logging
 public class UserEventPublisher {
 
     /**
@@ -62,7 +64,9 @@ public class UserEventPublisher {
                 .message(json)
                 .messageAttributes(messageAttributes)
             );
+            log.info("Successfully published {} event for user ID: {}", eventType, userDataEvent.userId());
         } catch (Exception e) {
+            log.error("Failed to publish {} event for user ID: {}", eventType, userDataEvent.userId(), e);
             throw new RuntimeException("Failed to convert UserDataEvent to JSON", e);
         }
     }
@@ -90,7 +94,9 @@ public class UserEventPublisher {
                 .message(json)
                 .messageAttributes(messageAttributes)
             );
+            log.info("Successfully published {} event for friendship between user ID: {} and user ID: {}", eventType, friendshipEvent.userAId(), friendshipEvent.userBId()); // Log success
         } catch (Exception e) {
+            log.error("Failed to publish {} event for friendship between user ID: {} and user ID: {}", eventType, friendshipEvent.userAId(), friendshipEvent.userBId(), e); // Log error
             throw new RuntimeException("Failed to convert FriendshipEvent to JSON", e);
         }
     }

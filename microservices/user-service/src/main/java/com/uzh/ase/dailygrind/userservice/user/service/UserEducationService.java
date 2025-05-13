@@ -5,6 +5,7 @@ import com.uzh.ase.dailygrind.userservice.user.mapper.UserEducationMapper;
 import com.uzh.ase.dailygrind.userservice.user.repository.UserEducationRepository;
 import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserEducationEntity;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
  * Provides methods to fetch, create, update, and delete education entries for a user.
  */
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserEducationService {
 
@@ -27,7 +29,9 @@ public class UserEducationService {
      * @return a list of {@link UserEducationDto} representing the user's education records
      */
     public List<UserEducationDto> getEducationForUser(String userId) {
+        log.info("Fetching education entries for user: {}", userId);
         List<UserEducationEntity> userEducationDtos = userEducationRepository.findAllUserEducations(userId);
+        log.info("Found {} education entries for user: {}", userEducationDtos.size(), userId);
         return userEducationDtos.stream()
             .map(userEducationMapper::toUserEducationDto)
             .toList();
@@ -41,8 +45,10 @@ public class UserEducationService {
      * @return the created {@link UserEducationDto}
      */
     public UserEducationDto createUserEducation(UserEducationDto createUserEducationDtos, String name) {
+        log.info("Creating education entry for user: {}", name);
         UserEducationEntity userEducationEntity = userEducationMapper.toUserEducationEntity(createUserEducationDtos, name);
         userEducationRepository.saveUserEducation(userEducationEntity);
+        log.info("Successfully created education entry for user: {}", name);
         return userEducationMapper.toUserEducationDto(userEducationEntity);
     }
 
@@ -55,9 +61,11 @@ public class UserEducationService {
      * @return the updated {@link UserEducationDto}
      */
     public UserEducationDto updateUserEducation(String educationId, UserEducationDto updateUserEducationDto, String name) {
+        log.info("Updating education entry with ID: {} for user: {}", educationId, name);
         UserEducationEntity userEducationEntity = userEducationMapper.toUserEducationEntity(updateUserEducationDto, name);
         userEducationEntity.setSk(UserEducationEntity.generateSK(educationId));
         userEducationRepository.updateUserEducation(userEducationEntity);
+        log.info("Successfully updated education entry with ID: {} for user: {}", educationId, name);
         return userEducationMapper.toUserEducationDto(userEducationEntity);
     }
 
@@ -68,7 +76,9 @@ public class UserEducationService {
      * @param educationId the ID of the education entry to delete
      */
     public void deleteUserEducation(String name, String educationId) {
+        log.info("Deleting education entry with ID: {} for user: {}", educationId, name);
         userEducationRepository.deleteUserEducation(name, educationId);
+        log.info("Successfully deleted education entry with ID: {} for user: {}", educationId, name);
     }
 
     /**
@@ -77,9 +87,11 @@ public class UserEducationService {
      * @param userId the ID of the user
      */
     public void deleteEducationForUser(String userId) {
+        log.info("Deleting all education entries for user: {}", userId);
         List<UserEducationEntity> userEducationEntities = userEducationRepository.findAllUserEducations(userId);
-        for (UserEducationEntity userEducationEntity : userEducationEntities) {
-            userEducationRepository.deleteUserEducation(userId, userEducationEntity.getSk());
-        }
+        userEducationEntities.forEach(userEducationEntity ->
+            userEducationRepository.deleteUserEducation(userId, userEducationEntity.getSk())
+        );
+        log.info("Successfully deleted all education entries for user: {}", userId);
     }
 }

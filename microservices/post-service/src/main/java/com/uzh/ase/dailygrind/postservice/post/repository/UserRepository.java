@@ -56,17 +56,22 @@ public class UserRepository {
      * @param userId the ID of the user to delete
      */
     public void deleteUser(String userId) {
-        String pk = UserEntity.generatePK(userId);
         Key key = Key.builder()
-            .partitionValue(pk)
+            .partitionValue(UserEntity.generatePK(userId))
+            .sortValue(UserEntity.generateSK())
             .build();
         userTable.deleteItem(key);
 
-        // Delete the corresponding friend entries
-        key = Key.builder()
-            .partitionValue(FriendEntity.generatePK(userId))
-            .build();
-        friendTable.deleteItem(key);
+        // Delete all friend entries for the user
+        List<FriendEntity> friends = getFriends(userId);
+        for (FriendEntity friend : friends) {
+            removeFriend(friend);
+            FriendEntity inverseFriend = FriendEntity.builder()
+                .pk(FriendEntity.generatePK(friend.getFriendId()))
+                .sk(FriendEntity.generateSK(userId))
+                .build();
+            removeFriend(inverseFriend);
+        }
     }
 
     /**
@@ -116,16 +121,30 @@ public class UserRepository {
     }
 
     /**
-     * Retrieves the user entity for a specific user (friend).
+     * Retrieves a friend entity for a specific user and friend.
+     * <p>
+     * This method queries the friend table to find a specific friend for the given user by their partition key and sort key.
+     *
+     * @param userId    the ID of the user
+     * @return the friend entity if found, otherwise null
+     */
+    public List<String> getFriendIds(String userId) {
+        return getFriends(userId).stream()
+            .map(FriendEntity::getFriendId)
+            .toList();
+    }
+
+    /**
+     * Retrieves the user entity for a specific user.
      * <p>
      * This method queries the user table to find a user by their unique user ID.
      *
-     * @param friendId the ID of the friend (user) to retrieve
-     * @return the user entity for the friend if found, otherwise null
+     * @param userId the ID of the user to retrieve
+     * @return the user entity for the user if found, otherwise null
      */
-    public UserEntity getUser(String friendId) {
+    public UserEntity getUser(String userId) {
         Key key = Key.builder()
-            .partitionValue(UserEntity.generatePK(friendId))
+            .partitionValue(UserEntity.generatePK(userId))
             .sortValue(UserEntity.generateSK())
             .build();
 

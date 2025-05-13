@@ -54,7 +54,8 @@ public class SecurityConfiguration {
             .authorizeHttpRequests(r ->
                 r.requestMatchers("/users/**").authenticated()
                     .requestMatchers("/posts/**").authenticated()
-                    .requestMatchers("swagger-ui/**", "/v3/api-docs/**").permitAll())
+                    .requestMatchers("swagger-ui/**", "/v3/api-docs/**").permitAll()
+                    .requestMatchers("actuator/**").permitAll())
             .oauth2ResourceServer(s -> s.jwt(Customizer.withDefaults()));
 
         return http.build();
