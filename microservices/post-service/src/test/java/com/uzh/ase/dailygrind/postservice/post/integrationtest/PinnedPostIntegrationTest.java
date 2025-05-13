@@ -2,8 +2,6 @@ package com.uzh.ase.dailygrind.postservice.post.integrationtest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uzh.ase.dailygrind.postservice.config.DynamoDBConfig;
-import com.uzh.ase.dailygrind.postservice.post.config.AwsTestCredentialsConfig;
-import com.uzh.ase.dailygrind.postservice.post.config.DynamoDBTestConfig;
 import com.uzh.ase.dailygrind.postservice.post.config.LocalStackTestConfig;
 import com.uzh.ase.dailygrind.postservice.post.repository.entity.PinnedPostEntity;
 import com.uzh.ase.dailygrind.postservice.post.repository.entity.PostEntity;
@@ -32,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-@Import({LocalStackTestConfig.class, AwsTestCredentialsConfig.class, DynamoDBTestConfig.class, DynamoDBConfig.class})
+@Import({LocalStackTestConfig.class, DynamoDBConfig.class})
 public class PinnedPostIntegrationTest {
 
     @Autowired
@@ -77,12 +75,12 @@ public class PinnedPostIntegrationTest {
         postTable.putItem(post);
 
         // When
-        mockMvc.perform(post("/users/me/pinned-posts/11111")
+        mockMvc.perform(post("/posts/users/me/pinned-posts/11111")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
         // Then
-        mockMvc.perform(get("/users/me/pinned-posts"))
+        mockMvc.perform(get("/posts/users/me/pinned-posts"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].postId").value("11111"));
     }
@@ -102,13 +100,13 @@ public class PinnedPostIntegrationTest {
         pinnedPostTable.putItem(pinnedPost);
 
         // When
-        mockMvc.perform(post("/users/me/pinned-posts/11111")
+        mockMvc.perform(post("/posts/users/me/pinned-posts/11111")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(post)))
                 .andExpect(status().isOk());
 
         // Then
-        mockMvc.perform(get("/users/me/pinned-posts"))
+        mockMvc.perform(get("/posts/users/me/pinned-posts"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].postId").value("11111"));
     }
@@ -128,7 +126,7 @@ public class PinnedPostIntegrationTest {
         pinnedPostTable.putItem(pinnedPost);
 
         // When + Then
-        mockMvc.perform(get("/users/me/pinned-posts"))
+        mockMvc.perform(get("/posts/users/me/pinned-posts"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].postId").value("11111"));
     }
@@ -137,7 +135,7 @@ public class PinnedPostIntegrationTest {
     @WithMockUser(username = "12345")
     void testGetPinnedPostsEmpty() throws Exception {
         // When + Then
-        mockMvc.perform(get("/users/me/pinned-posts"))
+        mockMvc.perform(get("/posts/users/me/pinned-posts"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isEmpty());
     }
@@ -157,7 +155,7 @@ public class PinnedPostIntegrationTest {
         pinnedPostTable.putItem(pinnedPost);
 
         // When + Then
-        mockMvc.perform(get("/users/12345/pinned-posts"))
+        mockMvc.perform(get("/posts/users/12345/pinned-posts"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].postId").value("11111"));
     }

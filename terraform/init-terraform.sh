@@ -1,16 +1,18 @@
 #!/bin/sh
 
-# Remove the localstack_providers_override.tf file if it exists
-rm -f localstack_providers_override.tf
+# Install dependencies for Push Notification Lambda
+cd /lambda-functions/push-notification-lambda/src && npm i > /dev/null 2>&1
 
-# Use this line if you are running on Apple M- chip (tested for M1 chip)
-# export GODEBUG=asyncpreemptoff=1
+# generate terraform files for ECS
+cd /terraform && bash /terraform/generate-ecs.sh
 
-# Use this line to see logs while running the init command
-# export TF_LOG=DEBUG
-
-# Initialize and apply Terraform with LocalStack
+# Run Terraform
+cd /terraform || exit 1
 tflocal init
 tflocal apply -auto-approve
 
+# Write secrets to .env files and deploy to AWS Secrets Manager
+/bin/sh /terraform/extract_secrets.sh
+
+# Print client_secret
 terraform output client_secret

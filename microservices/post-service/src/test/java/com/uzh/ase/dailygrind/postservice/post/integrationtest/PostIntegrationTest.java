@@ -2,8 +2,6 @@ package com.uzh.ase.dailygrind.postservice.post.integrationtest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uzh.ase.dailygrind.postservice.config.DynamoDBConfig;
-import com.uzh.ase.dailygrind.postservice.post.config.AwsTestCredentialsConfig;
-import com.uzh.ase.dailygrind.postservice.post.config.DynamoDBTestConfig;
 import com.uzh.ase.dailygrind.postservice.post.config.LocalStackTestConfig;
 import com.uzh.ase.dailygrind.postservice.post.controller.dto.PostDto;
 import com.uzh.ase.dailygrind.postservice.post.repository.entity.*;
@@ -31,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-@Import({LocalStackTestConfig.class, AwsTestCredentialsConfig.class, DynamoDBTestConfig.class, DynamoDBConfig.class})
+@Import({LocalStackTestConfig.class, DynamoDBConfig.class})
 public class PostIntegrationTest {
 
     @Autowired
@@ -99,7 +97,7 @@ public class PostIntegrationTest {
             dailyPostTable.putItem(dailyPostEntity);
 
             // When
-            mockMvc.perform(get("/users/me/daily-post")
+            mockMvc.perform(get("/posts/users/me/daily-post")
                     .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.postId").value("1"))
@@ -123,7 +121,7 @@ public class PostIntegrationTest {
             postTable.putItem(postEntity);
 
             // When
-            mockMvc.perform(get("/users/me/daily-post")
+            mockMvc.perform(get("/posts/users/me/daily-post")
                     .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(""));
@@ -149,7 +147,7 @@ public class PostIntegrationTest {
             dailyPostTable.putItem(dailyPostEntity);
 
             // When
-            mockMvc.perform(get("/users/77777/daily-post")
+            mockMvc.perform(get("/posts/users/77777/daily-post")
                     .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.postId").value("1"))
@@ -178,7 +176,7 @@ public class PostIntegrationTest {
             postTable.putItem(postEntity);
 
             // When
-            mockMvc.perform(get("/users/me/posts")
+            mockMvc.perform(get("/posts/users/me/posts")
                     .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].postId").value("1"))
@@ -192,7 +190,7 @@ public class PostIntegrationTest {
         @WithMockUser(username = "12345")
         void testGetPosts_noPosts() throws Exception {
             // When
-            mockMvc.perform(get("/users/me/posts")
+            mockMvc.perform(get("/posts/users/me/posts")
                     .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string("[]"));
@@ -212,7 +210,7 @@ public class PostIntegrationTest {
             postTable.putItem(postEntity);
 
             // When
-            mockMvc.perform(get("/users/77777/posts")
+            mockMvc.perform(get("/posts/users/77777/posts")
                     .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].postId").value("1"))
@@ -444,7 +442,7 @@ public class PostIntegrationTest {
                 .andExpect(status().isNoContent());
 
             // Then
-            mockMvc.perform(get("/users/me/daily-post"))
+            mockMvc.perform(get("/posts/users/me/daily-post"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(""));
         }
@@ -468,7 +466,7 @@ public class PostIntegrationTest {
                 .andExpect(status().isNoContent());
 
             // Then
-            mockMvc.perform(get("/users/me/pinned-posts"))
+            mockMvc.perform(get("/posts/users/me/pinned-posts"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("[]"));
         }

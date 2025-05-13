@@ -3,6 +3,7 @@ package com.uzh.ase.dailygrind.postservice.post.sqs;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sqs.SqsClient;
@@ -14,6 +15,7 @@ import java.net.URI;
  * It uses AWS credentials and region configuration from application properties
  * and creates an instance of the SQS client for interacting with SQS services.
  */
+@Profile("!test")
 @Configuration
 public class SqsConfig {
 
@@ -39,6 +41,9 @@ public class SqsConfig {
      */
     @Bean
     public SqsClient sqsClient(AwsCredentialsProvider awsCredentialsProvider) {
+        // Set the custom AWS service endpoint URL
+        // Provide AWS credentials
+        // Specify the AWS region
         return SqsClient.builder()
             .endpointOverride(URI.create(awsBaseUrl))  // Set the custom AWS service endpoint URL
             .credentialsProvider(awsCredentialsProvider)  // Provide AWS credentials

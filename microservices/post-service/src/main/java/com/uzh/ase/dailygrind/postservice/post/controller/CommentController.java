@@ -20,7 +20,7 @@ import java.util.List;
  * The controller interacts with the {@link CommentService} to manage comment data.
  */
 @RestController
-@RequestMapping
+@RequestMapping("${api.base-path}")
 @RequiredArgsConstructor
 public class CommentController {
 
@@ -34,7 +34,7 @@ public class CommentController {
      */
     @Operation(summary = "Get all comments for a post")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved comments")
-    @GetMapping("/posts/{postId}/comments")
+    @GetMapping("/{postId}/comments")
     public ResponseEntity<List<CommentEntryDto>> getComments(@PathVariable String postId) {
         return ResponseEntity.ok(commentService.getComments(postId));
     }
@@ -49,7 +49,7 @@ public class CommentController {
      */
     @Operation(summary = "Add a comment to a post")
     @ApiResponse(responseCode = "201", description = "Comment created successfully")
-    @PostMapping("/posts/{postId}/comments")
+    @PostMapping("/{postId}/comments")
     public ResponseEntity<CommentEntryDto> commentPost(@PathVariable String postId, @RequestBody CommentDto comment, Principal principal) {
         CommentEntryDto commentDto = commentService.commentPost(postId, principal.getName(), comment);
         return ResponseEntity.status(HttpStatus.CREATED).body(commentDto);
@@ -65,7 +65,7 @@ public class CommentController {
      */
     @Operation(summary = "Delete a comment by ID from a post")
     @ApiResponse(responseCode = "204", description = "Comment deleted successfully")
-    @DeleteMapping("/posts/{postId}/comments/{commentId}")
+    @DeleteMapping("/{postId}/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable String postId, @PathVariable String commentId, Principal principal) {
         commentService.deleteComment(postId, commentId, principal.getName());
         return ResponseEntity.noContent().build();

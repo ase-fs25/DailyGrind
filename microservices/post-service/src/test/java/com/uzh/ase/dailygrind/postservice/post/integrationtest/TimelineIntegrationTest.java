@@ -1,9 +1,6 @@
 package com.uzh.ase.dailygrind.postservice.post.integrationtest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uzh.ase.dailygrind.postservice.config.DynamoDBConfig;
-import com.uzh.ase.dailygrind.postservice.post.config.AwsTestCredentialsConfig;
-import com.uzh.ase.dailygrind.postservice.post.config.DynamoDBTestConfig;
 import com.uzh.ase.dailygrind.postservice.post.config.LocalStackTestConfig;
 import com.uzh.ase.dailygrind.postservice.post.repository.entity.DailyPostEntity;
 import com.uzh.ase.dailygrind.postservice.post.repository.entity.FriendEntity;
@@ -31,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-@Import({LocalStackTestConfig.class, AwsTestCredentialsConfig.class, DynamoDBTestConfig.class, DynamoDBConfig.class})
+@Import({LocalStackTestConfig.class, DynamoDBConfig.class})
 public class TimelineIntegrationTest {
 
     @Autowired
@@ -98,7 +95,7 @@ public class TimelineIntegrationTest {
         friendTable.putItem(friendEntity);
 
         // When
-        mockMvc.perform(get("/users/me/timeline"))
+        mockMvc.perform(get("/posts/users/me/timeline"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$[0].post.postId").value("1"))
             .andExpect(jsonPath("$[0].user.userId").value("11111"));
@@ -127,7 +124,7 @@ public class TimelineIntegrationTest {
         friendTable.putItem(friendEntity);
 
         // When
-        mockMvc.perform(get("/users/me/timeline"))
+        mockMvc.perform(get("/posts/users/me/timeline"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.length()").value(0));
     }
@@ -143,7 +140,7 @@ public class TimelineIntegrationTest {
         userTable.putItem(user);
 
         // When
-        mockMvc.perform(get("/users/me/timeline"))
+        mockMvc.perform(get("/posts/users/me/timeline"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.length()").value(0));
     }

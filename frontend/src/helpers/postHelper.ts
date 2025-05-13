@@ -2,14 +2,13 @@ import { getAuthToken } from './authHelper';
 import { Post, PostComments } from '../types/post';
 import moment from 'moment';
 import { POSTING_TIME } from '../constants/postTime';
-
-const API_URL = 'http://localhost:8081';
+import { getApiUrl } from './apiHelper';
 
 export async function getUserPosts(): Promise<Post[]> {
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(`${API_URL}/users/me/posts`, {
+    const response = await fetch(getApiUrl(`posts/users/me/posts`), {
       headers: {
         Authorization: `Bearer ${authToken}`,
       },
@@ -36,7 +35,7 @@ export async function createPost(title: string, content: string): Promise<Post> 
       content: content,
     };
 
-    const response = await fetch(`${API_URL}/posts`, {
+    const response = await fetch(getApiUrl(`posts`), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -63,7 +62,7 @@ export async function deletePost(postId: string): Promise<void> {
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(`${API_URL}/posts/${postId}`, {
+    const response = await fetch(getApiUrl(`posts/${postId}`), {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -101,7 +100,7 @@ export async function userHasPostedAlready(): Promise<boolean> {
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(`${API_URL}/users/me/daily-post`, {
+    const response = await fetch(getApiUrl(`posts/users/me/daily-post`), {
       headers: {
         Authorization: `Bearer ${authToken}`,
       },
@@ -132,7 +131,7 @@ export async function getPinnedPostsByUserId(userId: string): Promise<Post[]> {
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(`http://localhost:8081/users/${userId}/pinned-posts`, {
+    const response = await fetch(getApiUrl(`posts/users/${userId}/pinned-posts`), {
       headers: {
         Authorization: `Bearer ${authToken}`,
       },
@@ -153,7 +152,7 @@ export async function getUserPinnedPosts(): Promise<Post[]> {
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(`${API_URL}/users/me/pinned-posts`, {
+    const response = await fetch(getApiUrl(`posts/users/me/pinned-posts`), {
       headers: {
         Authorization: `Bearer ${authToken}`,
       },
@@ -175,7 +174,7 @@ export async function pinPost(postId: string): Promise<void> {
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(`${API_URL}/users/me/pinned-posts/${postId}`, {
+    const response = await fetch(getApiUrl(`posts/users/me/pinned-posts/${postId}`), {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -195,7 +194,7 @@ export async function unpinPost(postId: string): Promise<void> {
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(`${API_URL}/users/me/pinned-posts/${postId}`, {
+    const response = await fetch(getApiUrl(`posts/users/me/pinned-posts/${postId}`), {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -215,7 +214,7 @@ export async function likePost(postId: string): Promise<void> {
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(`${API_URL}/posts/${postId}/likes`, {
+    const response = await fetch(getApiUrl(`posts/${postId}/likes`), {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -235,7 +234,7 @@ export async function unlikePost(postId: string): Promise<void> {
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(`${API_URL}/posts/${postId}/likes`, {
+    const response = await fetch(getApiUrl(`posts/${postId}/likes`), {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -255,7 +254,7 @@ export async function getCommentsForPost(postId: string): Promise<PostComments[]
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(`${API_URL}/posts/${postId}/comments`, {
+    const response = await fetch(getApiUrl(`posts/${postId}/comments`), {
       headers: {
         Authorization: `Bearer ${authToken}`,
       },
@@ -281,7 +280,7 @@ export async function addCommentForPost(postId: string, newComment: string): Pro
       content: newComment,
     };
 
-    const response = await fetch(`${API_URL}/posts/${postId}/comments`, {
+    const response = await fetch(getApiUrl(`posts/${postId}/comments`), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -303,7 +302,7 @@ export async function deleteCommentForPost(postId: string, commentId: string): P
   try {
     const authToken = await getAuthToken();
 
-    const response = await fetch(`${API_URL}/posts/${postId}/comments/${commentId}`, {
+    const response = await fetch(getApiUrl(`posts/${postId}/comments/${commentId}`), {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${authToken}`,

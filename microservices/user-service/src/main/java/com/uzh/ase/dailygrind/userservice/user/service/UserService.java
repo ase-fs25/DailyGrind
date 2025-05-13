@@ -8,6 +8,7 @@ import com.uzh.ase.dailygrind.userservice.user.repository.entity.UserEntity;
 import com.uzh.ase.dailygrind.userservice.user.sns.UserEventPublisher;
 import com.uzh.ase.dailygrind.userservice.user.sns.events.EventType;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
@@ -36,13 +38,17 @@ public class UserService {
      * @return list of {@link UserInfoDto}
      */
     public List<UserInfoDto> getAllUserInfos(String requesterId) {
+        log.info("Fetching all user infos for requester with ID: {}", requesterId);
         List<UserEntity> userEntities = userRepository.findAllUserEntities();
         List<String> followingIds = userFriendRepository.findAllFriends(requesterId);
 
-        return userEntities.stream()
+        List<UserInfoDto> result = userEntities.stream()
             .map(userEntity -> userMapper.toUserInfoDto(userEntity, followingIds.contains(requesterId)))
             .filter(userInfoDto -> !userInfoDto.userId().equals(requesterId))
             .toList();
+
+        log.info("Found {} user infos for requester {}", result.size(), requesterId);
+        return result;
     }
 
     /**
@@ -53,8 +59,10 @@ public class UserService {
      * @return {@link UserInfoDto} or null if user not found
      */
     public UserInfoDto getUserInfo(String followingId, String requesterId) {
+        log.info("Fetching user info for user with ID: {} for requester with ID: {}", followingId, requesterId);
         UserEntity userEntity = userRepository.findUserById(followingId);
         if (userEntity == null) {
+            log.warn("User with ID: {} not found", followingId);
             return null;
         }
         boolean isFriend = userFriendRepository.isFriend(followingId, requesterId);
@@ -69,8 +77,10 @@ public class UserService {
      * @return {@link UserDetailsDto} or null if user not found
      */
     public UserDetailsDto getUserDetailsById(String userId, String requesterId) {
+        log.info("Fetching detailed info for user with ID: {} for requester with ID: {}", userId, requesterId);
         UserEntity userEntity = userRepository.findUserById(userId);
         if (userEntity == null) {
+            log.warn("User with ID: {} not found", userId);
             return null;
         }
         boolean isFriend = userFriendRepository.isFriend(requesterId, userId);
@@ -89,15 +99,24 @@ public class UserService {
      * @return {@link UserInfoDto} or null if user not found
      */
     public UserInfoDto getUserInfoById(String userId, String requesterId) {
+        log.info("Fetching user info for userId: {} requested by requesterId: {}", userId, requesterId);  // Log method entry
+
         UserEntity userEntity = userRepository.findUserById(userId);
         if (userEntity == null) {
+            log.warn("User not found for userId: {}", userId);  // Log if the user is not found
             return null;
         }
+
         boolean isFollowing = false;
         if (!userId.equals(requesterId)) {
             isFollowing = userFriendRepository.isFriend(userId, requesterId);
+            log.info("UserId: {} is {}following the requesterId: {}", userId, isFollowing ? "" : "not ", requesterId);  // Log the friendship status
         }
-        return userMapper.toUserInfoDto(userEntity, isFollowing);
+
+        UserInfoDto userInfoDto = userMapper.toUserInfoDto(userEntity, isFollowing);
+        log.info("Successfully fetched user info for userId: {}", userId);  // Log successful retrieval
+
+        return userInfoDto;
     }
 
     /**
@@ -108,9 +127,11 @@ public class UserService {
      * @return created {@link UserInfoDto}
      */
     public UserInfoDto createUser(UserCreateDto createUserDto, String userId) {
+        log.info("Creating a new user with ID: {}", userId);
         UserEntity userEntity = userMapper.toUserEntity(createUserDto, userId);
         userRepository.saveUser(userEntity);
         userEventPublisher.publishUserEvent(EventType.USER_CREATED, userMapper.toUserDataEvent(userEntity));
+        log.info("User with ID: {} created successfully", userId);
         return userMapper.toUserInfoDto(userEntity, false);
     }
 
@@ -122,9 +143,11 @@ public class UserService {
      * @return updated {@link UserInfoDto}
      */
     public UserInfoDto updateUser(UserCreateDto updateUserDto, String name) {
+        log.info("Updating user with ID: {}", name);
         UserEntity userEntity = userMapper.toUserEntity(updateUserDto, name);
         userRepository.updateUser(userEntity);
         userEventPublisher.publishUserEvent(EventType.USER_UPDATED, userMapper.toUserDataEvent(userEntity));
+        log.info("User with ID: {} updated successfully", name);
         return userMapper.toUserInfoDto(userEntity, false);
     }
 
@@ -137,7 +160,9 @@ public class UserService {
      * @return list of matching {@link UserInfoDto}
      */
     public List<UserInfoDto> searchUsersByName(String name, String requesterId) {
-        return userRepository.findAllUserEntities().stream()
+        log.info("Searching for users by name: '{}' requested by requesterId: {}", name, requesterId);  // Log method entry
+
+        List<UserInfoDto> matchingUsers = userRepository.findAllUserEntities().stream()
             .filter(user -> {
                 String search = name.toLowerCase();
                 String firstName = user.getFirstName().toLowerCase();
@@ -156,6 +181,14 @@ public class UserService {
             })
             .map(user -> userMapper.toUserInfoDto(user, userFriendRepository.isFriend(user.getId(), requesterId)))
             .toList();
+
+        if (matchingUsers.isEmpty()) {
+            log.warn("No users found matching the search query: '{}' for requesterId: {}", name, requesterId);  // Log if no results
+        } else {
+            log.info("Found {} users matching the search query: '{}'", matchingUsers.size(), name);  // Log the number of matching users
+        }
+
+        return matchingUsers;
     }
 
     /**
@@ -165,12 +198,16 @@ public class UserService {
      * @param userId ID of the user to delete
      */
     public void deleteUser(String userId) {
+        log.info("Deleting user with ID: {}", userId);
         UserEntity userEntity = userRepository.findUserById(userId);
         if (userEntity != null) {
             userRepository.deleteUser(userEntity);
             userJobService.deleteJobsForUser(userId);
             userEducationService.deleteEducationForUser(userId);
             userEventPublisher.publishUserEvent(EventType.USER_DELETED, userMapper.toUserDataEvent(userEntity));
+            log.info("User with ID: {} and associated data deleted successfully", userId);
+        } else {
+            log.warn("User with ID: {} not found", userId);
         }
     }
 }

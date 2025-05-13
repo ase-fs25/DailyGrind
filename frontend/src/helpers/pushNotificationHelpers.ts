@@ -1,4 +1,5 @@
 import { getAuthToken } from './authHelper';
+import { getApiUrl } from './apiHelper';
 
 let initialized = false;
 
@@ -9,7 +10,7 @@ export const registerUserForSubscription = async (): Promise<any> => {
   console.log('Service Worker Registration');
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker
-      .register('/service-worker.js')
+      .register((import.meta.env.PROD ? '/dailygrind' : '') + '/service-worker.js')
       .then(() => {
         if (Notification.permission !== 'denied') {
           return requestNotificationPermission();
@@ -71,7 +72,7 @@ export const saveSubscription = async (subscription: PushSubscription): Promise<
   try {
     let authToken = await getAuthToken();
 
-    const response = await fetch('http://localhost:8082/push-notifications/subscribe', {
+    const response = await fetch(getApiUrl('push-notifications/subscribe'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

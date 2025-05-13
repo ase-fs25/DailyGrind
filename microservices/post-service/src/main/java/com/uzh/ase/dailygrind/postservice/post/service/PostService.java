@@ -8,6 +8,7 @@ import com.uzh.ase.dailygrind.postservice.post.repository.PinnedPostRepository;
 import com.uzh.ase.dailygrind.postservice.post.repository.PostRepository;
 import com.uzh.ase.dailygrind.postservice.post.repository.entity.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -20,6 +21,7 @@ import java.util.NoSuchElementException;
  * It manages creation, updating, liking, pinning, and deleting posts.
  */
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class PostService {
 
@@ -38,15 +40,20 @@ public class PostService {
      * @throws ResponseStatusException if the user already has a daily post.
      */
     public PostDto createPost(PostDto postDto, String userId) {
+        log.info("Creating a new post for user {}", userId);
         PostEntity postEntity = postMapper.toPostEntity(userId, postDto);
         postEntity.setPostTimestamp(String.valueOf(System.currentTimeMillis()));
+
         String postId = dailyPostRepository.findDailyPostForUser(userId);
         if (postId != null) {
+            log.error("User {} already has a daily post", userId);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already has a daily post");
         }
+
         postRepository.savePost(postEntity);
         DailyPostEntity dailyPostEntity = new DailyPostEntity(userId, postEntity.getPostId());
         dailyPostRepository.saveDailyPost(dailyPostEntity);
+        log.info("Successfully created post with ID {} for user {}", postEntity.getPostId(), userId);
         return postMapper.toPostDto(postEntity, false, false);
     }
 
@@ -73,6 +80,7 @@ public class PostService {
      * @return        A list of PostDto objects representing the user's posts.
      */
     public List<PostDto> getPostsForUser(String userId) {
+        log.info("Retrieving all posts for user {}", userId);
         List<PostEntity> postEntities = postRepository.findAllPostsForUser(userId);
         return postEntities.stream()
             .map(postEntity -> addIsLikedAndIsPinnedToPostDto(postEntity, userId))
@@ -88,6 +96,7 @@ public class PostService {
      * @throws ResponseStatusException if the post is not found.
      */
     public PostDto getPostById(String postId, String userId) {
+        log.info("Retrieving post with ID {} for user {}", postId, userId);
         PostEntity postEntity = postRepository.findPostById(postId);
         return addIsLikedAndIsPinnedToPostDto(postEntity, userId);
     }
@@ -102,10 +111,15 @@ public class PostService {
      * @throws ResponseStatusException if the post is not found.
      */
     public PostDto updatePost(String postId, String userId, PostDto postDto) {
+        log.info("Updating post with ID {} for user {}", postId, userId);
         PostEntity postEntity = postRepository.findPostById(postId);
-        if (postEntity == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post not found");
+        if (postEntity == null) {
+            log.error("Post with ID {} not found for user {}", postId, userId);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post not found");
+        }
         postEntity = postMapper.toPostEntity(userId, postDto);
         postRepository.savePost(postEntity);
+        log.info("Successfully updated post with ID {} for user {}", postId, userId);
         return addIsLikedAndIsPinnedToPostDto(postEntity, userId);
     }
 
@@ -116,11 +130,13 @@ public class PostService {
      * @param userId   The ID of the user requesting the deletion.
      */
     public void deletePost(String postId, String userId) {
+        log.info("Deleting post with ID {} for user {}", postId, userId);
         unpinPost(postId, userId);
         postRepository.deletePostById(postId, userId);
         postRepository.deleteLikesForPost(postId);
         dailyPostRepository.deleteDailyPostById(postId, userId);
         commentRepository.deleteAllCommentsForPost(postId, userId);
+        log.info("Successfully deleted post with ID {} for user {}", postId, userId);
     }
 
     /**
@@ -130,6 +146,7 @@ public class PostService {
      * @return        A list of user IDs who liked the post.
      */
     public List<String> findAllUsersWhoLikedPost(String postId) {
+        log.info("Finding all users who liked post with ID {}", postId);
         return postRepository.findAllUsersWhoLikedPost(postId);
     }
 
@@ -141,10 +158,15 @@ public class PostService {
      * @throws ResponseStatusException if the post is not found.
      */
     public void likePost(String postId, String userId) {
+        log.info("User {} likes post with ID {}", userId, postId);
         PostEntity postEntity = postRepository.findPostById(postId);
-        if (postEntity == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post not found");
+        if (postEntity == null) {
+            log.error("Post with ID {} not found for user {}", postId, userId);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post not found");
+        }
         LikeEntity likeEntity = postMapper.toLikeEntity(postId, userId);
         postRepository.likePost(likeEntity);
+        log.info("Successfully liked post with ID {} for user {}", postId, userId);
     }
 
     /**
@@ -155,10 +177,15 @@ public class PostService {
      * @throws ResponseStatusException if the post is not found.
      */
     public void unlikePost(String postId, String userId) {
+        log.info("User {} unlikes post with ID {}", userId, postId);
         PostEntity postEntity = postRepository.findPostById(postId);
-        if (postEntity == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post not found");
+        if (postEntity == null) {
+            log.error("Post with ID {} not found for user {}", postId, userId);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post not found");
+        }
         LikeEntity likeEntity = postMapper.toLikeEntity(postId, userId);
         postRepository.unlikePost(likeEntity);
+        log.info("Successfully unliked post with ID {} for user {}", postId, userId);
     }
 
     /**
@@ -170,6 +197,7 @@ public class PostService {
      * @throws ResponseStatusException if the daily post is not found.
      */
     public PostDto getDailyPostForUser(String userId, String requestingUserId) {
+        log.info("Retrieving daily post for user {}", userId);
         String postId = dailyPostRepository.findDailyPostForUser(userId);
         PostEntity postEntity = postRepository.findPostById(postId);
         return addIsLikedAndIsPinnedToPostDto(postEntity, requestingUserId);
@@ -182,6 +210,7 @@ public class PostService {
      * @return        A list of PostDto objects representing the pinned posts.
      */
     public List<PostDto> getPinnedPostsByUserId(String userId) {
+        log.info("Retrieving pinned posts for user {}", userId);
         List<String> pinnedPostEntities = pinnedPostRepository.findPinnedPostIdsForUser(userId);
         return pinnedPostEntities.stream()
             .map(postRepository::findPostById)
@@ -198,10 +227,15 @@ public class PostService {
      * @throws NoSuchElementException if the post does not exist.
      */
     public PostDto pinPost(String postId, String userId) {
+        log.info("User {} pins post with ID {}", userId, postId);
         PostEntity postEntity = postRepository.findPostById(postId);
-        if (postEntity == null) throw new NoSuchElementException("Post with id " + postId + " does not exist");
+        if (postEntity == null) {
+            log.error("Post with ID {} does not exist", postId);
+            throw new NoSuchElementException("Post with id " + postId + " does not exist");
+        }
         PinnedPostEntity pinnedPostEntity = new PinnedPostEntity(userId, postEntity.getPostId());
         pinnedPostRepository.savePinnedPost(pinnedPostEntity);
+        log.info("Successfully pinned post with ID {} for user {}", postId, userId);
         return addIsLikedAndIsPinnedToPostDto(postEntity, userId);
     }
 
@@ -212,7 +246,9 @@ public class PostService {
      * @param userId   The ID of the user unpinning the post.
      */
     public void unpinPost(String postId, String userId) {
-        PinnedPostEntity pinnedPostEntity = new  PinnedPostEntity(userId, postId);
+        log.info("User {} unpins post with ID {}", userId, postId);
+        PinnedPostEntity pinnedPostEntity = new PinnedPostEntity(userId, postId);
         pinnedPostRepository.deleteDailyPostById(pinnedPostEntity);
+        log.info("Successfully unpinned post with ID {} for user {}", postId, userId);
     }
 }

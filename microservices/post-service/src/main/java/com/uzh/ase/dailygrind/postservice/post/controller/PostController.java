@@ -21,7 +21,7 @@ import java.util.List;
  * It interacts with the {@link PostService} to perform these actions.
  */
 @RestController
-@RequestMapping
+@RequestMapping("${api.base-path}")
 @RequiredArgsConstructor
 public class PostController {
 
@@ -89,7 +89,7 @@ public class PostController {
      */
     @Operation(summary = "Get a post by ID")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved post")
-    @GetMapping("/posts/{postId}")
+    @GetMapping("/{postId}")
     public ResponseEntity<PostDto> getPost(@PathVariable String postId, Principal principal) {
         return ResponseEntity.ok(postService.getPostById(postId, principal.getName()));
     }
@@ -106,7 +106,7 @@ public class PostController {
         @ApiResponse(responseCode = "201", description = "Post created successfully"),
         @ApiResponse(responseCode = "400", description = "Daily post already exists for today")
     })
-    @PostMapping("/posts")
+    @PostMapping
     public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto, Principal principal) {
         postDto = postService.createPost(postDto, principal.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(postDto);
@@ -126,7 +126,7 @@ public class PostController {
         @ApiResponse(responseCode = "200", description = "Post updated successfully"),
         @ApiResponse(responseCode = "400", description = "Post ID mismatch between URL and body")
     })
-    @PutMapping("/posts/{postId}")
+    @PutMapping("/{postId}")
     public ResponseEntity<PostDto> updatePost(@PathVariable String postId, @RequestBody PostDto postDto, Principal principal) {
         if (!postId.equals(postDto.postId())) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post ID mismatch");
         return ResponseEntity.ok(postService.updatePost(postId, principal.getName(), postDto));
@@ -141,7 +141,7 @@ public class PostController {
      */
     @Operation(summary = "Delete a post by ID")
     @ApiResponse(responseCode = "204", description = "Post deleted successfully")
-    @DeleteMapping("/posts/{postId}")
+    @DeleteMapping("/{postId}")
     public ResponseEntity<Void> deletePost(@PathVariable String postId, Principal principal) {
         postService.deletePost(postId, principal.getName());
         return ResponseEntity.noContent().build();
@@ -156,7 +156,7 @@ public class PostController {
      */
     @Operation(summary = "Like a post")
     @ApiResponse(responseCode = "201", description = "Post liked successfully")
-    @PostMapping("/posts/{postId}/likes")
+    @PostMapping("/{postId}/likes")
     public ResponseEntity<Void> likePost(@PathVariable String postId, Principal principal) {
         postService.likePost(postId, principal.getName());
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -171,7 +171,7 @@ public class PostController {
      */
     @Operation(summary = "Unlike a post")
     @ApiResponse(responseCode = "204", description = "Post unliked successfully")
-    @DeleteMapping("/posts/{postId}/likes")
+    @DeleteMapping("/{postId}/likes")
     public ResponseEntity<Void> unlikePost(@PathVariable String postId, Principal principal) {
         postService.unlikePost(postId, principal.getName());
         return ResponseEntity.noContent().build();

@@ -36,6 +36,8 @@ jobs:
     name: Analyze Java Microservices (${{ matrix.service }})
     runs-on: ubuntu-latest
     needs: discover-microservices
+    env:
+      AWS_COGNITO_USER_POOL_ID: us-east-1_XXXXXXXX
     permissions:
       security-events: write
       packages: read
