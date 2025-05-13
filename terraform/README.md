@@ -77,7 +77,7 @@ User Service and Post Service are decoupled and communicate via AWS SNS and SQS.
   - Static website hosting with website configuration
   - CloudFront distribution origin
 
-- ### REST APIs
+### REST APIs
 - **API Gateway**: Central entry point for all microservices (Infrastructure is ready but currently not fully supported through localstack)
   - Unified endpoint management with authentication integration
   - Request validation and transformation

@@ -52,7 +52,7 @@ By running the application with the `dev` profile, the application will provide 
 
 ## Documentation
 
-The microservice is also documented using JavaDoc. The JavaDoc can be generated using Maven and can be found in the `docs` directory. Open the `index.html` file in the `docs` directory to view the documentation.
+The microservice is documented using OpenAPI 3.0. The documentation is automatically generated and can be viewed in the Swagger UI `http://localhost:8081/swagger-ui/index.html`. Furthermore, the microservice is also documented using JavaDoc. The JavaDoc can be generated using Maven and can be found in the `docs` directory. Open the `index.html` file in the `docs` directory to view the documentation.
 
 ### Environment Variables
 - `AWS_REGION`: The AWS region to use for Cognito, DynamoDB and SQS.
@@ -68,12 +68,12 @@ This service is extensively tested. It includes unit tests for the controller an
 ## Development Setup
 
 ### Prerequisites
-- Java 17 or higher
-- Maven 3.x
+- Java 17
+- Maven
 - Docker and Docker Compose
 
 ### Run the Service locally in dev mode
-1. Start the docker compose with the dev profile according to the [README](../../terraform/README.md)
+1. Start the docker compose with the dev profile according to the [README](../../README.md)
 2. Start the microservice with the dev profile
 
 

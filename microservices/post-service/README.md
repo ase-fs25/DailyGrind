@@ -73,7 +73,7 @@ This service is extensively tested. It includes unit tests for the generated map
 
 ## Documentation
 
-The microservice is documented using OpenAPI 3.0. The documentation is automatically generated and can be viewed in the Swagger UI `http://localhost:8081/swagger-ui/index.html`. Furthermore, the microservice is also documented using JavaDoc. The JavaDoc can be generated using Maven and can be found in the `docs` directory. Open the `index.html` file in the `docs` directory to view the documentation.
+The microservice is documented using OpenAPI 3.0. The documentation is automatically generated and can be viewed in the Swagger UI `http://localhost:8080/swagger-ui/index.html`. Furthermore, the microservice is also documented using JavaDoc. The JavaDoc can be generated using Maven and can be found in the `docs` directory. Open the `index.html` file in the `docs` directory to view the documentation.
 
 ## Development Setup
 
@@ -83,7 +83,7 @@ The microservice is documented using OpenAPI 3.0. The documentation is automatic
 - Docker
 
 ### Run the Service locally in dev mode
-1. Start the docker compose with the dev profile according to the [README](../../terraform/README.md)
+1. Start the docker compose with the dev profile according to the [README](../../README.md)
 2. Start the microservice with the dev profile
 
 
