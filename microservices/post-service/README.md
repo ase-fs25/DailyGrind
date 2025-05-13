@@ -69,7 +69,9 @@ By running the application with the `dev` profile, the application will provide 
 - `AWS_SQS_QUEUE_URL`: The SQS queue URL to use for LocalStack. Check the terraform container to see the queue url.
 
 ### Tests
-This service is extensively tested. It includes unit tests for the generated mapstruct mappers. These mappers are part of the core logic since they handle the connection between business dtos and db entities. Furthermore, every endpoint and every szenario is covered by integration tests using a dynamodb that gets started in a localstack instance using testcontainers.
+This service is extensively tested. It includes unit tests for the generated mapstruct mappers. These mappers are part of the core logic since they handle the connection between business dtos and db entities. Furthermore, every endpoint and every szenario is covered by integration tests using a dynamodb that gets started in a localstack instance using testcontainers. We are also testing the integration with the SQS service. For that we are starting a localstack instance in testcontainers with SQS and DynamoDB. The integration tests are run using the `test` profile. This profile will start a localstack instance with SQS and DynamoDB. The integration tests will then run against this localstack instance. The integration tests are run using the `mvn clean test` command.
+
+The codec overage is tracked using jacoco and can be found in the `target/site/jacoco` directory. The codecoverage is tracked for the integration tests and the unit tests.
 
 ## Documentation
 
