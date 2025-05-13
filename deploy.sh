@@ -8,7 +8,7 @@ while docker ps | grep terraform > /dev/null 2>&1; do
   sleep 5;
 done;
 
-echo "✅ Terraform is done. Proceeding with deploy."
+echo "✅ Terraform is done. Proceeding with deployment."
 
 npm install --prefix /app/frontend
 npm run build --prefix /app/frontend

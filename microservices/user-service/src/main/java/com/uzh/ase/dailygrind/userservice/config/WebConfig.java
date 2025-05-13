@@ -8,21 +8,26 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * Web configuration class for configuring CORS settings.
+ * Web configuration class that configures Cross-Origin Resource Sharing (CORS) settings for the application.
  * <p>
- * This configuration allows cross-origin requests from specified origins and methods.
- * The allowed origins and methods are configured via application properties.
- * </p>
+ * This class configures the allowed CORS origins and HTTP methods for the application. It logs the configured values
+ * to ensure proper monitoring. If the allowed origins or methods are not set correctly, an error is logged.
  */
 @Configuration
 @Slf4j  // Lombok annotation for logging
 public class WebConfig implements WebMvcConfigurer {
 
+    /**
+     * List of allowed origins for CORS.
+     */
     @Value("${dg.us.cors.allowed-origins}")
-    private String[] allowedOrigins;  // Allowed origins for CORS requests
+    private String[] allowedOrigins;
 
+    /**
+     * List of allowed HTTP methods for CORS.
+     */
     @Value("${dg.us.cors.allowed-methods}")
-    private String[] allowedMethods;  // Allowed methods for CORS requests
+    private String[] allowedMethods;
 
     /**
      * Configures CORS mappings for the application.

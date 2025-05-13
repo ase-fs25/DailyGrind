@@ -93,6 +93,16 @@
       <optional>true</optional>
     </dependency>
 
+    <!--    Metrics-->
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-registry-prometheus</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+
     <!-- Swagger doku -->
     <dependency>
       <groupId>org.springdoc</groupId>

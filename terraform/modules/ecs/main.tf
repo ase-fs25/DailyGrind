@@ -3,28 +3,24 @@ resource "aws_ecs_cluster" "main" {
 }
 
 resource "aws_ecs_task_definition" "post_service" {
-  family       = "post_service"
+  family                   = "post_service"
   requires_compatibilities = ["FARGATE"]
-  network_mode = "awsvpc"
-  cpu          = "256"
-  memory       = "512"
+  network_mode             = "awsvpc"
+  cpu                      = "256"
+  memory                   = "512"
 
-  container_definitions = jsonencode([
-    {
-      name  = "post_service",
-      image = "post_service:latest",
-      portMappings = [
-        {
-          containerPort = 8080,
-          hostPort      = 8080,
-          protocol      = "tcp"
-        }
-      ],
-      environment = [
-        { name = "AWS_REGION", value = "us-east-1" }
-      ]
-    }
-  ])
+  container_definitions = jsonencode([{
+    name  = "post_service",
+    image = "post_service:latest",
+    portMappings = [{
+      containerPort = 8080,
+      hostPort      = 8080,
+      protocol      = "tcp"
+    }],
+    environment = [
+      { name = "AWS_REGION", value = "us-east-1" }
+    ]
+  }])
 }
 
 resource "aws_ecs_service" "post_service" {
@@ -52,28 +48,24 @@ resource "aws_ecs_service" "post_service" {
 }
 
 resource "aws_ecs_task_definition" "push_notification_service" {
-  family       = "push_notification_service"
+  family                   = "push_notification_service"
   requires_compatibilities = ["FARGATE"]
-  network_mode = "awsvpc"
-  cpu          = "256"
-  memory       = "512"
+  network_mode             = "awsvpc"
+  cpu                      = "256"
+  memory                   = "512"
 
-  container_definitions = jsonencode([
-    {
-      name  = "push_notification_service",
-      image = "push_notification_service:latest",
-      portMappings = [
-        {
-          containerPort = 8080,
-          hostPort      = 8081,
-          protocol      = "tcp"
-        }
-      ],
-      environment = [
-        { name = "AWS_REGION", value = "us-east-1" }
-      ]
-    }
-  ])
+  container_definitions = jsonencode([{
+    name  = "push_notification_service",
+    image = "push_notification_service:latest",
+    portMappings = [{
+      containerPort = 8080,
+      hostPort      = 8081,
+      protocol      = "tcp"
+    }],
+    environment = [
+      { name = "AWS_REGION", value = "us-east-1" }
+    ]
+  }])
 }
 
 resource "aws_ecs_service" "push_notification_service" {
@@ -101,28 +93,24 @@ resource "aws_ecs_service" "push_notification_service" {
 }
 
 resource "aws_ecs_task_definition" "user_service" {
-  family       = "user_service"
+  family                   = "user_service"
   requires_compatibilities = ["FARGATE"]
-  network_mode = "awsvpc"
-  cpu          = "256"
-  memory       = "512"
+  network_mode             = "awsvpc"
+  cpu                      = "256"
+  memory                   = "512"
 
-  container_definitions = jsonencode([
-    {
-      name  = "user_service",
-      image = "user_service:latest",
-      portMappings = [
-        {
-          containerPort = 8080,
-          hostPort      = 8082,
-          protocol      = "tcp"
-        }
-      ],
-      environment = [
-        { name = "AWS_REGION", value = "us-east-1" }
-      ]
-    }
-  ])
+  container_definitions = jsonencode([{
+    name  = "user_service",
+    image = "user_service:latest",
+    portMappings = [{
+      containerPort = 8080,
+      hostPort      = 8082,
+      protocol      = "tcp"
+    }],
+    environment = [
+      { name = "AWS_REGION", value = "us-east-1" }
+    ]
+  }])
 }
 
 resource "aws_ecs_service" "user_service" {

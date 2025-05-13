@@ -8,6 +8,7 @@ import com.uzh.ase.dailygrind.postservice.post.repository.PostRepository;
 import com.uzh.ase.dailygrind.postservice.post.repository.entity.CommentEntity;
 import com.uzh.ase.dailygrind.postservice.post.repository.entity.PostEntity;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -21,6 +22,7 @@ import java.util.List;
  * It also handles updating the comment count on the associated post when a comment is added or deleted.
  */
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class CommentService {
 
@@ -40,9 +42,16 @@ public class CommentService {
      * @throws ResponseStatusException if the post does not exist
      */
     public List<CommentEntryDto> getComments(String postId) {
+        log.info("Retrieving comments for post with ID '{}'", postId);
         PostEntity postEntity = postRepository.findPostById(postId);
-        if (postEntity == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post not found");
+        if (postEntity == null) {
+            log.warn("Post with ID '{}' not found", postId);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post not found");
+        }
+
         List<CommentEntity> commentEntities = commentRepository.findAllCommentsForPost(postId);
+        log.info("Found {} comments for post '{}'", commentEntities.size(), postId);
+
         return commentEntities.stream()
             .map(commentEntity -> new CommentEntryDto(
                 commentMapper.toCommentDto(commentEntity),
@@ -64,13 +73,17 @@ public class CommentService {
      * @return a {@link CommentEntryDto} representing the newly added comment
      */
     public CommentEntryDto commentPost(String postId, String userId, CommentDto comment) {
+        log.info("User '{}' is commenting on post '{}'", userId, postId);
+
         CommentEntity commentEntity = commentMapper.toCommentEntity(userId, postId, comment);
         commentEntity.setCommentTimestamp(String.valueOf(System.currentTimeMillis()));
         commentRepository.saveComment(commentEntity);
+        log.info("Saved new comment for post '{}'", postId);
 
         PostEntity postEntity = postRepository.findPostById(postId);
         postEntity.setCommentCount(postEntity.getCommentCount() + 1);
         postRepository.savePost(postEntity);
+        log.info("Incremented comment count for post '{}'", postId);
 
         return new CommentEntryDto(comment, userService.getUser(userId));
     }
@@ -86,11 +99,15 @@ public class CommentService {
      * @param userId the ID of the user requesting the deletion
      */
     public void deleteComment(String postId, String commentId, String userId) {
+        log.info("User '{}' is deleting comment '{}' from post '{}'", userId, commentId, postId);
+
         commentRepository.deleteComment(postId, commentId, userId);
+        log.info("Deleted comment '{}' from post '{}'", commentId, postId);
 
         PostEntity postEntity = postRepository.findPostById(postId);
         postEntity.setCommentCount(postEntity.getCommentCount() - 1);
         postRepository.savePost(postEntity);
+        log.info("Decremented comment count for post '{}'", postId);
     }
 
 }

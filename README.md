@@ -1,14 +1,8 @@
 # DailyGrind
 
-> **DailyGrind** combines the spontaneity of BeReal with the professionalism of LinkedIn, matching users once per day into one-on-one “Piece of
-> Knowledge” (PoK) exchanges. By limiting interactions to a single, bite-sized learning reflection each day, we foster high-quality, focused
-> connections
-> and mutual accountability.
+> **DailyGrind** combines the spontaneity of BeReal with the professionalism of LinkedIn, matching users once per day into one-on-one “Piece of Knowledge” (PoK) exchanges. By limiting interactions to a single, bite-sized learning reflection each day, we foster high-quality, focused connections and mutual accountability.
 >
-> Built with **React**, **Spring Boot** and **AWS (LocalStack)**, DailyGrind showcases cloud-native microservices, —complete with single‐table
-> DynamoDB data modeling, asynchronouse SNS/SQS messaging, event-driven web push notifications and infrastructure-as-code via Terraform, underpinned
-> by
-> a fully automated CI/CD pipeline, all developed as part of the Advanced Software Engineering course (FS 2025).
+> Built with **React**, **Spring Boot** and **AWS (LocalStack)**, DailyGrind showcases cloud-native microservices, —complete with single‐table DynamoDB data modeling, asynchronouse SNS/SQS messaging, event-driven web push notifications and infrastructure-as-code via Terraform, underpinned by a fully automated CI/CD pipeline, all developed as part of the Advanced Software Engineering course (FS 2025).
 
 ---
 
@@ -18,15 +12,14 @@
 2. [Architecture at a glance](#architecture-at-a-glance)
 3. [Testing](#testing)
 4. [Continuous Integration / Deployment](#continuous-integration--deployment)
-5. [Project Organization](#project-organization)
-
-- [Team Members](#team-members-and-their-main-focuses)
-- [Process & Methodology](#process--methodology)
-- [Sprint Cadence](#sprint-cadence)
-- [Timeline / Roadmap](#timeline--roadmap)
-
-6. [Submission Artifacts](#submission-artifacts)
-7. [License](#license)
+5. [Monitoring](#monitoring)
+6.[Project Organization](#project-organization)
+    - [Team Members](#team-members-and-their-main-focuses)
+    - [Process & Methodology](#process--methodology)
+    - [Sprint Cadence](#sprint-cadence)
+    - [Timeline / Roadmap](#timeline--roadmap)
+7[Submission Artifacts](#submission-artifacts)
+8[License](#license)
 
 ---
 
@@ -213,8 +206,7 @@ If something fails during provisioning (e.g., resource already exists, broken de
   <figcaption><em>Figure 1: High-level microservices & AWS diagram.</em></figcaption>
 </figure>
 
-For more detailed documentations please revice the following READMEs which comprehensively list the services functionality as well as the motivation
-of the tech-stack chosen:
+For more detailed documentations please revice the following READMEs which comprehensively list the services functionality as well as the motivation of the tech-stack chosen:
 
 - [*Infrastructure documentation*](terraform/README.md)
 
@@ -226,8 +218,7 @@ of the tech-stack chosen:
 
 - [*Frontend documentation*](frontend/README.md)
 
-Additionally, you can find a JavaDoc for each microservice at `microservices/*/docs/index.html` as well as the swagger doc at
-`http://localhost:MS-PORT/swagger-ui/index.html`.
+Additionally, you can find a JavaDoc for each microservice at `microservices/*/docs/index.html` as well as the swagger doc at `http://localhost:MS-PORT/swagger-ui/index.html`.
 
 ---
 
@@ -257,8 +248,7 @@ Additionally, you can find a JavaDoc for each microservice at `microservices/*/d
 
 ### Test Execution
 
-- **Local Development**: Tests can be run through IDE or Maven commands. Make sure Docker is running, since the integration tests use TestContainers
-  to simulate AWS services.
+- **Local Development**: Tests can be run through IDE or Maven commands. Make sure Docker is running, since the integration tests use TestContainers to simulate AWS services.
 - **Maven Profile**: Run integration tests for the microservices with:
   ```bash
   mvn clean test -P integration-tests
@@ -280,6 +270,29 @@ main            | production
 - All branches followed naming conventions and protection rules.
 - **Squash-and-merge** was enforced to keep history linear.
 - Luckily, we never needed to use the `hotfix/*` branch.
+
+---
+
+## Monitoring
+
+The `dev` and `prod` profiles include **Prometheus** and **Grafana** for service observability.
+
+### Prometheus
+
+Prometheus scrapes metrics from each microservice via their `/actuator/prometheus` endpoints at 5-second intervals.
+
+- URL: [http://localhost:9090](http://localhost:9090)
+- Config: `./prometheus/prometheus.yml`
+
+### Grafana
+
+Grafana provides interactive dashboards for visualizing Prometheus metrics.
+
+- URL: [http://localhost:4000](http://localhost:4000)
+- Login: `admin` / `admin`
+- Data is persisted in the `grafana-storage` Docker volume
+
+Prometheus is pre-configured as a data source. Dashboards can be imported or created using PromQL queries.
 
 ---
 
