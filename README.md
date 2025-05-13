@@ -12,13 +12,14 @@
 2. [Architecture at a glance](#architecture-at-a-glance)
 3. [Testing](#testing)
 4. [Continuous Integration / Deployment](#continuous-integration--deployment)
-5. [Project Organization](#project-organization)
+5. [Monitoring](#monitoring)
+6.[Project Organization](#project-organization)
     - [Team Members](#team-members-and-their-main-focuses)
     - [Process & Methodology](#process--methodology)
     - [Sprint Cadence](#sprint-cadence)
     - [Timeline / Roadmap](#timeline--roadmap)
-6. [Submission Artifacts](#submission-artifacts)
-7. [License](#license)
+7[Submission Artifacts](#submission-artifacts)
+8[License](#license)
 
 ---
 
@@ -143,6 +144,29 @@ main            ← production
 
 - All branches followed naming conventions and protection rules.
 - **Squash-and-merge** was enforced to keep history linear.
+
+---
+
+## Monitoring
+
+The `dev` and `prod` profiles include **Prometheus** and **Grafana** for service observability.
+
+### Prometheus
+
+Prometheus scrapes metrics from each microservice via their `/actuator/prometheus` endpoints at 5-second intervals.
+
+- URL: [http://localhost:9090](http://localhost:9090)
+- Config: `./prometheus/prometheus.yml`
+
+### Grafana
+
+Grafana provides interactive dashboards for visualizing Prometheus metrics.
+
+- URL: [http://localhost:4000](http://localhost:4000)
+- Login: `admin` / `admin`
+- Data is persisted in the `grafana-storage` Docker volume
+
+Prometheus is pre-configured as a data source. Dashboards can be imported or created using PromQL queries.
 
 ---
 
