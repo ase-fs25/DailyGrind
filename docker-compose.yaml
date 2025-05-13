@@ -86,3 +86,34 @@ services:
       - /app/frontend/node_modules
       - /var/run/docker.sock:/var/run/docker.sock
     restart: "no"
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    hostname: prometheus
+    profiles: [ dev, prod ]
+    networks:
+      - localstack_network
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus:/etc/prometheus
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    hostname: grafana
+    profiles: [ dev, prod ]
+    networks:
+      - localstack_network
+    ports:
+      - "4000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+
+volumes:
+  grafana-storage:
+

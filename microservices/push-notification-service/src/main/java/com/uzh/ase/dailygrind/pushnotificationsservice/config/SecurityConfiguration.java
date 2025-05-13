@@ -46,9 +46,10 @@ public class SecurityConfiguration {
             .exceptionHandling(c -> c.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.FORBIDDEN)))
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(r -> r
-                .requestMatchers("/push-notifications/**").permitAll()  // Allow unauthenticated access to push notifications.
-                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll())  // Allow unauthenticated access to Swagger UI.
-            .oauth2ResourceServer(s -> s.jwt(Customizer.withDefaults()));  // Enable JWT authentication for OAuth2 Resource Server.
+                .requestMatchers("/push-notifications/**").permitAll()
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                .requestMatchers("actuator/**").permitAll())
+            .oauth2ResourceServer(s -> s.jwt(Customizer.withDefaults()));
 
         return http.build();
     }

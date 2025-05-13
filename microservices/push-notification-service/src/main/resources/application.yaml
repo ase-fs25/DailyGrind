@@ -26,6 +26,20 @@ spring:
         jwt:
           issuer-uri: ${dg.us.aws.cognito.issuer-uri}
           jwk-set-uri: ${dg.us.aws.cognito.jwk-set-uri}
+
+management:
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  endpoint:
+    prometheus:
+      access: unrestricted
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, health, info
+
 server:
   port: ${PORT:8081}
 
