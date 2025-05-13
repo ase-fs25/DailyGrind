@@ -21,9 +21,8 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
  * </p>
  */
 @Configuration
-@Profile("!dev")  // Applies this configuration only when the 'dev' profile is not active
-@ConditionalOnProperty(name = "security.enabled", havingValue = "true", matchIfMissing = true)  // Enables security only if 'security.enabled' is true or missing
-@EnableWebSecurity  // Enables Spring Security configuration
+@Profile("!dev")
+@ConditionalOnProperty(name = "security.enabled", havingValue = "true", matchIfMissing = true)
 public class SecurityConfiguration {
 
     /**
@@ -47,6 +46,7 @@ public class SecurityConfiguration {
             .authorizeHttpRequests(r ->
                 r.requestMatchers("/users/**").authenticated()  // Requires authentication for /users/** endpoints
                     .requestMatchers("swagger-ui/**", "/v3/api-docs/**").permitAll()  // Allows public access to Swagger UI and API docs
+                    .requestMatchers("/actuator/**").permitAll()  // Allows public access to actuator endpoints
             )
             .oauth2ResourceServer(s -> s.jwt(Customizer.withDefaults()));  // Configures OAuth2 resource server with JWT support
 

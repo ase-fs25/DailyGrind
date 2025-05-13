@@ -66,6 +66,8 @@ By running the application with the `dev` profile, the application will provide 
 ### Tests
 This service is extensively tested. It includes unit tests for the generated mapstruct mappers. These mappers are part of the core logic since they handle the connection between business dtos and db entities. Furthermore, every endpoint and every szenario is covered by integration tests using a dynamodb that gets started in a localstack instance using testcontainers.
 
+The codec overage is tracked using jacoco and can be found in the `target/site/jacoco` directory. The codecoverage is tracked for the integration tests and the unit tests.
+
 ## Documentation
 
 The microservice is documented using OpenAPI 3.0. The documentation is automatically generated and can be viewed in the Swagger UI `http://localhost:8080/swagger-ui/index.html`. Furthermore, the microservice is also documented using JavaDoc. The JavaDoc can be generated using Maven and can be found in the `docs` directory. Open the `index.html` file in the `docs` directory to view the documentation.
