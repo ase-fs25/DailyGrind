@@ -72,9 +72,7 @@ $ open http://localhost:4566/dailygrind/index.html
 
 ---
 
-
 ## Architecture at a glance
-
 
 <figure style="text-align: center;">
   <img src="./img/architecture.jpeg" alt="Architecture overview" width="600"/>
@@ -100,12 +98,14 @@ Additionally, you can find a JavaDoc for each microservice at `microservices/*/d
 ## Testing
 
 #### Unit Tests
+
 - Focus on isolated component testing with mocked dependencies
 - Cover core functionality like service implementations and utility classes
 - Use JUnit 5 with nested test classes for organized test suites
 - Mockito for mocking dependencies in service and controller unit tests
 
 #### Integration Tests
+
 - Verify cross-component functionality using real service implementations
 - TestContainers with LocalStack to simulate AWS services:
 - Spring MockMVC for API endpoint testing with full request/response validation
@@ -113,6 +113,7 @@ Additionally, you can find a JavaDoc for each microservice at `microservices/*/d
 - Authentication testing with Spring Security's `@WithMockUser` annotation
 
 #### Test Implementation Patterns
+
 - Extensive use of test fixtures and builders for test data creation
 - Nested test classes organize tests by functional area (e.g., `UserIntegrationTest` contains nested classes for details and search functionalities)
 - REST endpoint testing with JSON path validation for complete response verification
@@ -130,6 +131,7 @@ Additionally, you can find a JavaDoc for each microservice at `microservices/*/d
 ## Continuous Integration / Deployment
 
 We used a **trunk-based development model** with short-lived branches:
+
 ```
 main            ← production
 │
@@ -148,14 +150,15 @@ main            ← production
 
 1. **Draft PR** opened when work begins; always linked to its GitHub Issue.
 2. PR runs checks:
-   - Lint, unit & integration tests
-   - Docker build
-     - SonarQube static code analysis:
-              <div align="left">
-                    <a href="https://sonarcloud.io/summary/new_code?id=ase-fs25_DailyGrind">
-                            <img src="https://sonarcloud.io/api/project_badges/quality_gate?project=ase-fs25_DailyGrind" alt="Quality Gate Status">
-                    </a>
-              </div>
+
+- Lint, unit & integration tests
+- Docker build
+  - SonarQube static code analysis:
+    <div align="left">
+    <a href="https://sonarcloud.io/summary/new_code?id=ase-fs25_DailyGrind">
+    <img src="https://sonarcloud.io/api/project_badges/quality_gate?project=ase-fs25_DailyGrind" alt="Quality Gate Status">
+    </a>
+    </div>
 
 3. At least **one peer review** required (cross-team if possible).
 
@@ -164,9 +167,11 @@ main            ← production
 ---
 
 ### Github Actions
+
 Our project uses GitHub Actions for comprehensive CI/CD automation with three main workflows:
 
 #### Microservices CI
+
 - **Workflow:** (`microservices.yml`)
 - Automatically discovers all microservices in the project
 - Builds and tests each microservice with Maven
@@ -174,16 +179,18 @@ Our project uses GitHub Actions for comprehensive CI/CD automation with three ma
 - Docker must be running as tests use TestContainers
 
 #### Frontend CI
+
 - **Workflow:** (`frontend.yml`)
 - Builds and validates the React frontend
 - Performs static code analysis:
-   - ESLint for code linting
-   - Prettier for code formatting
-   - TypeScript type checking
+  - ESLint for code linting
+  - Prettier for code formatting
+  - TypeScript type checking
 - Runs security audits on dependencies
 - Builds the production frontend bundle
 
 #### Code Quality Analysis
+
 - **Workflow:** (`codeql.yml`)
 - Performs advanced security scanning using GitHub CodeQL
 - Separate analysis for Java microservices and TypeScript/JavaScript frontend
@@ -191,6 +198,7 @@ Our project uses GitHub Actions for comprehensive CI/CD automation with three ma
 - Results published to GitHub Security tab
 
 All workflows run automatically on:
+
 - Pushes to `main`, `develop` and `release/*`, and `hotfix/*` branches
 - Pull requests targeting these branches
 
@@ -200,7 +208,8 @@ You can find the complete workflow configurations in the `.github/workflows` dir
 
 ## Project Organization
 
-This section explains how the team planned, tracked, and delivered the DailyGrind application, focusing on process, timeline, collaboration practices, and final deliverables.
+This section explains how the team planned, tracked, and delivered the DailyGrind application, focusing on process, timeline, collaboration practices,
+and final deliverables.
 
 ### Team Members and Their Main Focuses
 
@@ -212,26 +221,25 @@ Tim Vorburger     Full-Stack Developer
 Toni Krstic       Full-Stack Developer
 </div>
 
-
 ### Process & Methodology
 
-| Aspect                 | Choice                                                                                          | Motivation                                                                                                                             |
-|------------------------|--------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
-| **Framework**          | Scrum (adapted): 4 sprints, weekly meetings, review & retro                                     | Lightweight process that fit the semester timeline. Weekly inspect-and-adapt loops improved delivery consistency.                     |
-| **Backlog Tool**       | [GitHub Projects](https://github.com/orgs/ase-fs25/projects/1/views/1)                          | Tight integration with issues, PRs, milestones — one source of truth for planning and tracking.                                       |
-| **Task Tracking**      | GitHub Issues tracked during weekly meetings                                                    | Ensures traceability, structured progress, and clarity on ownership.                                                                  |
-| **Definition of Done** | Code + tests pass locally, CI pipeline green, PR approved, documentation updated   | Maintains shared quality expectations across services and contributors.                                                               |
+| Aspect                 | Choice                                                                           | Motivation                                                                                                        |
+|------------------------|----------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------|
+| **Framework**          | Scrum (adapted): 4 sprints, weekly meetings, review & retro                      | Lightweight process that fit the semester timeline. Weekly inspect-and-adapt loops improved delivery consistency. |
+| **Backlog Tool**       | [GitHub Projects](https://github.com/orgs/ase-fs25/projects/1/views/1)           | Tight integration with issues, PRs, milestones — one source of truth for planning and tracking.                   |
+| **Task Tracking**      | GitHub Issues tracked during weekly meetings                                     | Ensures traceability, structured progress, and clarity on ownership.                                              |
+| **Definition of Done** | Code + tests pass locally, CI pipeline green, PR approved, documentation updated | Maintains shared quality expectations across services and contributors.                                           |
 
 ---
 
 ### Sprint Cadence
 
-| Sprint | Dates (2025)        | Theme                                         |
-|--------|---------------------|-----------------------------------------------|
-| 1      | Jan 29 – Mar 17     | Project setup, CI, core user flows            |
-| 2      | Mar 18 – Mar 31     | CRUD for users, first batch of functionality  |
-| 3      | Apr 01 – Apr 28     | Second batch of functionality, CRUD for posts |
-| 4      | Apr 29 – May 12     | Final batch of functionality, testing, polish |
+| Sprint | Dates (2025)    | Theme                                         |
+|--------|-----------------|-----------------------------------------------|
+| 1      | Jan 29 – Mar 17 | Project setup, CI, core user flows            |
+| 2      | Mar 18 – Mar 31 | CRUD for users, first batch of functionality  |
+| 3      | Apr 01 – Apr 28 | Second batch of functionality, CRUD for posts |
+| 4      | Apr 29 – May 12 | Final batch of functionality, testing, polish |
 
 *All sprint tasks were tracked and visualized in the roadmap below.*
 
@@ -254,14 +262,14 @@ Key observations:
 
 ### Submission Artifacts
 
-| Item                 | Location                                                   |
-|----------------------|------------------------------------------------------------|
+| Item                 | Location                                                       |
+|----------------------|----------------------------------------------------------------|
 | Source code snapshot | `releases/DailyGrind_submission.zip` (tag `v1.0.0-submission`) |
-| Project board export | `Github_Project_Roadmap.jpeg`                              |
-| Project Reflection   | `Reflection.pdf`                                            |
+| Project board export | `Github_Project_Roadmap.jpeg`                                  |
+| Project Reflection   | `Reflection.pdf`                                               |
 
 ---
 
 ### License
 
-MIT ©2025 DailyGrind Team  –  University of Zurich
+MIT © 2025 DailyGrind Team – University of Zurich
