@@ -20,7 +20,7 @@ import java.util.NoSuchElementException;
  * It interacts with the {@link PostService} to manage pinned posts for a user.
  */
 @RestController
-@RequestMapping
+@RequestMapping("${api.base-path}")
 @RequiredArgsConstructor
 public class PinnedPostController {
 

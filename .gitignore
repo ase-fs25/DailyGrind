@@ -8,6 +8,8 @@ localstack-data/
 /terraform/.terraform.lock.hcl
 /terraform/terraform.tfstate
 /terraform/terraform.tfstate.backup
+terraform.tfvars
+/terraform/tf_outputs.json
 
 # Ignore lambda zip files
 /lambda-functions/*.zip
@@ -15,6 +17,5 @@ localstack-data/
 # Ignore other common files
 node_modules/
 *.env
-
 
 docker-compose.override.yaml

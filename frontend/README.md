@@ -6,11 +6,11 @@ Built with **React**, **TypeScript**, and **Vite**, the application is styled us
 
 ## Tech Stack
 
- - React with TypeScript
- - Vite for fast builds and dev server
- - Material UI (MUI) for component styling
- - JWT-based authentication (OAuth2 Resource Server)
- - Web Push API (integrated with AWS Lambda + EventBridge backend)
+- React with TypeScript
+- Vite for fast builds and dev server
+- Material UI (MUI) for component styling
+- JWT-based authentication (OAuth2 Resource Server)
+- Web Push API (integrated with AWS Lambda + EventBridge backend)
 
 ## Running the frontend locally
 

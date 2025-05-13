@@ -20,7 +20,7 @@ import java.util.List;
  * It interacts with the {@link TimelineService} to fetch the timeline entries for the user.
  */
 @RestController
-@RequestMapping
+@RequestMapping("${api.base-path}")
 @RequiredArgsConstructor
 public class TimelineController {
 

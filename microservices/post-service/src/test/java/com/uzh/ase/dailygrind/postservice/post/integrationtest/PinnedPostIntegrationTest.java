@@ -77,12 +77,12 @@ public class PinnedPostIntegrationTest {
         postTable.putItem(post);
 
         // When
-        mockMvc.perform(post("/users/me/pinned-posts/11111")
+        mockMvc.perform(post("/posts/users/me/pinned-posts/11111")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
         // Then
-        mockMvc.perform(get("/users/me/pinned-posts"))
+        mockMvc.perform(get("/posts/users/me/pinned-posts"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].postId").value("11111"));
     }
@@ -102,13 +102,13 @@ public class PinnedPostIntegrationTest {
         pinnedPostTable.putItem(pinnedPost);
 
         // When
-        mockMvc.perform(post("/users/me/pinned-posts/11111")
+        mockMvc.perform(post("/posts/users/me/pinned-posts/11111")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(post)))
                 .andExpect(status().isOk());
 
         // Then
-        mockMvc.perform(get("/users/me/pinned-posts"))
+        mockMvc.perform(get("/posts/users/me/pinned-posts"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].postId").value("11111"));
     }
@@ -128,7 +128,7 @@ public class PinnedPostIntegrationTest {
         pinnedPostTable.putItem(pinnedPost);
 
         // When + Then
-        mockMvc.perform(get("/users/me/pinned-posts"))
+        mockMvc.perform(get("/posts/users/me/pinned-posts"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].postId").value("11111"));
     }
@@ -137,7 +137,7 @@ public class PinnedPostIntegrationTest {
     @WithMockUser(username = "12345")
     void testGetPinnedPostsEmpty() throws Exception {
         // When + Then
-        mockMvc.perform(get("/users/me/pinned-posts"))
+        mockMvc.perform(get("/posts/users/me/pinned-posts"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isEmpty());
     }
@@ -157,7 +157,7 @@ public class PinnedPostIntegrationTest {
         pinnedPostTable.putItem(pinnedPost);
 
         // When + Then
-        mockMvc.perform(get("/users/12345/pinned-posts"))
+        mockMvc.perform(get("/posts/users/12345/pinned-posts"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].postId").value("11111"));
     }
