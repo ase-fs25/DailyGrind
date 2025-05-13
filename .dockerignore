@@ -45,3 +45,11 @@ amplifytools.xcconfig
 .secret-*
 **.sample
 #amplify-do-not-edit-end
+
+# Ignore localstack data directory
+localstack-data/
+/terraform/.terraform
+/terraform/.terraform.lock.hcl
+/terraform/terraform.tfstate
+/terraform/terraform.tfstate.backup
+/terraform/tf_outputs.json
