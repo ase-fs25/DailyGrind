@@ -4,6 +4,7 @@ import com.uzh.ase.dailygrind.postservice.post.controller.dto.PostDto;
 import com.uzh.ase.dailygrind.postservice.post.controller.dto.TimelineEntryDto;
 import com.uzh.ase.dailygrind.postservice.post.controller.dto.UserDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -15,6 +16,7 @@ import java.util.Objects;
  * It retrieves timeline entries for a user, which include the posts of their friends.
  */
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class TimelineService {
 
@@ -30,12 +32,17 @@ public class TimelineService {
      * @return        A list of TimelineEntryDto objects representing the user's timeline.
      */
     public List<TimelineEntryDto> getTimelineEntries(String userId) {
+        log.info("Retrieving timeline entries for user: {}", userId);
+
         // Retrieve the user's friends from the user service
         List<UserDto> friends = userService.getFriends(userId);
+        log.debug("Found {} friends for user {}", friends.size(), userId);
 
-        return friends.stream()
+        // Process the timeline entries
+        List<TimelineEntryDto> timelineEntries = friends.stream()
             // For each friend, retrieve their daily post
             .map(friend -> {
+                log.debug("Retrieving daily post for friend: {}", friend.userId());
                 PostDto post = postService.getDailyPostForUser(friend.userId(), userId);
                 // Create a TimelineEntryDto only if the friend has a daily post
                 return post != null ? new TimelineEntryDto(post, friend) : null;
@@ -45,5 +52,8 @@ public class TimelineService {
             // Sort the timeline entries by post timestamp in descending order
             .sorted(Comparator.comparing((TimelineEntryDto entry) -> entry.post().timestamp(), Comparator.reverseOrder()))
             .toList();
+
+        log.info("Retrieved {} timeline entries for user: {}", timelineEntries.size(), userId);
+        return timelineEntries;
     }
 }

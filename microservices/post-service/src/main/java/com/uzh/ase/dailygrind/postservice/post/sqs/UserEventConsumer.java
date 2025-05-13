@@ -86,17 +86,23 @@ public class UserEventConsumer {
         String payload = message.body();
         Map<String, MessageAttributeValue> attributes = message.messageAttributes();
 
-        // Get the event type from the message attributes (defaults to "UNKNOWN" if not found)
         String eventType = attributes.getOrDefault("eventType", MessageAttributeValue.builder().stringValue("UNKNOWN").build()).stringValue();
 
-        // Handle different event types based on the eventType value
-        switch (eventType) {
-            case "USER_CREATED" -> handleUserCreated(payload);
-            case "USER_UPDATED" -> handleUserUpdated(payload);
-            case "USER_DELETED" -> handleUserDeleted(payload);
-            case "FRIENDSHIP_CREATED" -> handleFriendshipCreated(payload);
-            case "FRIENDSHIP_DELETED" -> handleFriendshipDeleted(payload);
-            default -> log.error("Unknown event type: {}", eventType);
+        log.info("Processing event of type '{}' with message ID: {}", eventType, message.messageId());
+        log.debug("Message attributes: {}", attributes);
+        log.debug("Message payload: {}", payload);
+
+        try {
+            switch (eventType) {
+                case "USER_CREATED" -> handleUserCreated(payload);
+                case "USER_UPDATED" -> handleUserUpdated(payload);
+                case "USER_DELETED" -> handleUserDeleted(payload);
+                case "FRIENDSHIP_CREATED" -> handleFriendshipCreated(payload);
+                case "FRIENDSHIP_DELETED" -> handleFriendshipDeleted(payload);
+                default -> log.error("Unknown event type '{}' received. Message ID: {}", eventType, message.messageId());
+            }
+        } catch (Exception e) {
+            log.error("Exception while handling event type '{}' for message ID: {}: {}", eventType, message.messageId(), e.getMessage(), e);
         }
     }
 
