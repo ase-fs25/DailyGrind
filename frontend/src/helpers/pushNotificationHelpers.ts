@@ -1,21 +1,45 @@
-import { mockVapidKeys } from '../mockData/mockVapidKeys';
-import { fetchAuthSession } from 'aws-amplify/auth';
+import { getAuthToken } from './authHelper';
+import { getApiUrl } from './apiHelper';
+
+let initialized = false;
+
+export const registerUserForSubscription = async (): Promise<any> => {
+  if (initialized) return;
+  initialized = true;
+
+  console.log('Service Worker Registration');
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker
+      .register((import.meta.env.PROD ? '/dailygrind' : '') + '/service-worker.js')
+      .then(() => {
+        if (Notification.permission !== 'denied') {
+          return requestNotificationPermission();
+        }
+        return null;
+      })
+      .then((permission) => {
+        console.log('Permission result: ', permission);
+        if (permission === 'granted') {
+          return subscribeUserToPush();
+        }
+        return null;
+      })
+      .then(() => {})
+      .catch((error) => console.error('Service worker or notification error:', error));
+  }
+};
 
 export const requestNotificationPermission = async (): Promise<string> => {
-  return new Promise(function (resolve, reject) {
-    const permissionResult = Notification.requestPermission(function (result) {
-      return resolve(result);
-    });
-
-    if (permissionResult) {
-      permissionResult.then(resolve, reject);
-    }
-  }).then(function (permissionResult) {
+  try {
+    const permissionResult = await Notification.requestPermission();
     if (permissionResult !== 'granted') {
       throw new Error("We weren't granted permission.");
     }
     return permissionResult;
-  });
+  } catch (error) {
+    console.error('Permission request error:', error);
+    throw error;
+  }
 };
 
 export const subscribeUserToPush = async () => {
@@ -30,7 +54,7 @@ export const subscribeUserToPush = async () => {
     } else {
       const subscribeOptions = {
         userVisibleOnly: true,
-        applicationServerKey: mockVapidKeys.publicKey,
+        applicationServerKey: import.meta.env.VITE_VAPID_PUBLIC_KEY,
       };
       subscription = await registration.pushManager.subscribe(subscribeOptions);
       console.log('Created new PushSubscription: ', JSON.stringify(subscription));
@@ -44,25 +68,11 @@ export const subscribeUserToPush = async () => {
   }
 };
 
-/* TODO: Implement the Endpoint in the backend*/
 export const saveSubscription = async (subscription: PushSubscription): Promise<boolean> => {
   try {
-    let authToken = null;
-    try {
-      const session = await fetchAuthSession();
-      authToken = session.tokens?.accessToken.toString();
-      console.log('auth token: ', authToken);
-    } catch (e) {
-      console.error('Failed to fetch auth token: ', e);
-      return false;
-    }
+    let authToken = await getAuthToken();
 
-    if (!authToken) {
-      console.error('User is not authenticated');
-      return false;
-    }
-
-    const response = await fetch('http://localhost:8082/push-notifications/subscribe', {
+    const response = await fetch(getApiUrl('push-notifications/subscribe'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

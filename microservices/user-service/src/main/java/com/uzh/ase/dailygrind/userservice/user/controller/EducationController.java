@@ -14,6 +14,13 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.List;
 
+/**
+ * Controller for handling user education-related operations.
+ * <p>
+ * This controller exposes endpoints for retrieving, creating, updating, and deleting education records
+ * for users. The operations are based on the authenticated user's context or a specified user ID.
+ * </p>
+ */
 @RestController
 @RequestMapping("${api.base-path}")
 @RequiredArgsConstructor
@@ -21,6 +28,12 @@ public class EducationController {
 
     private final UserEducationService userEducationService;
 
+    /**
+     * Fetches the list of education details associated with the specified user.
+     *
+     * @param userId the ID of the user whose education details are to be retrieved
+     * @return a list of education details
+     */
     @Operation(summary = "Get a user's education details", description = "Fetches the list of education details associated with the specified user.")
     @ApiResponse(responseCode = "200", description = "Education details retrieved successfully",
         content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserEducationDto[].class)))
@@ -29,6 +42,12 @@ public class EducationController {
         return userEducationService.getEducationForUser(userId);
     }
 
+    /**
+     * Fetches the list of education details associated with the authenticated user.
+     *
+     * @param principal the authenticated user's principal containing the user ID
+     * @return a list of education details for the authenticated user
+     */
     @Operation(summary = "Get current user's education details", description = "Fetches the list of education details associated with the authenticated user.")
     @ApiResponse(responseCode = "200", description = "Education details retrieved successfully",
         content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserEducationDto[].class)))
@@ -37,6 +56,13 @@ public class EducationController {
         return userEducationService.getEducationForUser(principal.getName());
     }
 
+    /**
+     * Creates a new education record for the authenticated user.
+     *
+     * @param createUserEducationDtos the education details to be created
+     * @param principal the authenticated user's principal
+     * @return the created education record
+     */
     @Operation(summary = "Create a new education for the current user", description = "Creates a new education record for the authenticated user.")
     @ApiResponse(responseCode = "201", description = "Education created successfully",
         content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserEducationDto.class)))
@@ -46,6 +72,14 @@ public class EducationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUserEducation);
     }
 
+    /**
+     * Updates an existing education record for the authenticated user.
+     *
+     * @param educationId the ID of the education record to be updated
+     * @param updateUserEducationDto the new education details
+     * @param principal the authenticated user's principal
+     * @return the updated education record
+     */
     @Operation(summary = "Update an education for the current user", description = "Updates an existing education record for the authenticated user.")
     @ApiResponse(responseCode = "200", description = "Education updated successfully",
         content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserEducationDto.class)))
@@ -55,11 +89,18 @@ public class EducationController {
         return ResponseEntity.ok(updatedUserEducation);
     }
 
+    /**
+     * Deletes an education record from the authenticated user's profile.
+     *
+     * @param educationId the ID of the education record to be deleted
+     * @param principal the authenticated user's principal
+     * @return a response indicating that the education record has been deleted
+     */
     @Operation(summary = "Delete education for the current user", description = "Deletes an education record from the authenticated user's profile.")
     @ApiResponse(responseCode = "200", description = "Education record deleted successfully")
     @DeleteMapping("/me/education/{educationId}")
-    public ResponseEntity<?> deleteUserEducation(@PathVariable String educationId, Principal principal) {
+    public ResponseEntity<Void> deleteUserEducation(@PathVariable String educationId, Principal principal) {
         userEducationService.deleteUserEducation(principal.getName(), educationId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

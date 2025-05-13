@@ -22,8 +22,8 @@ const Friends = () => {
         <Tabs
           value={activeFriendsTab}
           onChange={handleFriendsTabChange}
-          textColor="primary"
-          indicatorColor="primary"
+          textColor="secondary"
+          indicatorColor="secondary"
           centered
           className="friends-tabs"
         >

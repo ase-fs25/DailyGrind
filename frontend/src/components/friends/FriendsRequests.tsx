@@ -1,44 +1,56 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Box, Typography, Button } from '@mui/material';
-import { mockFriendRequests } from '../../mockData/mockFriendRequests';
+import { fetchIncomingRequests, acceptFriendRequest, declineFriendRequest } from '../../helpers/friendsHelper';
 import '../../styles/components/friends/friendRequests.css';
+import { User } from '../../types/user';
 
 const FriendsRequests = () => {
-  // TODO: Replace 'mockFriendRequests' with an API call to fetch friend requests.
-  const [requests, setRequests] = useState(mockFriendRequests);
+  const [requestsBy, setRequestsBy] = useState<User[]>([]);
 
-  const handleAccept = (username: string) => {
-    alert(`Accepted request from ${username}`);
-    // TODO: Call backend API to accept friend request for this username.
-    // After a successful API call, update the UI.
-    setRequests((prev) => prev.filter((req) => req.username !== username));
+  useEffect(() => {
+    const loadRequests = async () => {
+      try {
+        const data = await fetchIncomingRequests();
+        setRequestsBy(data);
+      } catch (error) {
+        console.error('Failed to load friend requests:', error);
+      }
+    };
+
+    loadRequests();
+  }, []);
+
+  const handleAccept = async (requestedById: string) => {
+    try {
+      await acceptFriendRequest(requestedById);
+      setRequestsBy((prev) => prev.filter((req) => req.userId !== requestedById));
+    } catch (error) {
+      console.error('Failed to accept friend request:', error);
+    }
   };
 
-  const handleDecline = (username: string) => {
-    alert(`Declined request from ${username}`);
-    // TODO: Call backend API to decline friend request for this username.
-    // After a successful API call, update the UI.
-    setRequests((prev) => prev.filter((req) => req.username !== username));
+  const handleDecline = async (requestedById: string) => {
+    try {
+      await declineFriendRequest(requestedById);
+      setRequestsBy((prev) => prev.filter((req) => req.userId !== requestedById));
+    } catch (error) {
+      console.error('Failed to decline friend request:', error);
+    }
   };
 
   return (
     <Box className="requests-container">
-      <Typography variant="h6" className="requests-title">
-        Friend Requests
-      </Typography>
       <Box className="requests-list">
-        {requests.map((request, index) => (
-          <Box key={index} className="request-item">
+        {requestsBy.map((requestBy) => (
+          <Box key={requestBy.userId} className="request-item">
             <Typography variant="subtitle1" className="request-username">
-              {request.username}
+              {requestBy.firstName} {requestBy.lastName}
             </Typography>
-
-            {/* Button group with spacing */}
             <Box className="request-buttons">
-              <Button variant="outlined" color="success" size="small" onClick={() => handleAccept(request.username)}>
+              <Button variant="outlined" color="success" size="small" onClick={() => handleAccept(requestBy.userId)}>
                 Accept
               </Button>
-              <Button variant="outlined" color="error" size="small" onClick={() => handleDecline(request.username)}>
+              <Button variant="outlined" color="error" size="small" onClick={() => handleDecline(requestBy.userId)}>
                 Decline
               </Button>
             </Box>

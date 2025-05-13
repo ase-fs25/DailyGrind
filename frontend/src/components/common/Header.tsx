@@ -100,7 +100,7 @@ const Header = () => {
       <AppBar position="static" className="header-container">
         <Toolbar className="toolbar">
           <Box className="logo">
-            <span>Logo</span>
+            <div>DailyGrind</div>
           </Box>
           <Tabs value={tabIndex >= 0 ? tabIndex : 0} onChange={handleTabChange} className="header-tabs" centered>
             <Tab label="Feed" className="header-tab" />
@@ -109,7 +109,7 @@ const Header = () => {
           </Tabs>
           <Box className="button-row">
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              {leftText && <span style={{ marginRight: 8 }}>{leftText}</span>}
+              {leftText && <span style={{ marginRight: 8, fontSize: '12px' }}>{leftText}</span>}
               <Button
                 variant="contained"
                 startIcon={buttonIcon}

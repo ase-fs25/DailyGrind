@@ -1,0 +1,16 @@
+.jobs-list {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  gap: 8px;
+}
+
+.single-job {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  background: #f3e5f5;
+  border-radius: 8px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}

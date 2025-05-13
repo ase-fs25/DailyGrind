@@ -1,26 +1,20 @@
-output "daily_grind_user_pool_id" {
-  value = aws_cognito_user_pool.daily_grind_user_pool.id
+output "user_pool_id" {
+  value = module.cognito.user_pool_id
 }
 
-output "daily_grind_app_client_id" {
-  value = aws_cognito_user_pool_client.daily_grind_app_client.id
-}
-
-output "client_secret" {
-  value     = aws_cognito_user_pool_client.daily_grind_app_client.client_secret
-  sensitive = true
-}
-
-output "api_gateway_base_url" {
-  value = format(
-    "Frontend: http://localhost:4566/_aws/execute-api/%s/$default/\nMS User: http://localhost:4566/_aws/execute-api/%s/$default/users/\nMS Post: http://localhost:4566/_aws/execute-api/%s/$default/posts/",
-    aws_apigatewayv2_api.http_api.id,
-    aws_apigatewayv2_api.http_api.id,
-    aws_apigatewayv2_api.http_api.id
-  )
+output "app_client_id" {
+  value = module.cognito.app_client_id
 }
 
 output "frontend_url" {
-  # value = aws_s3_bucket_website_configuration.frontend_website.website_endpoint
-  value = "http://localhost:4566/dailygrind/index.html"
+  value = module.s3.website_url
+}
+
+output "api_gateway_url" {
+  value = module.apigateway.api_url
+}
+
+output "client_secret" {
+  value     = module.cognito.client_secret
+  sensitive = true
 }

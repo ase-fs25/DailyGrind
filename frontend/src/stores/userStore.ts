@@ -6,11 +6,14 @@ class UserStore {
     email: '',
     firstName: '',
     lastName: '',
+    profilePictureUrl: '',
     birthday: '',
     location: '',
     jobs: [],
     education: [],
   };
+
+  private feedHasLoaded = false;
 
   /** Entire User **/
   setUser(user: User) {
@@ -27,6 +30,7 @@ class UserStore {
       email: '',
       firstName: '',
       lastName: '',
+      profilePictureUrl: '',
       birthday: '',
       location: '',
       jobs: [],
@@ -49,6 +53,10 @@ class UserStore {
 
   get lastName(): string {
     return this.user.lastName;
+  }
+
+  get profilePictureUrl(): string {
+    return this.user.profilePictureUrl;
   }
 
   get birthday(): string {
@@ -74,6 +82,10 @@ class UserStore {
 
   setLastName(value: string) {
     this.user.lastName = value;
+  }
+
+  setProfilePictureUrl(value: string) {
+    this.user.profilePictureUrl = value;
   }
 
   setBirthday(value: string) {
@@ -130,6 +142,15 @@ class UserStore {
 
   removeEducation(educationId: string) {
     this.user.education = this.user.education.filter((edu) => edu.educationId !== educationId);
+  }
+
+  /** Getter/Setter to manage Feed load **/
+  getFeedHasLoaded(): boolean {
+    return this.feedHasLoaded;
+  }
+
+  setFeedHasLoaded(feedLoadingStatus: boolean) {
+    this.feedHasLoaded = feedLoadingStatus;
   }
 }
 

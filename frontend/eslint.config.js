@@ -3,6 +3,8 @@ import parser from '@typescript-eslint/parser';
 import plugin from '@typescript-eslint/eslint-plugin';
 import prettier from 'eslint-config-prettier';
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 export default [
   js.configs.recommended,
   {
@@ -23,14 +25,15 @@ export default [
         clearTimeout: 'readonly',
         setInterval: 'readonly',
         clearInterval: 'readonly',
-        fetch: 'false',
+        fetch: 'readonly',
+        navigator: 'readonly',
       },
     },
     plugins: {
       '@typescript-eslint': plugin,
     },
     rules: {
-      // Add custom rules if needed
+      'no-debugger': isProduction ? 'error' : 'off',
     },
   },
   {

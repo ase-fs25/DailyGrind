@@ -1,6 +1,6 @@
 package com.uzh.ase.dailygrind.userservice.user.repository;
 
-import com.uzh.ase.dailygrind.userservice.user.repository.entity.FriendRequestEntity;
+import com.uzh.ase.dailygrind.userservice.user.repository.entity.FriendshipEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
@@ -8,97 +8,217 @@ import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 
 import java.util.List;
-import java.util.UUID;
 
+/**
+ * Repository for managing user friendship entities in DynamoDB.
+ * Provides operations related to friend requests, friendships, and user relationships.
+ */
 @Repository
 @RequiredArgsConstructor
 public class UserFriendRepository {
 
-    private final DynamoDbTable<FriendRequestEntity> friendRequestTable;
+    private final DynamoDbTable<FriendshipEntity> friendRequestTable;
 
-    // --- Create friend request ---
-    public void createFriendRequest(String senderId, String receiverId) {
-        FriendRequestEntity request = FriendRequestEntity.builder()
-                .pk("FRIEND_REQUEST#" + receiverId)
-                .sk(UUID.randomUUID().toString())
-                .senderId(senderId)
-                .receiverId(receiverId)
-                .status("PENDING")
-                .build();
-        friendRequestTable.putItem(request);
+    /**
+     * Checks if two users are friends.
+     *
+     * @param userId     the ID of the first user
+     * @param otherUserId the ID of the second user
+     * @return {@code true} if the users are friends and the friendship is accepted, {@code false} otherwise
+     */
+    public boolean isFriend(String userId, String otherUserId) {
+        if (userId.equals(otherUserId)) return false;
+        Key key = Key.builder()
+            .partitionValue(FriendshipEntity.generatePK(userId))
+            .sortValue(FriendshipEntity.generateSK(otherUserId))
+            .build();
+
+        FriendshipEntity friendRequest = friendRequestTable.getItem(key);
+        return friendRequest != null && friendRequest.isFriendshipAccepted();
     }
 
-    // --- Accept friend request ---
-    public void acceptFriendRequest(String requestId, String receiverId) {
-        FriendRequestEntity request = friendRequestTable.getItem(
-                Key.builder().partitionValue("FRIEND_REQUEST#" + receiverId).sortValue(requestId).build()
-        );
-        if (request != null && request.getStatus().equals("PENDING")) {
-            request.setStatus("ACCEPTED");
-            friendRequestTable.putItem(request);
-        }
-    }
-
-    // --- Decline friend request ---
-    public void declineFriendRequest(String requestId, String receiverId) {
-        FriendRequestEntity request = friendRequestTable.getItem(
-                Key.builder().partitionValue("FRIEND_REQUEST#" + receiverId).sortValue(requestId).build()
-        );
-        if (request != null && request.getStatus().equals("PENDING")) {
-            request.setStatus("DECLINED");
-            friendRequestTable.putItem(request);
-        }
-    }
-
-    // --- Cancel outgoing friend request ---
-    public void cancelFriendRequest(String requestId, String senderId) {
-        // Here you would need to delete if you want, or mark as CANCELLED
-        FriendRequestEntity request = friendRequestTable.getItem(
-                Key.builder().partitionValue("FRIEND_REQUEST#" + senderId).sortValue(requestId).build()
-        );
-        if (request != null) {
-            request.setStatus("CANCELLED");
-            friendRequestTable.putItem(request);
-        }
-    }
-
-    // --- List incoming friend requests ---
-    public List<String> findIncomingRequests(String receiverId) {
+    /**
+     * Retrieves all friends of a specified user.
+     *
+     * @param userId the ID of the user whose friends are to be retrieved
+     * @return a list of user IDs representing the user's friends
+     */
+    public List<String> findAllFriends(String userId) {
         QueryConditional query = QueryConditional.keyEqualTo(
-                Key.builder().partitionValue("FRIEND_REQUEST#" + receiverId).build()
+            Key.builder().partitionValue(FriendshipEntity.generatePK(userId)).build()
         );
 
         return friendRequestTable.query(r -> r.queryConditional(query))
-                .items()
-                .stream()
-                .filter(item -> "PENDING".equals(item.getStatus()))
-                .map(FriendRequestEntity::getSenderId)
-                .toList();
+            .items()
+            .stream()
+            .filter(FriendshipEntity::isFriendshipAccepted)
+            .map(FriendshipEntity::getFriendId)
+            .distinct()
+            .toList();
     }
 
-    // --- List outgoing friend requests ---
-    public List<String> findOutgoingRequests(String senderId) {
-        // We would need a GSI (Global Secondary Index) here if you want efficient querying
-        // For now assume simple scan if needed or alternative design
-        throw new UnsupportedOperationException("Outgoing requests require GSI or custom design");
+    /**
+     * Creates a new friend request between two users.
+     * Adds both incoming and outgoing friendship requests.
+     *
+     * @param senderId   the ID of the user sending the friend request
+     * @param receiverId the ID of the user receiving the friend request
+     */
+    public void createFriendRequest(String senderId, String receiverId) {
+        FriendshipEntity incomingRequest = FriendshipEntity.builder()
+            .pk(FriendshipEntity.generatePK(receiverId))
+            .sk(FriendshipEntity.generateSK(senderId))
+            .friendshipAccepted(false)
+            .incoming(true)
+            .build();
+        friendRequestTable.putItem(incomingRequest);
+
+        FriendshipEntity outgoingRequest = FriendshipEntity.builder()
+            .pk(FriendshipEntity.generatePK(senderId))
+            .sk(FriendshipEntity.generateSK(receiverId))
+            .friendshipAccepted(false)
+            .incoming(false)
+            .build();
+        friendRequestTable.putItem(outgoingRequest);
     }
 
-    // --- List friends ---
+    /**
+     * Accepts a pending friend request between two users.
+     *
+     * @param requestingUserId the ID of the user requesting the friendship
+     * @param senderId         the ID of the user sending the friend request
+     */
+    public void acceptFriendRequest(String requestingUserId, String senderId) {
+        FriendshipEntity incomingRequest = friendRequestTable.getItem(
+            Key.builder()
+                .partitionValue(FriendshipEntity.generatePK(requestingUserId))
+                .sortValue(FriendshipEntity.generateSK(senderId))
+                .build()
+        );
+        if (incomingRequest != null && !incomingRequest.isFriendshipAccepted()) {
+            incomingRequest.setFriendshipAccepted(true);
+            friendRequestTable.putItem(incomingRequest);
+        }
+
+        FriendshipEntity outgoingRequest = friendRequestTable.getItem(
+            Key.builder()
+                .partitionValue(FriendshipEntity.generatePK(senderId))
+                .sortValue(FriendshipEntity.generateSK(requestingUserId))
+                .build()
+        );
+        if (outgoingRequest != null && !outgoingRequest.isFriendshipAccepted()) {
+            outgoingRequest.setFriendshipAccepted(true);
+            friendRequestTable.putItem(outgoingRequest);
+        }
+    }
+
+    /**
+     * Deletes the friendship (both incoming and outgoing requests) between two users.
+     *
+     * @param userId   the ID of one user
+     * @param friendId the ID of the other user
+     */
+    public void deleteFriendship(String userId, String friendId) {
+        FriendshipEntity incomingRequest = friendRequestTable.getItem(
+            Key.builder()
+                .partitionValue(FriendshipEntity.generatePK(userId))
+                .sortValue(FriendshipEntity.generateSK(friendId))
+                .build()
+        );
+
+        if (incomingRequest != null) {
+            friendRequestTable.deleteItem(incomingRequest);
+        }
+
+        FriendshipEntity outgoingRequest = friendRequestTable.getItem(
+            Key.builder()
+                .partitionValue(FriendshipEntity.generatePK(friendId))
+                .sortValue(FriendshipEntity.generateSK(userId))
+                .build()
+        );
+
+        if (outgoingRequest != null) {
+            friendRequestTable.deleteItem(outgoingRequest);
+        }
+    }
+
+    /**
+     * Retrieves a list of user IDs who have sent an incoming friend request to the specified user.
+     *
+     * @param userId the ID of the user receiving the friend requests
+     * @return a list of user IDs representing the senders of incoming friend requests
+     */
+    public List<String> findUserIdsOfIncomingRequests(String userId) {
+        QueryConditional query = QueryConditional.keyEqualTo(
+            Key.builder().partitionValue(FriendshipEntity.generatePK(userId)).build()
+        );
+
+        return friendRequestTable.query(r -> r.queryConditional(query))
+            .items()
+            .stream()
+            .filter(FriendshipEntity::isIncoming)
+            .filter(item -> !item.isFriendshipAccepted())
+            .map(FriendshipEntity::getSenderId)
+            .distinct()
+            .toList();
+    }
+
+    /**
+     * Retrieves a list of user IDs who have sent an outgoing friend request to the specified user.
+     *
+     * @param userId the ID of the user who has sent the outgoing friend requests
+     * @return a list of user IDs representing the recipients of outgoing friend requests
+     */
+    public List<String> findUserIdsOfOutgoingRequests(String userId) {
+        QueryConditional query = QueryConditional.keyEqualTo(
+            Key.builder().partitionValue(FriendshipEntity.generatePK(userId)).build()
+        );
+
+        return friendRequestTable.query(r -> r.queryConditional(query))
+            .items()
+            .stream()
+            .filter(item -> !item.isIncoming())
+            .filter(item -> !item.isFriendshipAccepted())
+            .map(FriendshipEntity::getReceiverId)
+            .distinct()
+            .toList();
+    }
+
+    /**
+     * Retrieves a list of user IDs who are friends with the specified user.
+     *
+     * @param userId the ID of the user whose friends are to be retrieved
+     * @return a list of user IDs representing the friends of the user
+     */
     public List<String> findFriends(String userId) {
         QueryConditional query = QueryConditional.keyEqualTo(
-                Key.builder().partitionValue("FRIEND_REQUEST#" + userId).build()
+            Key.builder().partitionValue(FriendshipEntity.generatePK(userId)).build()
         );
 
         return friendRequestTable.query(r -> r.queryConditional(query))
-                .items()
-                .stream()
-                .filter(item -> "ACCEPTED".equals(item.getStatus()))
-                .map(FriendRequestEntity::getSenderId)
-                .toList();
+            .items()
+            .stream()
+            .filter(FriendshipEntity::isFriendshipAccepted)
+            .map(FriendshipEntity::getFriendId)
+            .distinct()
+            .toList();
     }
 
-    public void removeFriend(String userId, String friendId) {
-        // Custom logic: you could delete accepted request, or mark as REMOVED
-        throw new UnsupportedOperationException("Remove friend logic needs defining!");
+    /**
+     * Checks if there is a pending friend request between two users.
+     *
+     * @param senderId   the ID of the user sending the friend request
+     * @param receiverId the ID of the user receiving the friend request
+     * @return {@code true} if a pending friend request exists, {@code false} otherwise
+     */
+    public boolean existsPendingRequest(String senderId, String receiverId) {
+        FriendshipEntity request = friendRequestTable.getItem(
+            Key.builder()
+                .partitionValue(FriendshipEntity.generatePK(senderId))
+                .sortValue(FriendshipEntity.generateSK(receiverId))
+                .build()
+        );
+
+        return request != null && !request.isFriendshipAccepted();
     }
 }

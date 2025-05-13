@@ -1,79 +1,182 @@
-import { useNavigate } from 'react-router-dom';
-import { Box, Typography, Card } from '@mui/material';
-import { useEffect } from 'react';
+import { Box, Typography, Card, CircularProgress, Avatar, IconButton } from '@mui/material';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import CommentIcon from '@mui/icons-material/Comment';
 
 import Header from '../common/Header';
-import userStore from '../../stores/userStore';
-import { loginUser } from '../../helpers/loginHelpers';
-import { getAuthToken } from '../../helpers/authHelper';
-
-import { mockPosts } from '../../mockData/mockPosts';
 
 import '../../styles/components/screens/screen.css';
 import '../../styles/components/screens/feed.css';
+import postsStore from '../../stores/postsStore';
+import { useEffect, useState } from 'react';
+import { FeedPost, Post, PostComments } from '../../types/post';
+import userStore from '../../stores/userStore';
+import { formatDate, getCommentsForPost, likePost, unlikePost } from '../../helpers/postHelper';
+import CommentsPopup from '../common/CommentsPopup';
 
 const Feed = () => {
-  const navigate = useNavigate();
+  const [feedPosts, setFeedPosts] = useState<FeedPost[]>(postsStore.getFeedPosts());
+  const [loading, setLoading] = useState(false);
+  const [openComments, setOpenComments] = useState(false);
+  const [currentComments, setCurrentComments] = useState<PostComments[]>([]);
+  const [currentPost, setCurrentPost] = useState<FeedPost>({
+    post: {
+      postId: '',
+      title: '',
+      content: '',
+      timestamp: '',
+      commentCount: 0,
+      isLiked: false,
+      isPinned: false,
+      likeCount: 0,
+    },
+    user: {
+      userId: '',
+      email: '',
+      firstName: '',
+      lastName: '',
+      profilePictureUrl: '',
+      birthday: '',
+      location: '',
+      jobs: [],
+      education: [],
+    },
+  });
 
   useEffect(() => {
-    if (userStore.getUser().userId === '') {
-      (async () => {
-        try {
-          const authToken = await getAuthToken();
+    const fetchPosts = () => {
+      setLoading(true);
 
-          const userInfo = await fetch('http://localhost:8080/users/me', {
-            method: 'GET',
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          });
+      const timeoutId = setTimeout(() => {
+        setFeedPosts(postsStore.getFeedPosts());
+        setLoading(false);
+        userStore.setFeedHasLoaded(true);
+      }, 1500);
 
-          if (userInfo.ok && authToken) {
-            const userInfoRaw = await userInfo.text();
+      return () => clearTimeout(timeoutId);
+    };
 
-            if (userInfoRaw) {
-              loginUser(userInfoRaw, authToken);
-            } else {
-              navigate('/registration', { replace: true });
-            }
-          }
-        } catch (e) {
-          console.error('post‑auth check failed', e);
-        }
-      })();
+    if (!userStore.getFeedHasLoaded()) {
+      fetchPosts();
     }
-  }, [navigate]);
+  }, []);
 
-  const formatDate = (timestamp: string) => {
-    const date = new Date(timestamp);
-    return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1)
-      .toString()
-      .padStart(2, '0')}-${date.getFullYear()}`;
+  const handleLike = async (post: FeedPost) => {
+    try {
+      if (post.post.isLiked) {
+        await unlikePost(post.post.postId);
+      } else {
+        await likePost(post.post.postId);
+      }
+
+      const existing = feedPosts.find((fp) => fp.post.postId === post.post.postId);
+      if (!existing) return;
+
+      const updatedPost: Post = {
+        ...existing.post,
+        isLiked: !existing.post.isLiked,
+        likeCount: existing.post.likeCount + (existing.post.isLiked ? -1 : 1),
+      };
+
+      postsStore.updateFeedPost(post.post.postId, { ...post, post: updatedPost });
+
+      setFeedPosts((fps) => fps.map((fp) => (fp.post.postId === post.post.postId ? { ...fp, post: updatedPost } : fp)));
+    } catch (err) {
+      console.error('Error toggling like:', err);
+    }
   };
+
+  const handleCommentsClick = async (post: FeedPost) => {
+    const fetchedComments = await getCommentsForPost(post.post.postId);
+
+    if (fetchedComments) {
+      setCurrentComments(fetchedComments);
+    }
+
+    setCurrentPost(post);
+    setOpenComments(true);
+  };
+
+  if (loading) {
+    return (
+      <Box className="screen-container">
+        <Header />
+        <Box className="feed-content" display="flex" justifyContent="center" alignItems="center" height="100vh">
+          <CircularProgress style={{ color: '#9c27b0' }} />
+        </Box>
+      </Box>
+    );
+  }
 
   return (
     <Box className="screen-container">
       <Header />
       <Box className="feed-content">
         <Box className="feed-grid">
-          {mockPosts.map((post) => (
-            <Box key={post.postId} className="feed-item">
+          {feedPosts.map((post) => (
+            <Box key={post.post.postId} className="feed-item">
               <Card className="post-card">
                 <div className="post-card-header">
-                  <Typography variant="h6" className="post-title">
-                    {post.title}
-                  </Typography>
+                  <div className="post-title-wrapper">
+                    <Avatar
+                      src={post.user.profilePictureUrl}
+                      alt={`${post.user.firstName} ${post.user.lastName}`}
+                      sx={{ width: 50, height: 50, boxShadow: '0 4px 8px rgba(0,0,0,0.1)', mr: '8px' }}
+                    />
+                    <Typography variant="h6" className="post-title">
+                      {post.post.title}
+                    </Typography>
+                    <Typography className="post-user">by {post.user.firstName + ' ' + post.user.lastName}</Typography>
+                  </div>
+
                   <Typography variant="subtitle2" className="post-timestamp">
-                    {formatDate(post.timestamp)}
+                    {formatDate(post.post.timestamp)}
                   </Typography>
                 </div>
 
                 <Typography variant="body1" className="post-content">
-                  {post.content}
+                  {post.post.content}
                 </Typography>
+                <div className="like-wrapper">
+                  <Typography variant="body1" className="like-count">
+                    {post.post.likeCount}
+                  </Typography>
+                  <IconButton
+                    edge="end"
+                    onClick={() => handleLike(post)}
+                    aria-label="like"
+                    sx={{ width: '36px', height: '36px' }}
+                    color="secondary"
+                  >
+                    {post.post.isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                  </IconButton>
+                  <IconButton
+                    edge="end"
+                    onClick={() => handleCommentsClick(post)}
+                    aria-label="comment"
+                    sx={{ width: '36px', height: '36px', marginLeft: '12px;', marginTop: '2px' }}
+                    color="secondary"
+                  >
+                    <CommentIcon />
+                  </IconButton>
+                </div>
               </Card>
             </Box>
           ))}
+          {feedPosts.length > 0 && (
+            <Typography className="sub-feed-message">Expand your network to see more posts!</Typography>
+          )}
+          {feedPosts.length === 0 && (
+            <Typography className="sub-feed-message">
+              Oh no, you do not have any friends yet. Expand your network to see more posts!
+            </Typography>
+          )}
+          <CommentsPopup
+            open={openComments}
+            onClose={() => setOpenComments(false)}
+            post={currentPost}
+            comments={currentComments}
+          />
         </Box>
       </Box>
     </Box>
