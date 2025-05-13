@@ -22,7 +22,7 @@
 
 ---
 
-## Quick start
+## Quick start
 
 ### Prerequisites
 
@@ -60,7 +60,7 @@ $ open http://localhost:4566/dailygrind/index.html
 
 ---
 
-### Running locally
+### For Development
 
 #### Microservices
 
@@ -134,7 +134,7 @@ We used a **trunk-based development model** with short-lived branches:
 main            ← production
 │
 └─ develop      ← integration branch, auto‑deploys to staging
-   ├─ feature/ | one branch per Issue (lifetime ≤ 7 days)
+   ├─ feature/ | one branch per Issue (lifetime ≤ 7 days)
    ├─ release/ | one branch per Sprint
    └─ fix/ | emergency patch branched from develop
 ```
@@ -264,4 +264,4 @@ Key observations:
 
 ### License
 
-MIT © 2025 DailyGrind Team  –  University of Zurich
+MIT ©2025 DailyGrind Team  –  University of Zurich
