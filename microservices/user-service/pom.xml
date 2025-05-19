@@ -31,7 +31,7 @@
   </developers>
   <properties>
     <java.version>17</java.version>
-    <aws.sdk.version>2.31.35</aws.sdk.version>
+    <aws.sdk.version>2.31.45</aws.sdk.version>
     <mapstruct.version>1.6.3</mapstruct.version>
   </properties>
   <dependencies>
