@@ -87,9 +87,11 @@ export async function fetchOutgoingRequests(): Promise<UserProfile[]> {
 
 // --- Accept Friend Request ---
 export async function acceptFriendRequest(requestSenderId: string): Promise<void> {
+  console.log('Accepting friend request from:', requestSenderId);
   const authToken = await getAuthToken();
+  console.log('Auth token:', authToken);
 
-  const response = await fetch(getApiUrl(`/users/requests/${requestSenderId}/accept`), {
+  const response = await fetch(getApiUrl(`users/requests/${requestSenderId}/accept`), {
     method: 'POST',
     headers: { Authorization: `Bearer ${authToken}` },
   });
