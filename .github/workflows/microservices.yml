@@ -21,7 +21,7 @@ jobs:
       services: ${{ steps.set-matrix.outputs.services }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Detect Backend Services
         id: set-matrix
@@ -41,7 +41,7 @@ jobs:
       AWS_COGNITO_USER_POOL_ID: us-east-1_XXXXXXXX
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Java
         uses: actions/setup-java@v4
